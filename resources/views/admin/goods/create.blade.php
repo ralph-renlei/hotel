@@ -27,17 +27,7 @@
 					<div style="margin-top:15px;">
 					<form class="form-horizontal" role="form" method="POST" action="{{ url('/admin/shop/goods/store') }}">
 						<input type="hidden" name="_token" value="{{ csrf_token() }}">
-						<div class="form-group base">
-							<label class="col-sm-2 control-label">商家<span style="color:red">*</span></label>
-							<div class="col-sm-5">
-								<select class="form-control" name="store_id" id="store_id">
-                                    <option value ="0">请选择商家</option>
-									@foreach($stores as $store)
-										<option value ="{{$store->id}}">{{$store->store_name}}</option>
-									@endforeach
-								</select>
-							</div>
-						</div>
+
 						<div class="form-group base">
 							<label class="col-sm-2 control-label">名称<span style="color:red">*</span></label>
 							<div class="col-sm-5">
@@ -45,31 +35,31 @@
 							</div>
 						</div>
 						<div class="form-group base">
+							<label class="col-sm-2 control-label">库存<span style="color:red">*</span></label>
+							<div class="col-sm-5">
+								<input type="text" class="form-control" name="stock" id="stock" placeholder="请输入名称"/>
+							</div>
+						</div>
+						<div class="form-group base">
 							<label class="col-sm-2 control-label">分类<span style="color:red">*</span></label>
 							<div class="col-sm-3" id="category">
-								<select class="form-control" name="category1" id="category1" onchange="categoryChange()" >
+								<select class="form-control" name="category" id="category">
                                     <option value ="0">请选择分类</option>
                                     @foreach($categories as $category)
 										<option value ="{{$category->id}}">{{$category->name}}</option>
 									@endforeach
 								</select>
 							</div>
+						</div>
+						<div class="form-group base">
+							<label class="col-sm-2 control-label">早餐<span style="color:red">*</span></label>
 							<div class="col-sm-3" id="category">
-								<select class="form-control" name="category2" id="category2" onchange="categoryChange1()">
-                                    <option value ="0">请选择子类</option>
-                                </select>
-							</div>
-						</div>
-						<div class="form-group base">
-							<label class="col-sm-2 control-label">音频地址</label>
-							<div class="col-sm-5">
-								<input type="text" class="form-control" name="voice" id="voice" placeholder="音频地址"/>
-							</div>
-						</div>
-						<div class="form-group base">
-							<label class="col-sm-2 control-label">视频地址</label>
-							<div class="col-sm-5">
-								<input type="text" class="form-control" name="video" id="video" placeholder="音频地址"/>
+								<select class="form-control" name="breakfast" id="breakfast">
+									<option value ="">请选择分类</option>
+										<option value ="0">无早餐</option>
+										<option value ="1">单早</option>
+										<option value ="0">双早</option>
+								</select>
 							</div>
 						</div>
 						<div class="form-group base">
@@ -104,87 +94,27 @@
 							</div>
 						</div>
 						<div class="form-group status" style="display: none">
-							<label class="col-sm-2 control-label">新品<span style="color:red">*</span></label>
-							<div class="col-sm-10">
-								<label class="radio-inline">
-									<input type="radio" name="isnew" id="isnew1" value="1"/>
-									是
-								</label>
-								<label class="radio-inline">
-									<input type="radio" name="isnew" id="isnew2" value="0" checked="checked"/>
-									否
-								</label>
+							<label class="col-sm-2 control-label">会员价</label>
+							<div class="col-sm-5">
+								<input type="number" name="vipprice" class="form-control" id="vipprice" placeholder="请输入会员价"/>
 							</div>
 						</div>
 						<div class="form-group status" style="display: none">
-							<label class="col-sm-2 control-label">推荐<span style="color:red">*</span></label>
-							<div class="col-sm-10">
-								<label class="radio-inline">
-									<input type="radio" name="isrecommand" id="isrecommand1" value="1"/>
-									是
-								</label>
-								<label class="radio-inline">
-									<input type="radio" name="isrecommand" id="isrecommand2" value="0" checked="checked"/>
-									否
-								</label>
+							<label class="col-sm-2 control-label">周末价</label>
+							<div class="col-sm-5">
+								<input type="number" name="weekendprice" class="form-control" id="weekendprice" placeholder="请输入周末价"/>
 							</div>
 						</div>
 						<div class="form-group status" style="display: none">
-							<label class="col-sm-2 control-label">打折<span style="color:red">*</span></label>
-							<div class="col-sm-10">
-								<label class="radio-inline">
-									<input type="radio" name="isdiscount" id="isdiscount1" value="1"/>
-									是
-								</label>
-								<label class="radio-inline">
-									<input type="radio" name="isdiscount" id="isdiscount2" value="0" checked="checked"/>
-									否
-								</label>
-							</div>
-						</div>
-						<div class="form-group status" style="display: none">
-							<label class="col-sm-2 control-label">热销<span style="color:red">*</span></label>
-							<div class="col-sm-10">
-								<label class="radio-inline">
-									<input type="radio" name="ishot" id="ishot1" value="1"/>
-									是
-								</label>
-								<label class="radio-inline">
-									<input type="radio" name="ishot" id="ishot2" value="0" checked="checked"/>
-									否
-								</label>
+							<label class="col-sm-2 control-label">假日价</label>
+							<div class="col-sm-5">
+								<input type="number" name="holidayprice" class="form-control" id="holidayprice" placeholder="请输入假日价"/>
 							</div>
 						</div>
 						<div class="form-group status" style="display: none">
 							<label class="col-sm-2 control-label">排序</label>
 							<div class="col-sm-5">
 								<input type="number" name="sort" class="form-control" id="sort" placeholder="请输入序号" value="0"/>
-							</div>
-						</div>
-						<div class="form-group status" style="display: none">
-							<label class="col-sm-2 control-label">审核<span style="color:red">*</span></label>
-							<div class="col-sm-10">
-								<label class="radio-inline">
-									<input type="radio" name="audited" id="audited1" value="1" checked="checked"/>
-									通过
-								</label>
-								<label class="radio-inline">
-									<input type="radio" name="audited" id="audited2" value="0"/>
-									未通过
-								</label>
-							</div>
-						</div>
-						<div class="form-group status" style="display: none">
-							<label class="col-sm-2 control-label">状态<span style="color:red">*</span></label>
-							<div class="col-sm-10">
-								<label class="radio-inline">
-									<input type="radio" name="status" id="status1" value="1" checked="checked"/>
-									上架
-								</label>
-								<label class="radio-inline">
-									<input type="radio" name="status" id="status2" value="0"/>
-									下架
-								</label>
 							</div>
 						</div>
 						<div class="form-group do">
@@ -201,33 +131,4 @@
 		</div>
 	</div>
 </div>
-	<script>
-		var categoryChange=function(){
-			var categoryId = $("#category1").val();
-			$.ajax({
-				type: "POST",
-				url: "/admin/category",
-				data: {id:categoryId},
-				success: function(res) {
-					$("#category2").find("option").remove();
-					for(var i=0;i<res.length;i++){
-						$("#category2").append("<option value='"+res[i].id+"'>"+res[i].name+"</option>");
-					}
-				}
-			});
-		}
-		var categoryChange1=function(){
-			var categoryId = $("#category2").val();
-			$.ajax({
-				type: "POST",
-				url: "/admin/category",
-				data: {id:categoryId},
-				success: function(res) {
-					for(var i=0;i<res.length;i++){
-						$("#category3").append("<option value='"+res[i].id+"'>"+res[i].name+"</option>");
-					}
-				}
-			});
-		}
-	</script>
 @endsection

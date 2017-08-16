@@ -20,6 +20,7 @@ class UploadController extends Controller
         }
 
         $target_dir = storage_path().DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.date('Ymd').DIRECTORY_SEPARATOR;
+
         $item = $_FILES['file'];
         $type = $this->getImageType($item);
 

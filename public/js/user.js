@@ -22,6 +22,7 @@ layui.use('upload', function(){
             $(input).after('<input type="hidden" name="_token" value="'+$('meta[name="csrf-token"]').attr('content')+'">');
         }
         ,success: function(res){
+            console.log(res);
             if(res.code==0){
                 $('#avatar').val(res.data.src);
                 if($('#article-thumb').length>0){

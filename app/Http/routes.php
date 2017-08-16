@@ -14,7 +14,7 @@
 
 //---------------------------基础通用模块--------------------------------
 
-Route::get('/', 'Mobile/HomeController@index');
+Route::get('/', 'Mobile\HomeController@index');
 Route::get('wechat/valid','WechatController@valid');
 
 Route::post('upload/image','UploadController@image');

@@ -34,31 +34,30 @@
 								</div>
 							</div>
 							<div class="form-group base">
+								<label class="col-sm-2 control-label">库存<span style="color:red">*</span></label>
+								<div class="col-sm-5">
+									<input type="text" class="form-control" name="stock" id="stock" placeholder="请输入库存" value="{{$goods->stock}}"/>
+								</div>
+							</div>
+							<div class="form-group base">
 								<label class="col-sm-2 control-label">分类<span style="color:red">*</span></label>
 								<div class="col-sm-3" id="category">
-									<select class="form-control" name="category1" id="category1" onchange="categoryChange()" >
-										<option selected="selected">{{$category[0]}}</option>
+									<select class="form-control" name="category1" id="category">
 										@for($i=0;$i<count($categorys);$i++)
 											<option value ="{{$categorys[$i]->id}}">{{$categorys[$i]->name}}</option>
 										@endfor
 									</select>
 								</div>
+							</div>
+							<div class="form-group base">
+								<label class="col-sm-2 control-label">早餐<span style="color:red">*</span></label>
 								<div class="col-sm-3" id="category">
-									<select class="form-control" name="category2" id="category2" onchange="categoryChange1()">
-										<option selected="selected">{{$category[1]}}</option>
+									<select class="form-control" name="breakfast" id="breakfast">
+										<option value ="">请选择分类</option>
+										<option value ="0" @if($goods->breakfast==0) selected @endif>无早餐</option>
+										<option value ="1" @if($goods->breakfast==1) selected @endif>单早</option>
+										<option value ="0" @if($goods->breakfast==2) selected @endif>双早</option>
 									</select>
-								</div>
-							</div>
-							<div class="form-group base">
-								<label class="col-sm-2 control-label">音频地址</label>
-								<div class="col-sm-5">
-									<input type="text" class="form-control" name="voice" id="voice" placeholder="音频地址" value="{{$goods->voice }}"/>
-								</div>
-							</div>
-							<div class="form-group base">
-								<label class="col-sm-2 control-label">视频地址</label>
-								<div class="col-sm-5">
-									<input type="text" class="form-control" name="video" id="video" placeholder="视频地址" value="{{$goods->video }}"/>
 								</div>
 							</div>
 							<div class="form-group base">
@@ -104,87 +103,27 @@
 								</div>
 							</div>
 							<div class="form-group status" style="display: none">
-								<label class="col-sm-2 control-label">新品<span style="color:red">*</span></label>
-								<div class="col-sm-10">
-									<label class="radio-inline">
-										<input type="radio" name="isnew" id="isnew1" value="1" @if($goods->isnew ==1)checked="checked"@endif/>
-										是
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="isnew" id="isnew2" value="0" @if($goods->isnew ==0)checked="checked"@endif/>
-										否
-									</label>
+								<label class="col-sm-2 control-label">会员价</label>
+								<div class="col-sm-5">
+									<input type="number" name="vipprice" class="form-control" id="vipprice" placeholder="请输入会员价" value="{{$goods->vipprice}}"/>
 								</div>
 							</div>
 							<div class="form-group status" style="display: none">
-								<label class="col-sm-2 control-label">推荐<span style="color:red">*</span></label>
-								<div class="col-sm-10">
-									<label class="radio-inline">
-										<input type="radio" name="isrecommand" id="isrecommand1" value="1" @if($goods->isrecommand ==1)checked="checked"@endif/>
-										是
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="isrecommand" id="isrecommand2" value="0" @if($goods->isrecommand ==0)checked="checked"@endif/>
-										否
-									</label>
+								<label class="col-sm-2 control-label">周末价</label>
+								<div class="col-sm-5">
+									<input type="number" name="weekendprice" class="form-control" id="weekendprice" placeholder="请输入周末价" value="{{$goods->weekendprice}}"/>
 								</div>
 							</div>
 							<div class="form-group status" style="display: none">
-								<label class="col-sm-2 control-label">打折<span style="color:red">*</span></label>
-								<div class="col-sm-10">
-									<label class="radio-inline">
-										<input type="radio" name="isdiscount" id="isdiscount1" value="1" @if($goods->isdiscount ==1)checked="checked"@endif/>
-										是
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="isdiscount" id="isdiscount2" value="0" @if($goods->isdiscount ==0)checked="checked"@endif/>
-										否
-									</label>
-								</div>
-							</div>
-							<div class="form-group status" style="display: none">
-								<label class="col-sm-2 control-label">热销<span style="color:red">*</span></label>
-								<div class="col-sm-10">
-									<label class="radio-inline">
-										<input type="radio" name="ishot" id="ishot1" value="1" @if($goods->ishot ==1)checked="checked"@endif/>
-										是
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="ishot" id="ishot2" value="0" @if($goods->ishot ==0)checked="checked"@endif/>
-										否
-									</label>
+								<label class="col-sm-2 control-label">假日价</label>
+								<div class="col-sm-5">
+									<input type="number" name="holidayprice" class="form-control" id="holidayprice" placeholder="请输入假日价" value="{{$goods->holidayprice}}"/>
 								</div>
 							</div>
 							<div class="form-group status" style="display: none">
 								<label class="col-sm-2 control-label">排序</label>
 								<div class="col-sm-5">
-									<input type="number" name="sort" class="form-control" id="sort" placeholder="请输入序号" value="0" value="{{$goods->sort}}"/>
-								</div>
-							</div>
-							<div class="form-group status" style="display: none">
-								<label class="col-sm-2 control-label">审核<span style="color:red">*</span></label>
-								<div class="col-sm-10">
-									<label class="radio-inline">
-										<input type="radio" name="audited" id="audited1" value="1"  @if($goods->audited ==1)checked="checked"@endif/>
-										通过
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="audited" id="audited2" value="0" @if($goods->audited ==0)checked="checked"@endif/>
-										未通过
-									</label>
-								</div>
-							</div>
-							<div class="form-group status" style="display: none">
-								<label class="col-sm-2 control-label">状态<span style="color:red">*</span></label>
-								<div class="col-sm-10">
-									<label class="radio-inline">
-										<input type="radio" name="status" id="status1" value="1" @if($goods->status ==1)checked="checked"@endif/>
-										上架
-									</label>
-									<label class="radio-inline">
-										<input type="radio" name="status" id="status2" value="0" @if($goods->status ==0)checked="checked"@endif/>
-										下架
-									</label>
+									<input type="number" name="sort" class="form-control" id="sort" placeholder="请输入序号" value="{{$goods->sort}}"/>
 								</div>
 							</div>
 							<div class="form-group do">

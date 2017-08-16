@@ -7,8 +7,8 @@ class Goods extends Model {
 	//
     protected $table = 'goods';
     protected $fillable = [
-        'store_id','goods_sn','type','category', 'goods_cate', 'name', 'thumb','images','description', 'voice', 'video', 'content', 'marketprice','productprice',
-        'agentprice','costprice','issale','isnew','ishot','isdiscount','isrecommand','istime','sort','views','status','audited'
+        'goods_sn','category', 'name','stock', 'thumb','images','description', 'marketprice','productprice',
+        'vipprice','costprice','weekendprice','holidayprice','sort',
     ];
     protected $primaryKey = 'goods_id';
 }

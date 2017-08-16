@@ -38,9 +38,9 @@ class GoodsController extends Controller {
 	public function create()
 	{
 		//
-        $stores = [];
-        $stores = Store::where('status',1)->get();
-		$this->var['stores'] = $stores;
+//        $stores = [];
+//        $stores = Store::where('status',1)->get();
+//		$this->var['stores'] = $stores;
 
         $categories = [];
         $categories = Category::where('parent',0)->orderBy('sort','desc')->orderBy('id','asc')->get();
@@ -56,115 +56,71 @@ class GoodsController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-		//
+//		print_r($request->all());exit;
 		$id = $request->input('id');
 		$name = $request->input('name');
+		$stock = $request->input('stock');
 		$description = $request->input('description');
-		$content = $request->input('content');
 		$marketprice = $request->input('marketprice');
 		$productprice = $request->input('productprice');
-		$agentprice = $request->input('agentprice');
+		$vipprice = $request->input('vipprice');
 		$costprice = $request->input('costprice');
-		$issale = $request->input('issale');
-		$isnew = $request->input('isnew');
-		$ishot = $request->input('ishot');
-		$isdiscount = $request->input('isdiscount');
-		$isrecommand = $request->input('isrecommand');
-		$istime = $request->input('istime');
+		$weekendprice = $request->input('weekendprice');
+		$holidayprice = $request->input('holidayprice');
 		$sort = $request->input('sort');
-		$status = $request->input('status');
-		$audited = $request->input('audited');
 		$images = $request->input('images');
 		$new_gallery = $request->input('new_gallery');
-		$storeId=$request->input('store_id');
-		$video=$request->input('video');
-		$voice=$request->input('voice');
-		$type=$request->input('type');
-		$category1=$request->input('category1');
-		$category2=$request->input('category2');
+		$category=$request->input('category');
+		$breakfast = $request->input('breakfast');
 		$this->validate($request,
 			[
 				'name'=>'required|max:30|min:2',
 				'description'=>'max:1000',
 				'marketprice'=>'required',
 				'productprice'=>'required',
-				'issale'=>'in:1,0',
-				'ishot'=>'in:1,0',
-				'isnew'=>'in:1,0',
-				'isdiscount'=>'in:1,0',
-				'isrecommand'=>'in:1,0',
-				'istime'=>'in:1,0',
 				'sort'=>'integer',
-				'status'=>'required|in:1,0',
-				'audited'=>'required|in:1,0',
-				'store_id'=>'required'
 			]
 			);
 		$regex = '@(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))@';
-		if(!empty($video)) {
-			if(!preg_match($regex,$video)){
-				return redirect()->back()->withErrors(['status' => '视频地址不符合规范']);
-			}
+		if(!empty($category)){
+			$category=$category;
 		}
-		if(!empty($voice)) {
-			if(!preg_match($regex,$voice)){
-				return redirect()->back()->withErrors(['status' => '音频地址不符合规范']);
-			}
-		}
-		if(!empty($category1)){
-			$category1=Category::where('id',$category1)->first();
-			$category1=$category1->name;
-		}
-		if(!empty($category2)){
-			$category2=Category::where('id',$category2)->first();
-			$category2=$category2->name;
-		}
-		$category=$category1.'|'.$category2;
+
+
 		$data = array(
 			'name'=>$name,
 			'productprice'=>$productprice,
-			'status'=>$status,
-			'audited'=>$audited,
-			'video'=>$video,
-			'voice'=>$voice,
-			'type'=>$type,
-			'category'=>$category
+			'category'=>$category,
+			'stock'=>$stock,
+			'marketprice'=>$marketprice,
+			'productprice'=>$productprice,
+			'vipprice'=>$vipprice,
+			'costprice'=>$costprice,
+			'weekendprice'=>$weekendprice,
+			'holidayprice'=>$holidayprice,
+			'category'=>$category,
 		);
+
 		if(!empty($description)){
 			$data['description'] = $description;
-		}
-		if(!empty($content)){
-			$data['content'] = $content;
 		}
 		if(!empty($marketprice)){
 			$data['marketprice'] = $marketprice;
 		}
-		if(!empty($agentprice)){
-			$data['agentprice'] = $agentprice;
+		if(!empty($viprice)){
+			$data['vipprice'] =$vipprice;
 		}
 		if(!empty($costprice)){
 			$data['costprice'] = $costprice;
 		}
+		if(!empty($weekendprice)){
+			$data['weekendprice'] = $weekendprice;
+		}
+		if(!empty($holidayprice)){
+			$data['holidayprice'] = $holidayprice;
+		}
 		if(isset($sort)){
 			$data['sort'] = $sort;
-		}
-		if(isset($ishot)){
-			$data['ishot'] = $ishot;
-		}
-		if(isset($isdiscount)){
-			$data['isdiscount'] = $isdiscount;
-		}
-		if(isset($isrecommand)){
-			$data['isrecommand'] = $isrecommand;
-		}
-		if(isset($issale)){
-			$data['issale'] = $issale;
-		}
-		if(isset($istime)){
-			$data['istime'] = $istime;
-		}
-		if(isset($isnew)){
-			$data['isnew'] = $isnew;
 		}
 
 		if(!empty($new_gallery)){
@@ -175,6 +131,7 @@ class GoodsController extends Controller {
 			}
 			$data['images'] = substr($data['images'],0,strlen($data['images'])-1);
 		}
+
 		$goods = NULL;
 		if($id){
 			$goods = Goods::where('goods_id',$id)->first();
@@ -184,8 +141,8 @@ class GoodsController extends Controller {
 		}
 		if(!$goods){
 			$data['goods_sn']=date('YmdHis',time());
-			$data['store_id']=$storeId;
-			$store = Store::where('id',$storeId)->first();
+//			$data['store_id']=$storeId;
+//			$store = Store::where('id',$storeId)->first();
 			$goods = Goods::create($data);
 		}
 
@@ -257,11 +214,10 @@ class GoodsController extends Controller {
 		$var['goods']=Goods::where('goods_id',$id)->first();
 		$gallery_list = array();
 		if(!empty($var['goods']->images)){
-			//$gallery_list = json_decode($store->images,true);
 			$gallery_list = explode(',',$var['goods']->images);
 		}
-		$var['category']=explode('|',$var['goods']['category']);
-		$var['categorys']=DB::select('SELECT * FROM goods_category WHERE id IN (SELECT DISTINCT parent FROM goods_category)');
+//		$var['category']=explode('|',$var['goods']['category']);
+		$var['categorys']=DB::select('SELECT * FROM goods_category WHERE parent = 0');
 		$var['gallery_list'] = $gallery_list;
 		return view('admin.goods.show',$var);
 	}

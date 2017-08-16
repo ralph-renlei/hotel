@@ -55,9 +55,9 @@ return [
 		'mysql' => [
 			'driver'    => 'mysql',
 			'host'      => env('DB_HOST', 'localhost'),
-			'database'  => env('DB_DATABASE', 'amor_db'),
+			'database'  => env('DB_DATABASE', 'wx_hotel'),
 			'username'  => env('DB_USERNAME', 'root'),
-			'password'  => env('DB_PASSWORD', 'root'),
+			'password'  => env('DB_PASSWORD', '123'),
 			'charset'   => 'utf8mb4',
 			'collation' => 'utf8mb4_general_ci',
 			'prefix'    => '',
