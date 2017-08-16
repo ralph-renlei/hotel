@@ -1,0 +1,26 @@
+<div class="col-md-2 sidebar">
+    <ul class="nav nav-sidebar active" id="home_menu">
+        <li class="active"><a href="{{ url('/admin') }}">后台首页</a></li>
+    </ul>
+    <ul class="nav nav-sidebar" id="shop_menu" style="display: none">
+        <li><a href="{{ url('/admin/shop') }}">商家列表</a></li>
+        <li><a href="{{ url('/admin/shop/goods') }}">商品列表</a></li>
+    </ul>
+    <ul class="nav nav-sidebar" id="order_menu" style="display: none">
+        <li><a href="{{ url('/admin/order') }}">订单列表</a></li>
+        <li><a href="{{ url('/admin/order/charge') }}">充值列表</a></li>
+        <li><a href="{{ url('/admin/order/user') }}">用户资金</a></li>
+        <li><a href="{{ url('/admin/order/money') }}">资金流水</a></li>
+    </ul>
+    <ul class="nav nav-sidebar" id="user_menu" style="display: none">
+        <li><a href="{{ url('/admin/user/member') }}">消费者</a></li>
+        <li><a href="{{ url('/admin/user/store') }}">商家</a></li>
+        <li><a href="{{ url('/admin/user/admin') }}">管理员</a></li>
+        <li><a href="{{ url('/admin/user/account') }}">账户资料</a></li>
+    </ul>
+    <ul class="nav nav-sidebar" id="system_menu" style="display:none">
+        <li><a href="{{ url('/admin/system/cate') }}">商品分类</a></li>
+        <li><a href="{{ url('/admin/system/banner') }}">首页BANNER</a></li>
+        <li><a href="{{ url('/admin/system/config') }}">系统配置</a></li>
+    </ul>
+</div>

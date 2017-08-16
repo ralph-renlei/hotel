@@ -1,0 +1,5 @@
+suites:
+    main:
+        namespace: WxHotel
+        psr4_prefix: WxHotel
+        src_path: app

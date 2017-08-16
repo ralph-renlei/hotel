@@ -1,0 +1,40 @@
+<?php namespace WxHotel;
+
+use Illuminate\Database\Eloquent\Model;
+use DB;
+
+class Order extends Model {
+
+	//
+    protected $table = 'orders';
+    protected $loan_table = 'orders_loan';
+	protected $fillable=['order_sn','order_status','channel_id','uname','mobile','store_id','store_name','pay_status','uid','goods_id','goods_name','goods_amount','pay_fee','money_paid','bonus','order_amount',
+	'affiliate','froms','add_time','confirm_time','pay_time','receive_time','note'];
+    public $primaryKey = 'order_id';
+    public $timestamps = false;
+
+	public function check($order_id){
+		$data = array();
+		$data = $this->where('order_id',$order_id)->first();
+		return $data;
+	}
+
+    public function getList($keywords=NULL){
+        $data = array();
+        if($keywords){
+            $data = \DB::table($this->table)
+                ->select('*')
+                ->where('mobile','LIKE','%'.$keywords.'%')
+                ->orderBy('order_id','desc')
+                ->paginate(20);
+            $data->setPath('/admin/order?keyword='.$keywords);
+        }else{
+            $data = \DB::table($this->table)
+                ->select('*')
+                ->orderBy('order_id','desc')
+                ->paginate(20);
+            $data->setPath('/admin/order');
+        }
+        return $data;
+    }
+}

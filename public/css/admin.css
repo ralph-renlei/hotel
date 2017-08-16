@@ -1,0 +1,198 @@
+.layui-layedit{
+    width:70%;
+   margin-left:120px;
+}
+.photo-border{
+    padding-left: 26px;
+}
+.h_config_panel span{
+    display: inline-block;
+    width: 19%;
+    text-align: center;
+    margin-top: 15px;
+    position: relative;
+}
+.h_config_panel span i{
+    font-size: 25px;
+    color: #a3a3a3;
+}
+.h_config_panel span .icon-duigou{
+    position: absolute;
+    top: -25px;
+    left: 50px;
+    color: #fe552e;
+    font-size: 45px;
+}
+
+.facility_span span{
+    display: inline-block;
+    width: 19%;
+    text-align: center;
+    margin-top: 15px;
+    position: relative;
+}
+
+.gallery .house-photo li{
+    float: left;
+    width:200px;
+    height:200px;
+    margin-right:10px;
+    margin-bottom:10px;
+	position:relative;
+}
+.img_all{
+    display: inline-block;
+    clear: both;
+    width:150px;
+    height:150px;
+    margin:20px 0;
+}
+.img_idcard{
+    margin-left: 313px;
+}
+.gallery .house-photo li img{
+    width:200px;
+    height:200px;
+}
+.weui_uploader_input_wrp {
+    float: left;
+    position: relative;
+    margin-right: 10px;
+    margin-bottom:10px;
+    width:200px;
+    height: 200px;
+    border: 1px solid #D9D9D9;
+}
+.weui_uploader_input_wrp:before, .weui_uploader_input_wrp:after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #D9D9D9;
+}
+.weui_uploader_input_wrp:after{
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #D9D9D9;
+}
+.weui_uploader_input {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+}
+.weui_uploader_input_wrp:before {
+    width: 2px;
+    height:100px;
+}
+.weui_uploader_input_wrp:after {
+    width:100px;
+    height:2px;
+}
+.house-photo li .hidden{
+    position: absolute;
+    bottom:0px;
+    left:0px;
+	background:#000;
+	opacity:0.7;
+	width:200px;
+    height: 200px;
+    z-index:999;
+	transform:translate(0px,96px);
+	padding:0px 20px;
+    
+}
+.house-photo li .hidden .delete{
+	width:100px;
+	height:40px;
+	border-radius: 6px;
+	background:#34c083;
+	color:#ffffff;
+	line-height: 40px;
+	text-align: center;
+	font-size: 16px;
+	 display:none;
+}
+.house-photo li:hover  .delete{
+    display: block;
+  }
+.house-map{
+       margin:20px auto;
+        width: 730px; 
+        height: 590px; 
+       border: 1px solid gray;
+       overflow:hidden; 
+}  
+.current a{
+	 border-bottom: 2px solid #1698f8;
+	 color:#1698f8;
+}
+  /*缩略图*/
+.article-thumbnail{
+	position: absolute;
+	top:0px;
+	right:200px;
+	height:200px;
+	width:300px;
+	z-index: 99;
+}
+.article-thumbnail img{
+	height:200px;
+	width:300px;
+}
+/*logo*/
+.navbar-logo{
+	height:50px;
+	width:100px;
+}
+.user-photo{
+    position: absolute;
+    top:0px;
+    right:120px;
+    height:200px;
+    width:300px;
+    z-index: 99;
+}
+.user-photo img{
+    height:150px;
+    width:150px;
+}
+
+.r_cell {
+    width: 60%;
+    float: left;
+    margin: 0px auto;
+    border-bottom: 1px solid #ddd;
+    margin-left: 15px;
+}
+.purpose_wrap {
+    display: flex;
+    justify-content: space-between;
+}
+.purpose_wrap .purpose_cell {
+    width: 31%;
+    float: left;
+    padding: 8px 6px;
+    background: #cfcfcf;
+    margin: 5px 0px;
+    border-radius: 3px;
+    text-align: center;
+}
+.purpose_wrap .current_purpose {
+    background: #e20795;
+    color: #fff;
+}
+.label_left{
+    margin-left: 17px;
+    margin-bottom: 20px;
+}
+.search_bottom{
+    margin-bottom: 11px;
+}
