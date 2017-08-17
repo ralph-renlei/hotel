@@ -13,25 +13,17 @@
 						<table class="table">
 							<tr>
 								<th class="info">ID</th>
-								<th class="info">货号</th>
-								<th class="info">名称</th>
-								<th class="info">普通价</th>
-								<th class="info">库存</th>
+								<th class="info">房间名称（编号）</th>
+								<th class="info">所属类型</th>
 								<th class="info">操作</th>
 							</tr>
 							@foreach($goods as $item)
 							<tr>
 							<td>{{ $item->goods_id }}</td>
-							<td>{{ $item->goods_sn }}</td>
 							<td>{{ $item->name }}</td>
+							<td>{{ $item->category['name'] }}</td>
 							<td>
-								{{ $item->productprice }}
-							</td>
-								<td>
-										<span class="btn btn-success">{{$item->stock}}</span>
-								</td>
-							<td>
-								<a href="{{ url('/admin/shop/goods/show/'.$item->goods_id) }}"><button type="button" class="btn btn-default btn-sm">详情</button></a>
+								<a href="{{ url('/admin/shop/goods/show/'.$item->goods_id) }}"><button type="button" class="btn btn-default btn-sm">修改</button></a>
 								<button type="button" class="btn btn-default btn-sm" onclick="app.goods.del('{{ $item->goods_id }}')">删除</button>
 							</td>
 							</tr>

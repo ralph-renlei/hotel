@@ -3,8 +3,7 @@
         <li class="active"><a href="{{ url('/admin') }}">后台首页</a></li>
     </ul>
     <ul class="nav nav-sidebar" id="shop_menu" style="display: none">
-        <li><a href="{{ url('/admin/shop') }}">商家列表</a></li>
-        <li><a href="{{ url('/admin/shop/goods') }}">商品列表</a></li>
+        <li><a href="{{ url('/admin/shop/goods') }}">房间管理</a></li>
     </ul>
     <ul class="nav nav-sidebar" id="order_menu" style="display: none">
         <li><a href="{{ url('/admin/order') }}">订单列表</a></li>

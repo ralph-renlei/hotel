@@ -47,10 +47,11 @@ class SystemController extends Controller
         return view('admin.system.cate',$var);
     }
     public function postCate(Request $request){
-//        $return = array(
-//            'code'=>self::CODE_FAIL,
-//            'msg'=>self::FAIL_MSG
-//        );
+        $return = array(
+            'code'=>self::CODE_FAIL,
+            'msg'=>self::FAIL_MSG
+        );
+//        print_r($request->all());exit;
         $id = $request->input('id');
         $name = $request->input('name');
         $marketprice = $request->input('marketprice');
@@ -61,6 +62,8 @@ class SystemController extends Controller
         $number = $request->input('number');
         $sort = $request->input('sort');
         $status = $request->input('status');
+        $images = $request->input('images');
+        $new_gallery = explode(',',(ltrim($request->input('new_gallery'),',')));
 
         if(!isset($name)|| empty($name) || strlen($name)>20){
             $return['code'] = self::CODE_PARAM;
@@ -80,6 +83,15 @@ class SystemController extends Controller
         $cate = NULL;
         if(isset($id) && (int)$id>0){
             $cate = Category::find((int)$id);
+        }
+
+        if(!empty($new_gallery)){
+            $thumb = $new_gallery[0];
+            $images='';
+            for($i=0;$i<count($new_gallery);$i++){
+                $images.=$new_gallery[$i].',';
+            }
+            $images = substr($images,0,strlen($images)-1);
         }
 
         if(!empty($cate)){
@@ -108,6 +120,9 @@ class SystemController extends Controller
             if(isset($status)){
                 $cate->status = (int)$status;
             }
+            if(isset($images)){
+                $cate->images = $images;
+            }
             $cate->save();
             $return['code'] = self::CODE_SUCCESS;
             $return['msg'] = self::SUCCESS_MSG;
@@ -122,6 +137,8 @@ class SystemController extends Controller
                 'number'=>(int)$number,
                 'sort'=>(int)$sort,
                 'status'=>(int)$status,
+                'thumb'=>$thumb,
+                'images'=>$images,
             ];
 
             $cate = Category::create($data);

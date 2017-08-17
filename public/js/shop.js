@@ -22,7 +22,7 @@ $(function(){
             }
             ,success: function(res){
                 if(res.code==0){
-                    var html = "<li><img data-original='"+res.data.src+"' src='"+res.data.src+"'></li>";
+                    var html = "<li><img data-original='"+res.data.src+"' src='"+res.data.src+"' style='width: 200px;'></li>";
                     $('#gallery').append(html);
                     var input = "<input name='new_gallery[]' type='hidden' value='"+res.data.src+"' />";
                     $('#gallery_div').append(input);

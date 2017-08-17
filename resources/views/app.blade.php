@@ -24,7 +24,7 @@
 				<ul class="nav navbar-nav">
 					@if (!Auth::guest())
 					<li id="home"><a href="{{ url('/admin') }}">管理中心</a></li>
-					<li id="shop"><a href="{{ url('/admin/shop') }}">商家管理</a></li>
+					<li id="shop"><a href="{{ url('/admin/shop/goods') }}">房间管理</a></li>
                     <li id="fund" ><a href="{{ url('/admin/order') }}">交易管理</a></li>
                     <li id="user" ><a href="{{ url('/admin/user') }}">用户管理</a></li>
 					<li id="system"><a href="{{ url('/admin/system') }}">系统配置</a></li>
@@ -65,5 +65,6 @@
 	<script src="{{ asset('/js/viewer-jquery.min.js') }}"></script>
 	<script src="{{ asset('/js/app.js') }}"></script>
 	<script src="{{ asset('/js/qqmap.js') }}"></script>
+	<script src="{{ asset('/js/shop.js') }}"></script>
 </body>
 </html>
