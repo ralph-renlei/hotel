@@ -24,7 +24,9 @@ class GoodsController extends Controller {
 		//
 		$var = array();
 		$list = Goods::orderBy('goods_id','DESC')->paginate(20);
-
+		foreach($list as &$one){
+			$one['category'] = Category::where('id',$one->category_id)->first();
+		}
 		$list->setPath('/admin/shop/goods');
 		$var['goods'] = $list;
 		return view('admin.goods.home',$var);
@@ -37,13 +39,8 @@ class GoodsController extends Controller {
 	 */
 	public function create()
 	{
-		//
-//        $stores = [];
-//        $stores = Store::where('status',1)->get();
-//		$this->var['stores'] = $stores;
-
         $categories = [];
-        $categories = Category::where('parent',0)->orderBy('sort','desc')->orderBy('id','asc')->get();
+        $categories = Category::orderBy('sort','desc')->orderBy('id','asc')->get();
         $this->var['categories'] = $categories;
 
         return view('admin.goods.create',$this->var);
@@ -59,26 +56,11 @@ class GoodsController extends Controller {
 //		print_r($request->all());exit;
 		$id = $request->input('id');
 		$name = $request->input('name');
-		$stock = $request->input('stock');
-		$description = $request->input('description');
-		$marketprice = $request->input('marketprice');
-		$productprice = $request->input('productprice');
-		$vipprice = $request->input('vipprice');
-		$costprice = $request->input('costprice');
-		$weekendprice = $request->input('weekendprice');
-		$holidayprice = $request->input('holidayprice');
-		$sort = $request->input('sort');
-		$images = $request->input('images');
-		$new_gallery = $request->input('new_gallery');
 		$category=$request->input('category');
-		$breakfast = $request->input('breakfast');
 		$this->validate($request,
 			[
 				'name'=>'required|max:30|min:2',
-				'description'=>'max:1000',
-				'marketprice'=>'required',
-				'productprice'=>'required',
-				'sort'=>'integer',
+				'category'=>'integer',
 			]
 			);
 		$regex = '@(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))@';
@@ -86,51 +68,10 @@ class GoodsController extends Controller {
 			$category=$category;
 		}
 
-
 		$data = array(
 			'name'=>$name,
-			'productprice'=>$productprice,
-			'category'=>$category,
-			'stock'=>$stock,
-			'marketprice'=>$marketprice,
-			'productprice'=>$productprice,
-			'vipprice'=>$vipprice,
-			'costprice'=>$costprice,
-			'weekendprice'=>$weekendprice,
-			'holidayprice'=>$holidayprice,
-			'category'=>$category,
+			'category_id'=>$category,
 		);
-
-		if(!empty($description)){
-			$data['description'] = $description;
-		}
-		if(!empty($marketprice)){
-			$data['marketprice'] = $marketprice;
-		}
-		if(!empty($viprice)){
-			$data['vipprice'] =$vipprice;
-		}
-		if(!empty($costprice)){
-			$data['costprice'] = $costprice;
-		}
-		if(!empty($weekendprice)){
-			$data['weekendprice'] = $weekendprice;
-		}
-		if(!empty($holidayprice)){
-			$data['holidayprice'] = $holidayprice;
-		}
-		if(isset($sort)){
-			$data['sort'] = $sort;
-		}
-
-		if(!empty($new_gallery)){
-			$data['thumb'] = $new_gallery[0];
-			$data['images']='';
-			for($i=0;$i<count($new_gallery);$i++){
-				$data['images'].=$new_gallery[$i].',';
-			}
-			$data['images'] = substr($data['images'],0,strlen($data['images'])-1);
-		}
 
 		$goods = NULL;
 		if($id){
@@ -140,9 +81,6 @@ class GoodsController extends Controller {
 			}
 		}
 		if(!$goods){
-			$data['goods_sn']=date('YmdHis',time());
-//			$data['store_id']=$storeId;
-//			$store = Store::where('id',$storeId)->first();
 			$goods = Goods::create($data);
 		}
 
@@ -212,13 +150,7 @@ class GoodsController extends Controller {
 	{
 		$var = array();
 		$var['goods']=Goods::where('goods_id',$id)->first();
-		$gallery_list = array();
-		if(!empty($var['goods']->images)){
-			$gallery_list = explode(',',$var['goods']->images);
-		}
-//		$var['category']=explode('|',$var['goods']['category']);
-		$var['categorys']=DB::select('SELECT * FROM goods_category WHERE parent = 0');
-		$var['gallery_list'] = $gallery_list;
+		$var['categorys']=DB::select('SELECT * FROM goods_category');
 		return view('admin.goods.show',$var);
 	}
 

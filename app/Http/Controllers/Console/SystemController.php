@@ -9,7 +9,6 @@
 
 namespace WxHotel\Http\Controllers\Console;
 
-
 use WxHotel\Attribute;
 use WxHotel\Category;
 use WxHotel\Config;
@@ -41,34 +40,31 @@ class SystemController extends Controller
     }
     public function cate(){
         $var = [];
-        $list = Category::orderBy('sort','DESC')->orderBy('id','ASC')->where('parent',0)->paginate(20);
+        $list = Category::orderBy('sort','DESC')->orderBy('id','ASC')->paginate(20);
         $list->setPath('/admin/system/cate');
 
         $var['lists'] = $list;
         return view('admin.system.cate',$var);
     }
     public function postCate(Request $request){
-        $return = array(
-            'code'=>self::CODE_FAIL,
-            'msg'=>self::FAIL_MSG
-        );
+//        $return = array(
+//            'code'=>self::CODE_FAIL,
+//            'msg'=>self::FAIL_MSG
+//        );
         $id = $request->input('id');
-        $parent = $request->input('parent');
         $name = $request->input('name');
-        $code = $request->input('code');
-        $icon = $request->input('icon');
+        $marketprice = $request->input('marketprice');
+        $normalprice = $request->input('normalprice');
+        $vipprice = $request->input('vipprice');
+        $bed = $request->input('bed');
+        $description = $request->input('description');
+        $number = $request->input('number');
         $sort = $request->input('sort');
         $status = $request->input('status');
-
 
         if(!isset($name)|| empty($name) || strlen($name)>20){
             $return['code'] = self::CODE_PARAM;
             $return['msg'] = '名称为空或者太长';
-            return response()->json($return);
-        }
-        if(!isset($code)|| empty($code) || strlen($code)>20 ){
-            $return['code'] = self::CODE_PARAM;
-            $return['msg'] = '键值为空或者太长';
             return response()->json($return);
         }
         if(isset($sort) && !is_numeric((int)$sort) ){
@@ -82,27 +78,35 @@ class SystemController extends Controller
             return response()->json($return);
         }
         $cate = NULL;
-        $parent_cate = NULL;
         if(isset($id) && (int)$id>0){
             $cate = Category::find((int)$id);
         }
-        if(isset($parent) && (int)$parent>0){
-            $parent_cate = Category::find((int)$parent);
-        }
+
         if(!empty($cate)){
-            $cate->code = $code;
             $cate->name = $name;
+            if(isset($marketprice)){
+                $cate->marketprice = $marketprice;
+            }
+            if(isset($normalprice)){
+                $cate->normalprice = $normalprice;
+            }
+            if(isset($vipprice)){
+                $cate->vipprice = $vipprice;
+            }
+            if(isset($bed)){
+                $cate->bed = $bed;
+            }
+            if(isset($description)){
+                $cate->description =  $description;
+            }
+            if(isset($number)){
+                $cate->number = $number;
+            }
             if(isset($sort)){
                 $cate->sort = (int)$sort;
             }
             if(isset($status)){
                 $cate->status = (int)$status;
-            }
-            if(!empty($parent_cate)){
-                $cate->parent = $parent_cate->parent;
-            }
-            if(isset($icon) && !empty($icon)){
-                $cate->icon = $icon;
             }
             $cate->save();
             $return['code'] = self::CODE_SUCCESS;
@@ -110,16 +114,16 @@ class SystemController extends Controller
         }else{
             $data = [
                 'name'=>$name,
-                'code'=>$code,
+                'marketprice'=>$marketprice,
+                'normalprice'=>$vipprice,
+                'vipprice'=>$vipprice,
+                'bed'=>$bed,
+                'description'=>$description,
+                'number'=>(int)$number,
                 'sort'=>(int)$sort,
-                'status'=>(int)$status
+                'status'=>(int)$status,
             ];
-            if(!empty($icon)){
-                $data['icon'] = $icon;
-            }
-            if(!empty($parent_cate)){
-                $data['parent'] = $parent_cate->id;
-            }
+
             $cate = Category::create($data);
             $return['code'] = self::CODE_SUCCESS;
             $return['msg'] = self::SUCCESS_MSG;
@@ -144,7 +148,7 @@ class SystemController extends Controller
             ];
             return response()->json($return);
         }
-        Category::where('parent',$cate->id)->delete();
+        Category::where('id',$cate->id)->delete();
         $cate->delete();
         $return = [
             'code'=>self::CODE_SUCCESS,
@@ -173,6 +177,7 @@ class SystemController extends Controller
             return response()->json($return);
         }
         $cate = Category::find($id);
+
         if(!$cate){
             $return = [
                 'code'=>self::CODE_PARAM,

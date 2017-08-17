@@ -527,17 +527,17 @@ var app  = app || {};
                 if(result.code==1){
                     var c = result.data;
                     $('#id').val(c.id);
-                    $('#parent').val(c.parent);
                     $('#name').val(c.name);
-                    $('#code').val(c.code);
+                    $('#marketprice').val(c.marketprice);
+                    $('#normalprice').val(c.normalprice);
+                    $('#vipprice').val(c.vipprice);
+                    $('#number').val(c.number);
+                    $('#bed').val(c.bed);
                     $('#sort').val(c.sort);
                     if(c.status==1){
                         $('#status1').attr('checked','checked');
                     }else{
                         $('#status2').attr('checked','checked');
-                    }
-                    if(c.icon){
-                        $('#icon').val(c.icon);
                     }
                 }else{
                     alert(result.msg);
@@ -577,20 +577,22 @@ var app  = app || {};
     };
     app.system.cate_add = function(){
         var id = $('#id').val();
-        var parent = $('#parent').val();
         var name = $('#name').val();
-        var icon = $('#icon').val();
-        var code = $('#code').val();
+        var marketprice = $('#marketprice').val();
+	    var normalprice = $('#normalprice').val();
+	    var vipprice = $('#vipprice').val();
+	    var bed = $('#bed').val();
+	    var description = $('#description').val();
+	    var number = $('#number').val();
         var sort = $('#sort').val();
         var status = $("input[name='status'][checked]").val();
         if(!id)id = 0;
-        if(!parent) parent = 0;
         $.ajax({
             url: '/admin/system/cate',
             type: 'POST',
             dataType:'json',
-            data:{id:id,parent:parent,name:name,code:code,icon:icon,sort:sort,status:status},
-            success: function(result) {
+            data:{id:id,name:name,marketprice:marketprice,normalprice:normalprice,vipprice:vipprice,bed:bed,description:description,number:number,sort:sort,status:status},
+	        success: function(result) {
                 if(result.code==1){
                     alert(result.msg);
                     setTimeout(function(){
@@ -672,13 +674,14 @@ var app  = app || {};
         });
     };
     app.system.cancel = function(){
-        $('#code').val('');
         $('#name').val('');
-        $('#val').val('');
-        $('#icon').val('');
+        $('#marketprice').val('');
+        $('#normalprice').val('');
+        $('#vipprice').val('');
+        $('#number').val('');
+        $('#bed').val('');
         $('#sort').val(0);
         $('#id').val(0);
-        $('#parent').val(0);
     };
     app.system.cancel_menu = function(){
         $('#mtype').val('');

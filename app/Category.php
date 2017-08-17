@@ -6,8 +6,8 @@ class Category extends Model {
 
     //
     protected $table = 'goods_category';
-    public $fillable = [
-        'name','code','icon','parent','sort','status'
+    protected $fillable = [
+        'name','status','marketprice','normalprice','vipprice','bed','description','number','sort',
     ];
     public $primaryKey = 'id';
     public $timestamps = FALSE;
