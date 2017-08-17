@@ -51,7 +51,7 @@ class SystemController extends Controller
             'code'=>self::CODE_FAIL,
             'msg'=>self::FAIL_MSG
         );
-//        print_r($request->all());exit;
+
         $id = $request->input('id');
         $name = $request->input('name');
         $marketprice = $request->input('marketprice');
@@ -62,8 +62,6 @@ class SystemController extends Controller
         $number = $request->input('number');
         $sort = $request->input('sort');
         $status = $request->input('status');
-        $images = $request->input('images');
-        $new_gallery = explode(',',(ltrim($request->input('new_gallery'),',')));
 
         if(!isset($name)|| empty($name) || strlen($name)>20){
             $return['code'] = self::CODE_PARAM;
@@ -83,15 +81,6 @@ class SystemController extends Controller
         $cate = NULL;
         if(isset($id) && (int)$id>0){
             $cate = Category::find((int)$id);
-        }
-
-        if(!empty($new_gallery)){
-            $thumb = $new_gallery[0];
-            $images='';
-            for($i=0;$i<count($new_gallery);$i++){
-                $images.=$new_gallery[$i].',';
-            }
-            $images = substr($images,0,strlen($images)-1);
         }
 
         if(!empty($cate)){
@@ -137,8 +126,6 @@ class SystemController extends Controller
                 'number'=>(int)$number,
                 'sort'=>(int)$sort,
                 'status'=>(int)$status,
-                'thumb'=>$thumb,
-                'images'=>$images,
             ];
 
             $cate = Category::create($data);
@@ -174,16 +161,40 @@ class SystemController extends Controller
         return response()->json($return);
     }
 
-    public function getCateChildren($id){
-        $var = [];
-        $cate = Category::find($id);
-        if($cate){
-            $list = Category::where('parent',$cate->id)->orderBy('sort','desc')->orderBy('id','asc')->paginate(20);
-            $list->setPath('/admin/system/cates/'.$cate->id);
-            $var['lists'] = $list;
-            $var['cate'] = $cate;
+    public function getImage($id){
+        $images = Category::where('id',$id)->first();
+        $gallery_list = array();
+        if(!empty($images->images)){
+            $gallery_list = explode(',',$images->images);
         }
-        return view('admin.system.cate_children',$var);
+
+        return view('admin.system.cate_children',['gallery_list'=>$gallery_list,'id'=>$id]);
+    }
+
+    public function saveImage(Request $request){
+        //查询数据库中的图片，将所有提交的图片 与已有图片做差值，剩下的图片更新
+        $old_img = Category::where('id',$request->id)->lists('images');
+        $old_img = explode(',',$old_img[0]);
+        $images_array = explode(',',trim($request->images,','));//所有提交的图片
+        if(isset($old_img)){//修改
+            $new_array = array_diff($images_array,$old_img);print_r($new_array);
+            $thumb = current($new_array);//缩略图，区第一张图
+            if(count($new_array)>1){
+                $images = trim(implode(',',array_shift($new_array)),',');//图片
+            }
+            $images = $thumb;
+        }else{
+            $thumb = $images_array[0];
+            if(count($images_array)>1){
+                $images = array_shift($images_array);
+            }
+            $images = $thumb;
+        }
+
+        $cate = Category::where('id',$request->id)->update(['thumb'=>$thumb,'images'=>$images]);
+        $return['code'] = self::CODE_SUCCESS;
+        $return['msg'] = self::SUCCESS_MSG;
+        return response()->json($return);
     }
     public function getCate($id){
         if(!isset($id) || empty($id)){

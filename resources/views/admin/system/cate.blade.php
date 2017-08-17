@@ -12,6 +12,7 @@
 							<tr>
 								<th class="info">名称</th>
 								<th class="info">挂牌价/普通价/会员价</th>
+                                <th class="info">房间数量</th>
                                 <th class="info">床位</th>
 								<th class="info">操作</th>
 							</tr>
@@ -19,10 +20,11 @@
 								<tr id="item_{{ $item->id }}">
                                     <td class="data">{{ $item->name }}</td>
 									<td class="data">{{ $item->marketprice }}/{{$item->normalprice }}/{{ $item->vipprice }}</td>
+									<td class="data">{{ $item->number }}</td>
 									<td class="data">{{ $item->bed }}</td>
 									<td class="do">
 										<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal" onclick="app.system.edit_cate('{{ $item->id }}')">修改</button>
-										<a href="{{ url('/admin/system/cates/'.$item->id) }}"><button type="button" class="btn btn-default btn-sm">图片</button></a>
+										<a href="{{ url('/admin/system/cates/images/'.$item->id) }}"><button type="button" class="btn btn-default btn-sm">图片</button></a>
 										<button type="button" class="btn btn-default btn-sm" onclick="app.system.del_cate('{{ $item->id }}')">删除</button>
 									</td>
 								</tr>
@@ -104,16 +106,6 @@
                                     <input type="radio" name="status" id="status2" value="0"/>
                                     不上线
                                 </label>
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="inputPassword3" class="col-sm-2 control-label">上传图片<span style="color:red">*</span></label>
-							<div class="col-sm-10">
-								<ul id="gallery" class="house-photo">
-								</ul>
-								<div class="weui_uploader_input_wrp">
-									<form target="layui-upload-iframe" method="post" key="set-mine" enctype="multipart/form-data" action="/upload/image"><input class="weui_uploader_input layui-upload-file" name="file" id="file" accept="image/jpg;image/png;image/jpeg;" type="file"></form>
-								</div>
 							</div>
 						</div>
 					</form>

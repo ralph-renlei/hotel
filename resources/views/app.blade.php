@@ -9,6 +9,7 @@
 	<link href="{{ asset('/css/app.css') }}" rel="stylesheet">
 	<link href="{{ asset('/css/admin.css') }}" rel="stylesheet">
 	<link href="{{ asset('/js/layui/css/layui.css') }}" rel="stylesheet">
+	<script src="{{ asset('/js/jquery.min.js') }}"></script>
 	<!--[if lt IE 9]>
 		<script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
 		<script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -24,7 +25,7 @@
 				<ul class="nav navbar-nav">
 					@if (!Auth::guest())
 					<li id="home"><a href="{{ url('/admin') }}">管理中心</a></li>
-					<li id="shop"><a href="{{ url('/admin/shop/goods') }}">房间管理</a></li>
+					<li id="shop"><a href="{{ url('/admin/shop/goods') }}">客房管理</a></li>
                     <li id="fund" ><a href="{{ url('/admin/order') }}">交易管理</a></li>
                     <li id="user" ><a href="{{ url('/admin/user') }}">用户管理</a></li>
 					<li id="system"><a href="{{ url('/admin/system') }}">系统配置</a></li>
@@ -59,7 +60,7 @@
 		var SITE = "{{ url('/admin') }}";
 		var STATIC = "{{ asset('/js') }}";
 	</script>
-	<script src="{{ asset('/js/jquery.min.js') }}"></script>
+
 	<script src="{{ asset('/js/bootstrap.min.js') }}"></script>
 	<script src="{{ asset('/js/layui/layui.js') }}"></script>
 	<script src="{{ asset('/js/viewer-jquery.min.js') }}"></script>

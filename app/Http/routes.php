@@ -63,7 +63,8 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::delete('system/affiliate', 'SystemController@delAffiliate');
 
     Route::get('system/cate', 'SystemController@cate');
-    Route::get('system/cates/{id}', 'SystemController@getCateChildren');
+    Route::get('system/cates/images/{id}', 'SystemController@getImage');//上传图片
+    Route::post('system/cates/images', 'SystemController@saveImage');//上传图片
     Route::get('system/cate/{id}', 'SystemController@getCate');
     Route::post('system/cate', 'SystemController@postCate');
     Route::delete('system/cate', 'SystemController@delCate');

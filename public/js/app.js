@@ -586,17 +586,13 @@ var app  = app || {};
 	    var number = $('#number').val();
         var sort = $('#sort').val();
 	    var images = '';
-	    var new_gallery="";
-	    $('img').each(function(){
-		    new_gallery=new_gallery+','+$(this).attr('src');
-	    });
         var status = $("input[name='status'][checked]").val();
         if(!id)id = 0;
         $.ajax({
             url: '/admin/system/cate',
             type: 'POST',
             dataType:'json',
-            data:{id:id,name:name,marketprice:marketprice,normalprice:normalprice,vipprice:vipprice,bed:bed,description:description,number:number,sort:sort,status:status,images:images,new_gallery:new_gallery},
+            data:{id:id,name:name,marketprice:marketprice,normalprice:normalprice,vipprice:vipprice,bed:bed,description:description,number:number,sort:sort,status:status,},
 	        success: function(result) {
 		        if(result.code==1){
 			        alert(result.msg);
