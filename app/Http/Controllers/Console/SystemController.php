@@ -68,7 +68,34 @@ class SystemController extends Controller
             $return['msg'] = '名称为空或者太长';
             return response()->json($return);
         }
-        if(isset($sort) && !is_numeric((int)$sort) ){
+
+        if(isset($marketprice) && !is_numeric($marketprice)){
+            $return['code'] = self::CODE_PARAM;
+            $return['msg'] = '挂牌价必须为数字';
+            return response()->json($return);
+        }
+        if(isset($normalprice) && !is_numeric($normalprice)){
+            $return['code'] = self::CODE_PARAM;
+            $return['msg'] = '普通价必须为数字';
+            return response()->json($return);
+        }
+        if(isset($vipprice) && !is_numeric($vipprice)){
+            $return['code'] = self::CODE_PARAM;
+            $return['msg'] = '会员价必须为数字';
+            return response()->json($return);
+        }
+        if(isset($bed) && !is_numeric($bed)){
+            $return['code'] = self::CODE_PARAM;
+            $return['msg'] = '床位必须为数字';
+            return response()->json($return);
+        }
+        if(isset($number) && !is_numeric($number)){
+            $return['code'] = self::CODE_PARAM;
+            $return['msg'] = '房间数必须为数字';
+            return response()->json($return);
+        }
+
+        if(isset($sort) && !is_numeric($sort) ){
             $return['code'] = self::CODE_PARAM;
             $return['msg'] = '排序必须为数字';
             return response()->json($return);
@@ -172,12 +199,13 @@ class SystemController extends Controller
     }
 
     public function saveImage(Request $request){
+
         //查询数据库中的图片，将所有提交的图片 与已有图片做差值，剩下的图片更新
         $old_img = Category::where('id',$request->id)->lists('images');
         $old_img = explode(',',$old_img[0]);
         $images_array = explode(',',trim($request->images,','));//所有提交的图片
         if(isset($old_img)){//修改
-            $new_array = array_diff($images_array,$old_img);print_r($new_array);
+            $new_array = array_diff($images_array,$old_img);
             $thumb = current($new_array);//缩略图，区第一张图
             if(count($new_array)>1){
                 $images = trim(implode(',',array_shift($new_array)),',');//图片
@@ -191,9 +219,10 @@ class SystemController extends Controller
             $images = $thumb;
         }
 
-        $cate = Category::where('id',$request->id)->update(['thumb'=>$thumb,'images'=>$images]);
-        $return['code'] = self::CODE_SUCCESS;
-        $return['msg'] = self::SUCCESS_MSG;
+        $cate= Category::where('id',$request->id)->update(['thumb'=>$thumb,'images'=>$images]);
+        if($cate){
+            $return = array('code'=>0,'msg'=>self::SUCCESS_MSG);
+        }
         return response()->json($return);
     }
     public function getCate($id){

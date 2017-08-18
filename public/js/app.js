@@ -586,27 +586,28 @@ var app  = app || {};
 	    var number = $('#number').val();
         var sort = $('#sort').val();
 	    var images = '';
-        var status = $("input[name='status'][checked]").val();
+        var status = $("input[name='status']:checked").val();
         if(!id)id = 0;
         $.ajax({
             url: '/admin/system/cate',
             type: 'POST',
             dataType:'json',
             data:{id:id,name:name,marketprice:marketprice,normalprice:normalprice,vipprice:vipprice,bed:bed,description:description,number:number,sort:sort,status:status,},
-	        success: function(result) {
-		        if(result.code==1){
-			        alert(result.msg);
-			        setTimeout(function(){
-				        window.location.reload();
-			        },500);
-		        }else{
-			        alert(result.msg);
-		        }
-	        },
-	        error:function(jqXHR,textStatus, errorThrown ){
-		        alert(errorThrown);
-	        }
+            success: function(result) {
+                if(result.code==1){
+                    alert(result.msg);
+                    setTimeout(function(){
+                        window.location.reload();
+                    },500);
+                }else{
+                    alert(result.msg);
+                }
+            },
+            error:function(jqXHR,textStatus, errorThrown ){
+                alert(errorThrown);
+            }
         });
+
     };
     app.system.edit = function(id){
         $('#item_'+id).children('.data').each(function(i,v){

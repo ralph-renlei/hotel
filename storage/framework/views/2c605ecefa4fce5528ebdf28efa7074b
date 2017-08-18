@@ -1,0 +1,44 @@
+<?php $__env->startSection('content'); ?>
+<div class="container">
+	<div class="row">
+		<?php echo $__env->make('menu', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+		<div class="col-md-10 col-md-offset-1">
+			<div class="panel panel-default">
+				<div class="panel-heading">店铺用户</div>
+				<div class="panel-body">
+					<div class="table-responsive">
+						<table class="table">
+							<tr>
+								<th class="info">ID</th>
+								<th class="info">姓名</th>
+								<th class="info">手机号码</th>
+								<th class="info">店名</th>
+                                <th class="info">时间</th>
+								<th class="info">操作</th>
+							</tr>
+							<?php foreach($lists as $item): ?>
+								<tr id="item_<?php echo e($item->id); ?>">
+									<td class="data"><?php echo e($item->id); ?></td>
+									<td class="data"><?php echo e($item->name); ?></td>
+									<td class="data"><?php echo e($item->mobile); ?></td>
+                                    <td class="data"><?php echo e($item->store_name); ?></td>
+                                    <td class="data"><?php echo e($item->money); ?></td>
+									<td class="do">
+										<button type="button" class="btn btn-default btn-sm" onclick="app.user.del('<?php echo e($item->id); ?>')">删除</button>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</table>
+					</div>
+				</div>
+				<div class="panel-footer">
+					<?php echo $lists->render(); ?>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

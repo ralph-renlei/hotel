@@ -1,0 +1,75 @@
+<?php $__env->startSection('content'); ?>
+<div class="container">
+	<div class="row">
+		<?php echo $__env->make('menu', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+		<div class="col-md-10 col-md-offset-1">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					房间列表
+					&nbsp;&nbsp;<a class="glyphicon glyphicon-plus" href="<?php echo e(url('/admin/shop/create')); ?>">添加</a>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+						<form class="form-inline" action="<?php echo e(url('/admin/shop')); ?>" method="get">
+							<div class="form-group">
+								<label class="label_left">关键词</label>
+								<input type="text" class="form-control" id="keyword" name="keyword" placeholder="请输入名字" <?php if(isset($keyword)): ?>value="<?php echo e($keyword); ?>"<?php endif; ?>/>
+							</div>
+							<button type="submit" class="btn btn-default search_bottom">搜索</button>
+						</form>
+					</div>
+					<div class="table-responsive">
+						<table class="table">
+							<tr>
+								<th class="info">ID</th>
+								<th class="info" style="width:14%">名称</th>
+								<th class="info">返现</th>
+								<th class="info">联系人</th>
+								<th class="info">电话</th>
+								<th class="info" style="width:14%">地址</th>
+								<th class="info" style="width:5%">状态</th>
+								<th class="info" style="width:10%">添加时间</th>
+								<th class="info" style="width:20%">操作</th>
+							</tr>
+							<?php foreach($lists as $item): ?>
+							<tr>
+							<td><?php echo e($item->id); ?></td>
+							<td><?php echo e($item->store_name); ?></td>
+							<td><?php echo e($item->cash); ?></td>
+							<td><?php echo e($item->contacter); ?></td>
+							<td><?php echo e($item->mobile); ?></td>
+							<td><?php echo e($item->address); ?></td>
+							<td><?php if($item->status == 1): ?>
+									<span class="btn btn-success">启用</span>
+								<?php else: ?>
+									<span class="btn btn-danger">禁用</span>
+								<?php endif; ?></td>
+							<td>
+								<?php echo e($item->created_at); ?>
+
+							</td>
+							<td>
+								<?php if($item->status ==0): ?>
+									<button type="button" class="btn btn-default btn-sm" onclick="app.shop.audit('<?php echo e($item->id); ?>',1)">启用</button>
+								<?php else: ?>
+									<button type="button" class="btn btn-default btn-sm" onclick="app.shop.audit('<?php echo e($item->id); ?>',0)">禁用</button>
+								<?php endif; ?>
+								<a href="<?php echo e(url('/admin/shop/show/'.$item->id)); ?>"><button type="button" class="btn btn-default btn-sm">详情</button></a>
+									<button type="button" class="btn btn-default btn-sm" onclick="app.shop.del('<?php echo e($item->id); ?>')">删除</button>
+							</td>
+							</tr>
+							<?php endforeach; ?>
+						</table>
+					</div>
+				</div>
+				<div class="panel-footer">
+					<?php echo $lists->render(); ?>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

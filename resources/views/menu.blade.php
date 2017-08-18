@@ -3,7 +3,6 @@
         <li class="active"><a href="{{ url('/admin') }}">后台首页</a></li>
     </ul>
     <ul class="nav nav-sidebar" id="shop_menu" style="display: none">
-	    <li><a href="{{ url('/admin/system/cate') }}">房型管理</a></li>
 	    <li><a href="{{ url('/admin/shop/goods') }}">房间管理</a></li>
     </ul>
 	<ul class="nav nav-sidebar" id="order_menu" style="display: none">
@@ -19,6 +18,7 @@
 	    <li><a href="{{ url('/admin/user/account') }}">账户资料</a></li>
     </ul>
 	<ul class="nav nav-sidebar" id="system_menu" style="display:none">
+		<li><a href="{{ url('/admin/system/cate') }}">房型管理</a></li>
         <li><a href="{{ url('/admin/system/banner') }}">首页BANNER</a></li>
         <li><a href="{{ url('/admin/system/config') }}">系统配置</a></li>
     </ul>
