@@ -67,5 +67,6 @@
 	<script src="<?php echo e(asset('/js/app.js')); ?>"></script>
 	<script src="<?php echo e(asset('/js/qqmap.js')); ?>"></script>
 	<script src="<?php echo e(asset('/js/shop.js')); ?>"></script>
+	<script src="<?php echo e(asset('/js/My97DatePicker/WdatePicker.js')); ?>"></script>
 </body>
 </html>

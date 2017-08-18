@@ -67,5 +67,6 @@
 	<script src="{{ asset('/js/app.js') }}"></script>
 	<script src="{{ asset('/js/qqmap.js') }}"></script>
 	<script src="{{ asset('/js/shop.js') }}"></script>
+	<script src="{{ asset('/js/My97DatePicker/WdatePicker.js') }}"></script>
 </body>
 </html>

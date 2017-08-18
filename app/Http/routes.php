@@ -42,6 +42,12 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::get('/shop/show/{id}','ShopController@show');
     Route::delete('/shop/item','ShopController@delete');
     Route::post('/shop/audit','ShopController@audit');
+    Route::get('shop/cate', 'SystemController@cate');//房型管理
+    Route::get('shop/price', 'SystemController@priceList');//房价管理
+    Route::get('shop/price/add', 'SystemController@priceAdd');//房价管理
+    Route::post('shop/price/store', 'SystemController@priceStore');//房价管理
+    Route::get('shop/price/{id}', 'SystemController@priceShow');//修改
+    Route::post('shop/price/save', 'SystemController@priceStore');//修改
     Route::get('/shop/goods','GoodsController@index');
     Route::get('/shop/goods/show/{id}','GoodsController@show');
     Route::get('/shop/goods/create','GoodsController@create');

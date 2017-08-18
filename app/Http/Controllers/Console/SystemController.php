@@ -225,6 +225,81 @@ class SystemController extends Controller
         }
         return response()->json($return);
     }
+
+    //房价变化
+    public function priceList(){
+        $List = Category::orderby('id','asc')->get();
+        return view('admin.system.cate_price',['list'=>$List]);
+    }
+
+    //添加页面
+    public function priceAdd(){
+        $List = Category::orderby('id','asc')->get();
+        return view('admin.system.cate_priceAdd',['list'=>$List]);
+    }
+
+    public function priceStore(Request $request)
+    {
+
+        $id = $request->input('category');
+        $marketprice = $request->input('marketprice');
+        $normalprice = $request->input('normalprice');
+        $vipprice = $request->input('vipprice');
+        $start = $request->input('start');
+        $end = $request->input('end');
+
+        if($id==0){
+            echo "<script>alert('房型必须选择');window.history.go(-1);</script>";
+            return ;
+        }
+
+        if(isset($marketprice) && !is_numeric($marketprice)){
+            echo "<script>alert('挂牌价必须为数字');window.history.go(-1);</script>";
+            return ;
+        }
+
+        if(isset($normalprice) && !is_numeric($normalprice)){
+            echo "<script>alert('普通价必须为数字');window.history.go(-1);</script>";
+            return ;
+        }
+        if(isset($vipprice) && !is_numeric($vipprice)){
+            echo "<script>alert('会员价必须为数字');window.history.go(-1);</script>";
+            return ;
+        }
+
+        if(strtotime($start)+3600*24<time()){
+            echo "<script>alert('开始时间不正确');window.history.go(-1);</script>";
+            return ;
+        }
+
+        if(strtotime($end)<time()){
+            echo "<script>alert('结束时间不正确');window.history.go(-1);</script>";
+            return ;
+        }
+        if(strtotime($start)>=strtotime($end)){
+            echo "<script>alert('结束时间不能早于开始时间');window.history.go(-1);</script>";
+            return ;
+        }
+
+        $cate = Category::where('id',$id)->update(['id'=>$id,'marketprice'=>$marketprice,'normalprice'=>$normalprice,'vipprice'=>$vipprice,'start'=>$start,'end'=>$end]);
+        if($cate){
+            return redirect('/admin/shop/price');
+        }else{
+            echo "<script>alert('失败');window.history.go(-1);</script>";
+        }
+    }
+
+    public function priceShow($id)
+    {
+        $List = Category::orderby('id','asc')->get();
+        $price = Category::where('id',$id)->first();
+        return view('admin.system.cate_priceEdit',['list'=>$List,'price'=>$price]);
+    }
+
+//    public function priceSave(Request $request){
+//
+//    }
+
     public function getCate($id){
         if(!isset($id) || empty($id)){
             $return = [

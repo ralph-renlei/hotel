@@ -4,37 +4,33 @@
 		<?php echo $__env->make('menu', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
 		<div class="col-md-9 col-md-offset-1">
 			<div class="panel panel-default">
-				<div class="panel-heading">房型分类&nbsp;&nbsp;<a class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#myModal">新增</a></div>
+				<div class="panel-heading">房型价格走势&nbsp;&nbsp;<a class="glyphicon glyphicon-plus" data-toggle="modal" href="/admin/shop/price/add">新增</a></div>
 				<div class="panel-body">
 					<div class="table-responsive">
 						<table class="table">
 							<tr>
-								<th class="info">名称</th>
+								<th class="info">房型名称</th>
 								<th class="info">挂牌价/普通价/会员价</th>
-                                <th class="info">房间数量</th>
-                                <th class="info">床位</th>
+                                <th class="info">状态</th>
+                                <th class="info">开始时间</th>
+                                <th class="info">结束时间</th>
 								<th class="info">操作</th>
 							</tr>
-							<?php foreach($lists as $item): ?>
+							<?php foreach($list as $item): ?>
 								<tr id="item_<?php echo e($item->id); ?>">
                                     <td class="data"><?php echo e($item->name); ?></td>
 									<td class="data"><?php echo e($item->marketprice); ?>/<?php echo e($item->normalprice); ?>/<?php echo e($item->vipprice); ?></td>
-									<td class="data"><?php echo e($item->number); ?></td>
-									<td class="data"><?php echo e($item->bed); ?></td>
+									<td class="data"><?php if($item->status==1): ?> 上线 <?php else: ?> 不上线 <?php endif; ?></td>
+									<td class="data"><?php echo e($item->start); ?></td>
+									<td class="data"><?php echo e($item->end); ?></td>
 									<td class="do">
-										<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal" onclick="app.system.edit_cate('<?php echo e($item->id); ?>')">修改</button>
-										<a href="<?php echo e(url('/admin/system/cates/images/'.$item->id)); ?>"><button type="button" class="btn btn-default btn-sm">图片</button></a>
-										<button type="button" class="btn btn-default btn-sm" onclick="app.system.del_cate('<?php echo e($item->id); ?>')">删除</button>
+										<a href="<?php echo e(url('/admin/shop/price/'.$item->id)); ?>"><button type="button" class="btn btn-default btn-sm">修改计划</button></a>
 									</td>
 								</tr>
 							<?php endforeach; ?>
 						</table>
 					</div>
 				</div>
-				<div class="panel-footer">
-                    <?php echo $lists->render(); ?>
-
-                </div>
 			</div>
 		</div>
 	</div>
@@ -47,12 +43,12 @@
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal" role="form">
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-2 control-label">名称<span style="color:red">*</span></label>
-                            <div class="col-sm-10">
-                                <input type="text" name="name" class="form-control" id="name" placeholder="请输入名称2-10个字符"/>
-                            </div>
-                        </div>
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">名称<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input type="text" name="name" class="form-control" id="name" placeholder="请输入名称2-10个字符"/>
+							</div>
+						</div>
 						<div class="form-group">
 							<label for="inputEmail3" class="col-sm-2 control-label">挂牌价<span style="color:red">*</span></label>
 							<div class="col-sm-10">
@@ -86,32 +82,32 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label">简介<span style="color:red">*</span></label>
 							<div class="col-sm-8">
-								<textarea id="description" name="description" class="form-control" cols="30" rows="10"><?php echo e($item->description); ?></textarea>
+								<textarea id="description" name="description" class="form-control" cols="30" rows="10"></textarea>
 							</div>
 						</div>
-                        <div class="form-group">
-                            <label for="inputPassword3" class="col-sm-2 control-label">排序<span style="color:red">*</span></label>
-                            <div class="col-sm-10">
-                                <input type="number" name="sort" class="form-control" id="sort" placeholder="请输入整数"/>
-                            </div>
-                        </div>
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">排序<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input type="number" name="sort" class="form-control" id="sort" placeholder="请输入整数"/>
+							</div>
+						</div>
 						<div class="form-group">
 							<label for="inputPassword3" class="col-sm-2 control-label">状态<span style="color:red">*</span></label>
 							<div class="col-sm-10">
-                                <label class="radio-inline user_role">
-                                    <input type="radio" name="status" id="status1" value="1" checked/>
-                                    上线
-                                </label>
-                                <label class="radio-inline user_role">
-                                    <input type="radio" name="status" id="status2" value="0"/>
-                                    不上线
-                                </label>
+								<label class="radio-inline user_role">
+									<input type="radio" name="status" id="status1" value="1" checked/>
+									上线
+								</label>
+								<label class="radio-inline user_role">
+									<input type="radio" name="status" id="status2" value="0"/>
+									不上线
+								</label>
 							</div>
 						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
-                    <input type="hidden" name="id" id="id" value="0"/>
+					<input type="hidden" name="id" id="id" value="0"/>
 					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="app.system.cancel();">关闭</button>
 					<button type="button" class="btn btn-primary" onclick="app.system.cate_add()">保存</button>
 				</div>
