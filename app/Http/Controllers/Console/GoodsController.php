@@ -23,7 +23,7 @@ class GoodsController extends Controller {
 	{
 		//
 		$var = array();
-		$list = Goods::orderBy('goods_id','DESC')->paginate(20);
+		$list = Goods::orderBy('category_id','desc')->orderBy('goods_id','DESC')->paginate(20);
 		foreach($list as &$one){
 			$one['category'] = Category::where('id',$one->category_id)->first();
 		}
@@ -103,10 +103,10 @@ class GoodsController extends Controller {
 		}
 		$field = $request->input('field');
 		$val = $request->input('val');
-		if(!in_array($field,array('status','audited'),true)){
+		if(!in_array($field,array('status','oopen'),true)){
 			return response()->json($return);
 		}
-		if(!in_array((int)$val,array(1,0),true)){
+		if(!in_array((int)$val,array(1,0,-1),true)){
 			return response()->json($return);
 		}
 		$goods = Goods::find($id);

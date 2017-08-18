@@ -29,6 +29,15 @@ Route::get('region/community/{id}', 'RegionController@getCommunity');
 Route::any('notify','Mobile\SwiftController@notify');
 Route::any('pay','Mobile\WxpayController@prepay');
 
+//--------------------------------个人中心---------------------------------
+Route::get('/member','MemberController@index');
+Route::get('/member/info','MemberController@loadInfo');
+Route::get('/member/order','MemberController@order');
+Route::get('/member/order_detail/{id}','MemberController@order_detail');
+Route::get('/member/credit','MemberController@credit');
+Route::post('/member/credit','MemberController@makeCredit');
+Route::get('/member/setting','MemberController@setting');
+
 //--------------------------------PC管理端---------------------------------
 Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
 {

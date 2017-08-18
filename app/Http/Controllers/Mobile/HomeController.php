@@ -30,7 +30,8 @@ class HomeController extends Controller {
      */
     public function index()
     {
-        return view('home',array('module'=>'home'));
+//        return view('home',array('module'=>'home'));
+        return view('room.index_online');
     }
 
 }

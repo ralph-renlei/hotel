@@ -339,6 +339,7 @@ $("#work_year").click(function() {
 
 //上传图片
 function readFile() {
+	var uploadurl = "{{ url('upload/image') }}";
 	var formData = new FormData();
 	var $that = $(this);
 	$that.parent().siblings(".img_note").css("display", "none");
@@ -352,7 +353,7 @@ function readFile() {
 			img.setAttribute("class", "main_img");
 			$.ajax({
 				type: "POST",
-				url: UPLOADURL,
+				url: uploadurl,
 				data: formData,
 				processData: false,
 				contentType: false,
