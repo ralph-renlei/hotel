@@ -41,13 +41,13 @@
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-2 control-label">开始时间<span style="color:red">*</span></label>
                                 <div class="col-sm-3">
-                                    <input class="Wdate form-control" type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" name="start" value="{{$price->start}}">
+                                    <input class=" form-control" type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd})" name="start" value="{{$price->start}}">
                                 </div>
                             </div><br><br>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-2 control-label">结束时间<span style="color:red">*</span></label>
                                 <div class="col-sm-3">
-                                    <input class="Wdate form-control" type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" name="end" value="{{$price->end}}">
+                                    <input class=" form-control" type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="end" value="{{$price->end}}">
                                 </div>
                             </div><br><br>
                         </form>

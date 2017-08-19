@@ -8,22 +8,29 @@ $("#check_out").click(function() {
 $(".submit_order").click(function() {
 	var username = $("#checkin_name").val();
 	var phone = $("#checkin_phone").val();
-//	var start_time = ;
-//	var end_time = ;
+	var start = $('#start').text();
+	var end = $('#end').text();
+	var str = $('#order_amount').text();
+	var order_amount = str.replace('￥','');
+	var id = $('#category_id').attr('data');
+	var category_name = $('#category_name').text();
 	$.ajax({
 		type: "POST",
-		url: "",
+		url: "/reserve/ordercommit",
 		async: true,
 		data: {
+			_token:"{{csrf_token()}}",
 			username: username,
 			phone: phone,
-			start_time: start_time,
-			end_time: end_time,
-			house_info: ''
+			start: start,
+			end: end,
+			order_amount: order_amount,
+			id:id,
+			category_name:category_name,
 		},
 		success: function(res) {
-			if(res.code) {
-				window.location.href = 'my_order.html';
+			if(res.code==1) {
+				window.location.href = '/member';
 
 			}
 		}
@@ -47,7 +54,7 @@ if(typeof FileReader === 'undefined') {
 	}
 }
 function readFile() {
-	var UPLOADURL = "/upload/image";
+	var UPLOADURL = '/upload/image';
 	var formData = new FormData();
 	var $that = $(this);
 	$that.parent().css("display", "none");
@@ -103,11 +110,11 @@ function validation() {
 	}
 
 	$.ajax({
-		type: "POST",
-		url: 'bind',
+		type: "GET",
+		url: '/member/setting/bind',
 		data: {
 			mobile: mobile,
-			code: code
+			code: code,
 		},
 		dataType: "json",
 		success: function(res) {
@@ -115,6 +122,8 @@ function validation() {
 				if(res.data.url) {
 					window.location.href = res.data.url;
 				}
+			}else{
+				alert(res.msg)
 			}
 		},
 		error: function(msg) {
@@ -130,6 +139,7 @@ $(".send_code").bind("click", function() {
 		alert("手机号不能为空");
 		return false;
 	}
+
 	var v = this;
 	settime(v);
 	$.ajax({
@@ -197,7 +207,9 @@ function init_date() {
 		defaultText: ' 离开 ',
 		autoSubmit: false,
 		inputTrigger: 'input_trigger1',
-		theme: 'ta'
+		theme: 'ta',
+		autoSubmit: 'true'
+		
 	});
 
 }

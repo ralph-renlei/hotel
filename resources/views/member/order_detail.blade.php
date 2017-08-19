@@ -20,36 +20,40 @@
 				<div class="no_interval_cell order_title">
 					<p>
 						<span class="bigger_text">西安希尔顿酒店</span>
-						<span>在线预订</span>
+						<span>@if($order_detail->forms == 1 ) 在线预订 @else 线下预定 @endif</span>
 					</p>
 					<p>
-						<span class="bigger_text">数码双床房</span>
+						<span class="bigger_text">{{$order_detail->category_name}}</span>
 						<span>1间</span>
 					</p>
 				</div>
 				<div class="no_interval_cell time_range">
 					<div class="start_time">
 						入住时间：
-						<span class="bigger_text">8月13日</span> 今天
+						<span class="bigger_text">{{$order_detail->start}}</span>
 					</div>
 					<div class="end_time">
 						离店时间：
-						<span class="bigger_text">8月18日</span> 周四
+						<span class="bigger_text">{{$order_detail->end}}</span>
 					</div>
 					<div class="range order_range">
-						<span>6</span>晚
+						<span>{{$order_detail->last}}</span>晚
 					</div>
 				</div>
 				<div class="no_interval_cell">
 					<div class="">
-						<p>订单状态: <span class="orange_text">已预订</span></p>
-						<p>入住的房间号: <span class="orange_text">2026</span></p>
+						<p>订单状态: <span class="orange_text">
+								@if($order_detail->order_status == 0) 已预订,等待酒店确认
+								@elseif($order_detail->order_status == 1) 预订成功，可以入住
+								@else 订单已完成
+								@endif</span></p>
+						<p>入住的房间号: <span class="orange_text">{{$order_detail->goods_name}}</span></p>
 					</div>
 				</div>
 				<div class="no_interval_cell">
 					<div class="">
-						<p>手机号: <span class="bigger_text">15711112222</span></p>
-						<p>总价: <span class="bigger_text">￥380</span></p>
+						<p>手机号: <span class="bigger_text">{{$order_detail->phone}}</span></p>
+						<p>总价: <span class="bigger_text">￥{{$order_detail->order_amount}}</span></p>
 					</div>
 				</div>
 				

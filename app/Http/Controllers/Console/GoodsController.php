@@ -103,7 +103,7 @@ class GoodsController extends Controller {
 		}
 		$field = $request->input('field');
 		$val = $request->input('val');
-		if(!in_array($field,array('status','oopen'),true)){
+		if(!in_array($field,array('status','open'),true)){
 			return response()->json($return);
 		}
 		if(!in_array((int)$val,array(1,0,-1),true)){

@@ -348,7 +348,8 @@ input {
 
 .ta_calendar {
 	width: 94%;
-	right: 3%;
+	left: 3%!important;
+	right: 3%!important;
 	border: 1px solid #ddd;
 }
 

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use WxHotel\Order;
+use WxHotel\SmsRecord;
 use WxHotel\User;
 
 class MemberController extends Controller {
@@ -27,8 +28,8 @@ class MemberController extends Controller {
 
 	public function order_detail($id){
 		//根据订单id 查询订单详情 房型，数量，房间号，订单状态，手机号，总价
-		$order_detail = Order::where('order_id',1)->first();
-		return view('member.order_detail');
+		$order_detail = Order::where('order_id',$id)->first();
+		return view('member.order_detail',['order_detail'=>$order_detail]);
 	}
 
 	public function credit()
@@ -43,8 +44,7 @@ class MemberController extends Controller {
 
 	//上传认证材料
 	public function makeCredit(Request $request){
-		//通过当前的openid 确定用户，并添加认证信息道数据库中
-        print_r($request->all());
+		//通过当前的openid 确定用户，并添加认证信息道数据库
 		$data = [
 			'name'=>$request->input('realname'),
 			'idcard_no'=>$request->input('idcard_number'),
@@ -61,4 +61,36 @@ class MemberController extends Controller {
 	{
 		return view('member.setting');
 	}
+
+	public function bind(Request $request){
+		//根据用户 的 电话 和 验证码判断
+		$code = SmsRecord::where('mobile',$request->input('mobile'))->orderBy('id','desc')->lists('token');
+		if($code[0] == $request->input('code')){
+			//判断当前提交的号码和数据库中的号码是否一致，不一致进行覆盖，一致，加载修改页面
+			$oldphone = User::where('openid','oG3Ulv_z-uJsb-uUmy6m62J5qxc0')->lists('mobile');
+			if($oldphone[0] != $request->input('mobile')){
+				User::where('openid','oG3Ulv_z-uJsb-uUmy6m62J5qxc0')->update(['mobile'=>$request->input('mobile')]);
+				$return['code'] = self::CODE_SUCCESS;
+				$return['msg'] = self::SUCCESS_MSG;
+				$return['data'] = ['url'=>'/member'];
+				return response()->json($return);
+			}else{
+				$return['code'] = self::CODE_SUCCESS;
+				$return['msg'] = self::SUCCESS_MSG;
+				$return['data'] = ['url'=>'/member/setting/new'];
+				return response()->json($return);
+			}
+		}else{
+			$return['code'] = 0;
+			$return['msg'] = '验证码不正确';
+			return response()->json($return);
+		}
+	}
+
+	//加载新手机后页面
+	public function newphone(){
+		return view('member.setting_newphone');
+	}
+
+
 }

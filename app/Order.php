@@ -8,8 +8,9 @@ class Order extends Model {
 	//
     protected $table = 'orders';
     protected $loan_table = 'orders_loan';
-	protected $fillable=['order_sn','order_status','channel_id','uname','mobile','store_id','store_name','pay_status','uid','goods_id','goods_name','goods_amount','pay_fee','money_paid','bonus','order_amount',
-	'affiliate','froms','add_time','confirm_time','pay_time','receive_time','note'];
+	protected $fillable=['order_sn','order_status','pay_status','openid','uid','goods_id','goods_name','goods_price','order_amount','add_time','forms','pdt_snapshot','start','end','category_id',
+        'category_name','phone','username','last'
+	];
     public $primaryKey = 'order_id';
     public $timestamps = false;
 

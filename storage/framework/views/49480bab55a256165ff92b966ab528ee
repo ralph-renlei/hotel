@@ -7,6 +7,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<link rel="stylesheet" type="text/css" href="<?php echo e(asset('/hotel/css/style.css')); ?>" />
 		<link rel="stylesheet" type="text/css" href="<?php echo e(asset('/hotel/css/iconfont/iconfont.css')); ?>" />
+		<link rel="stylesheet" type="text/css" href="<?php echo e(asset('/hotel/css/dateRange.css')); ?>"/>
 	</head>
 
 	<body>
@@ -17,7 +18,7 @@
 		</div>
 		<div class="qrcode_wrap">
 			<div class="no_interval_wrap">
-				<div class="no_interval_on">
+				<div class="no_interval_on" id="date1">
 					<div class="online_time">
 						<i class="iconfont icon-icon-test"></i> 入住时间：
 						<span class="bigger_text">8月13日</span> 今天
@@ -33,7 +34,7 @@
 					</div>
 				</div>
 			</div>
-			<a class="button orange_btn" href="page/reserve_online.html">开始预订</a>
+			<a class="button orange_btn" href="javascript:void(0);" onclick="sendtime()">开始预订</a>
 		</div>
 		</div>
 
@@ -43,11 +44,17 @@
 			<span class="online_line"></span>
 		</p>
 	</body>
+
 	<script src="<?php echo e(asset('/hotel/js/jquery.min.js')); ?>" type="text/javascript" charset="utf-8"></script>
 	<script src="<?php echo e(asset('/hotel/js/dateRange.js')); ?>" type="text/javascript" charset="utf-8"></script>
 	<script src="<?php echo e(asset('hotel/js/common.js')); ?>" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 		init_date();
+		function sendtime(){
+			var text = $('#date1').text();
+			var text_arr = text.split(' ');
+			window.location.href = '/reserve?start='+text_arr[0]+'&end='+text_arr[2];
+		}
 	</script>
 
 </html>

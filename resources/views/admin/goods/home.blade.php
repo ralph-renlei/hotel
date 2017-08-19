@@ -45,6 +45,14 @@
 							<td>
 								<a href="{{ url('/admin/shop/goods/show/'.$item->goods_id) }}"><button type="button" class="btn btn-default btn-sm">修改</button></a>
 								<button type="button" class="btn btn-default btn-sm" onclick="app.goods.del('{{ $item->goods_id }}')">删除</button>
+								@if($item->open==1)
+									@if($item->status == 1) <button type="button" class="btn btn-default btn-sm" onclick=""  data-toggle="modal" data-target="#myModal">安排入住</button>
+									@elseif($item->status == 0) <button type="button" class="btn btn-default btn-sm" disabled>客房已满</button>
+									@else <button type="button" class="btn btn-default btn-sm" disabled>不能安排</button>
+									@endif
+								@else
+								<button type="button" class="btn btn-default btn-sm" disabled>不能入住</button>
+								@endif
 							</td>
 							</tr>
 							@endforeach
@@ -57,6 +65,75 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="modal fade in" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="display: none;"><div class="modal-backdrop fade in"></div>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" onclick="app.system.cancel();">×</span><span class="sr-only" onclick="app.system.cancel();">Close</span></button>
+					<h4 class="modal-title" id="myModalLabel">安排入住</h4>
+				</div>
+				<div class="modal-body">
+					<form class="form-horizontal" role="form">
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">订单号<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input type="text" name="order_id" class="form-control" id="order_id" value="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-2 control-label">预订人<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input type="text" name="name" class="form-control" id="name" value="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputEmail3" class="col-sm-2 control-label">电话<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input type="text" name="mobile" class="form-control" id="mobile" value="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputEmail3" class="col-sm-2 control-label">房间类型<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input type="text" name="category" class="form-control" id="category" value="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputEmail3" class="col-sm-2 control-label">房间名称（编号）<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input type="text" name="goods_name" class="form-control" id="goods_name" value="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputEmail3" class="col-sm-2 control-label">人数<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input type="text" name="number" class="form-control" id="number" value="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputEmail3" class="col-sm-2 control-label">开房时间<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input class=" form-control" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="start" id="start" value="">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="inputEmail3" class="col-sm-2 control-label">退房时间<span style="color:red">*</span></label>
+							<div class="col-sm-10">
+								<input class=" form-control" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="end" id="end" value="">
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<input type="hidden" name="id" id="id" value="" order_id=""/>
+					<button type="button" class="btn btn-default" data-dismiss="modal" onclick="app.system.cancel();">关闭</button>
+					<button type="submit" class="btn btn-primary" onclick="room_arrange()">保存</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script>
 		$('select[name=status_change]').each(function(){
 			$(this).change(function(){
@@ -75,6 +152,36 @@
 				});
 			});
 		});
+
+		room_arrange = function(){
+			var order_id = $('#order_id').val();
+			var name = $('#name').val();
+			var mobile = $('#mobile').val();
+			var category = $('#category').val();
+			var goods_name = $('#goods_name').val();
+			var number = $('#number').val();
+			var start = $('#start').val();
+			var end = $('#end').val();
+			$.ajax({
+				url: '/admin/order/room_arrange',
+				type: 'POST',
+				dataType:'json',
+				data:{order_id:order_id,name:name,mobile:mobile,category:category,goods_name:goods_name,number:number,start:start,end:end,_token:"{{csrf_token()}}"},
+				success: function(result) {
+					if(result.code==1){
+						alert(result.msg);
+						setTimeout(function(){
+							window.location.reload();
+						},500);
+					}else{
+						alert(result.msg);
+					}
+				},
+				error:function(jqXHR,textStatus, errorThrown ){
+					alert(errorThrown);
+				}
+			});
+		}
 	</script>
 
 @endsection

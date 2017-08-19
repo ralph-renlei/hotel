@@ -37,6 +37,13 @@ Route::get('/member/order_detail/{id}','MemberController@order_detail');
 Route::get('/member/credit','MemberController@credit');
 Route::post('/member/credit','MemberController@makeCredit');
 Route::get('/member/setting','MemberController@setting');
+Route::get('/member/setting/bind','MemberController@bind');
+Route::get('/member/setting/new','MemberController@newphone');
+
+//--------------------------------房间预定---------------------------------
+Route::get('/reserve','ReserveController@index');
+Route::get('/reserve/orderonline','ReserveController@makeOrder');
+Route::post('/reserve/ordercommit','ReserveController@orderCommit');
 
 //--------------------------------PC管理端---------------------------------
 Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
@@ -67,7 +74,11 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::get('/shop/total','OrderController@getDeliveryTotal');
     Route::post('category','GoodsController@getCategory');
 
-    Route::get('order', 'OrderController@index');
+    Route::get('/order','OrderManageController@index');
+    Route::get('/order/{id}','OrderManageController@show');
+    Route::post('/order/{id}','OrderManageController@orderedit');
+    Route::post('/order/room_arrange','OrderManageController@room_arrange');
+
     Route::get('system', 'SystemController@cate');
     Route::get('system/config', 'SystemController@config');
     Route::post('system/config', 'SystemController@saveConfig');
