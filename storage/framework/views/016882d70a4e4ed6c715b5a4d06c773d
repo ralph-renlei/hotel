@@ -1,0 +1,84 @@
+<?php $__env->startSection('content'); ?>
+<div class="container">
+	<div class="row">
+		<?php echo $__env->make('menu', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+		<div class="col-md-10 col-md-offset-1">
+			<div class="panel panel-default">
+				<div class="panel-heading">用户编辑</div>
+				<div class="panel-body">
+					<?php if(count($errors) > 0): ?>
+						<div class="alert alert-danger">
+							<strong>对不起，有错误发生！</strong><br><br>
+							<ul>
+								<?php foreach($errors->all() as $error): ?>
+									<li><?php echo e($error); ?></li>
+								<?php endforeach; ?>
+							</ul>
+						</div>
+					<?php endif; ?>
+					<form class="form-horizontal" role="form" method="POST" action="<?php echo e(url('/admin/user/user')); ?>">
+						<input type="hidden" name="_token" value="<?php echo e(csrf_token()); ?>">
+						<div class="form-group">
+							<label class="col-md-4 control-label">姓名</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control" name="name" id="name" value="<?php echo e($user->name); ?>" placeholder="请输入您的姓名"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">手机</label>
+							<div class="col-md-6">
+								<input type="mobile" class="form-control" name="mobile" id="mobile" value="<?php echo e($user->mobile); ?>" placeholder="请输入您的手机号码"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">身份证号</label>
+							<div class="col-md-6">
+								<input type="mobile" class="form-control" name="idcard_no" id="idcard_no" value="<?php echo e($user->idcard_no); ?>" placeholder="请输入您的手机号码"/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-4 control-label">状态<span style="color:red">*</span></label>
+							<div class="col-sm-6" id="category">
+								<select class="form-control" name="verify">
+									<option value="">请选择分类</option>
+									<option value="1" <?php if($user->verify==1): ?> selected <?php endif; ?>>已认证</option>
+									<option value="0" <?php if($user->verify==0): ?> selected <?php endif; ?>>未认证</option>
+									<option value="-1" <?php if($user->verify==-1): ?> selected <?php endif; ?>>审核中</option>
+								</select>
+							</div>
+						</div>
+						<?php if(isset($user->idcard_front)): ?>
+							<div class="form-group">
+								<label class="col-md-4 control-label">身份证正反面</label>
+								<div class="col-md-6">
+									<img src="<?php echo e($user->idcard_front); ?>" width="450px;"/> <br><br>
+									<img src="<?php echo e($user->idcard_back); ?>"  width="450px;"/>
+								</div>
+							</div>
+						<?php else: ?>
+							<div class="form-group">
+								<label class="col-md-4 control-label">身份证正反面</label>
+								<div class="col-md-6">
+									<input type="text" class="form-control"  value="未上传" disabled/>
+								</div>
+							</div>
+						<?php endif; ?>
+
+						<div class="form-group">
+							<div class="col-md-6 col-md-offset-4">
+								<input type="hidden" class="form-control" name="id" id="id" value="<?php echo e($user->id); ?>" />
+								<button type="submit" class="btn btn-primary">保存</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="panel-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('app', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

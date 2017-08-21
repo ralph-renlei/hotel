@@ -15,9 +15,10 @@
     </ul>
 	<ul class="nav nav-sidebar" id="user_menu" style="display: none">
 	    <li><a href="{{ url('/admin/user/member') }}">消费者</a></li>
-	    <li><a href="{{ url('/admin/user/store') }}">商家</a></li>
-	    <li><a href="{{ url('/admin/user/admin') }}">管理员</a></li>
-	    <li><a href="{{ url('/admin/user/account') }}">账户资料</a></li>
+	    <li><a href="{{ url('/admin/user/verify') }}">认证审核</a></li>
+	    {{--<li><a href="{{ url('/admin/user/store') }}">商家</a></li>--}}
+	    {{--<li><a href="{{ url('/admin/user/admin') }}">管理员</a></li>--}}
+	    {{--<li><a href="{{ url('/admin/user/account') }}">账户资料</a></li>--}}
     </ul>
 	<ul class="nav nav-sidebar" id="system_menu" style="display:none">
 

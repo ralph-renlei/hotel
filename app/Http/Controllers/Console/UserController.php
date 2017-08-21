@@ -34,6 +34,32 @@ class UserController extends Controller
         return view('admin.user.home',$var);
     }
 
+    public function verify(){
+        $list = User::orderBy('id','desc')->paginate(20);
+        return view('admin.user.verify',['users'=>$list]);
+    }
+
+    public function getImage($id){
+        $images = User::where('id',$id)->first();
+        $gallery_list = array();
+        if(!empty($images->idcard_front)){
+            $gallery_list = [$images->idcard_front,$images->idcard_back];
+        }
+
+        return view('admin.user.loadimage',['gallery_list'=>$gallery_list,'id'=>$id]);
+    }
+
+    public function saveImage(Request $request){
+        $images = explode(',',trim($request->input('images'),','));
+        $idcard_front = $images[0];
+        $idcard_back = $images[1];
+        $result = User::where('id',$request->input('id'))->update(['idcard_front'=>$idcard_front,'idcard_back'=>$idcard_back]);
+        if($request){
+            $return = array('code'=>1,'msg'=>self::SUCCESS_MSG);
+        }
+        return response()->json($return);
+    }
+
     public function addUser(Request $request){
         return view('admin.user.add');
     }
@@ -62,8 +88,7 @@ class UserController extends Controller
             $this->validate($request, [
                 'mobile' => 'required|regex:/^1[2-9]\d{9}$/|unique:users,mobile,'.$user->id.'|max:11',
                 'name'=>'required',
-                'role'=>'required',
-                'status'=>'in:0,1'
+                'status'=>'in:0,1,-1'
             ]);
 
             $user->mobile = $mobile;
@@ -91,14 +116,12 @@ class UserController extends Controller
             $this->validate($request, [
                 'mobile' => 'required|regex:/^1[2-9]\d{9}$/|unique:users,mobile|max:11',
                 'name'=>'required',
-                'role'=>'required',
-                'status'=>'in:0,1'
+                'status'=>'in:0,1,-1'
             ]);
             $data = array(
                 'username'=>$mobile,
                 'name'=>$name,
                 'mobile'=>$mobile,
-                'role'=>$role,
                 'status'=>1,
             );
             $data['password'] = bcrypt(substr($mobile,5));
@@ -125,7 +148,7 @@ class UserController extends Controller
         }
 
         if($response){
-            return redirect('/admin/user');
+            return redirect('/admin/user/verify');
         }
         return redirect()->back()->withErrors(['status' => '失败']);
     }

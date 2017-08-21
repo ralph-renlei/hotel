@@ -115,6 +115,10 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::get('user/user/{id}','UserController@getUser');
     Route::post('user/user','UserController@postUser');
     Route::delete('user/user','UserController@delUser');
+    Route::get('/user/verify','UserController@verify');
+    Route::get('/user/verify/image/{id}','UserController@getImage');
+    Route::post('/user/verify/saveimage','UserController@saveImage');
+
     //下线
     Route::get('user/affiliate','AffiliateController@index');
     Route::get('user/affiliate/{id}','AffiliateController@show');

@@ -15,8 +15,7 @@
                                 <th class="info">姓名</th>
 								<th class="info">手机</th>
                                 <th class="info">认证</th>
-                                <th class="info">状态</th>
-                                <th class="info">时间</th>
+                                <th class="info">添加时间</th>
 								<th class="info">操作</th>
 							</tr>
 							@foreach ($lists as $item)
@@ -32,17 +31,11 @@
                                             <span class="btn btn-danger">否</span>
                                         @endif
                                     </td>
-                                    <td class="data">
-                                        @if ($item->status == 1)
-                                            <span class="btn btn-success">启用</span>
-                                        @else
-                                            <span class="btn btn-danger">禁用</span>
-                                        @endif
-                                    </td>
                                     <td class="data">{{ $item->created_at }}</td>
 									<td class="do">
 										<a href="{{ url('/admin/user/user/'.$item->id) }}"><button type="button" class="btn btn-default btn-sm">修改</button></a>
                                         <button type="button" class="btn btn-default btn-sm" onclick="app.user.del('{{ $item->id }}')">删除</button>
+                                        <button type="button" class="btn btn-default btn-sm" onclick="app.user.del('{{ $item->id }}')">详情</button>
 									</td>
 								</tr>
 							@endforeach
