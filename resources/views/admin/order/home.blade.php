@@ -6,7 +6,7 @@
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					订单列表
+					订单列表 &nbsp;&nbsp;<a class="glyphicon glyphicon-plus" href="/admin/order/add">添加</a>
 				</div>
 				<div class="panel-body">
 					<div class="row">
@@ -33,10 +33,10 @@
 							</tr>
 							@foreach($list as $item)
 							<tr>
-								<td>{{$item->order_id}}</td>
+								<td>{{$item->order_id}} </td>
                                 <td>{{ $item->username }}</td>
                                 <td>{{ $item->phone }}</td>
-                                <td>{{ $item->category_name }}</td>
+                                <td>{{ $item->category_name }} @if($item->forms!=1) {{$item->goods_name}} @endif</td>
                                 <td>{{ $item->order_amount }}</td>
                                 <td>{{ $item->start }}</td>
                                 <td>{{ $item->end }}</td>
@@ -46,6 +46,23 @@
                                 </td>
 							    <td class="do">
 									<button type="button" class="btn btn-default btn-sm" onclick="order_detail({{$item->order_id}})"  data-toggle="modal" data-target="#myModal">详情</button>
+									@if($item->forms == 1 || $item->forms == 2)
+										@if($item->order_status==0)
+											<a href="/admin/shop/goods"><button type="button" class="btn btn-default btn-sm">分配房间</button></a>
+										@elseif($item->order_status==1)
+											<button type="button" class="btn btn-default btn-sm" disabled>已分配</button></a>
+										@else
+											<button type="button" class="btn btn-default btn-sm" disabled>订单完成</button></a>
+										@endif
+									@else
+										@if($item->order_status==0)
+										<a href="/admin/order/allowarrange/{{$item->order_id}}"><button type="button" class="btn btn-default btn-sm">同意申请</button></a>
+										@elseif($item->order_status==1)
+											<button type="button" class="btn btn-default btn-sm" disabled>已分配</button></a>
+										@else
+											<button type="button" class="btn btn-default btn-sm" disabled>订单完成</button></a>
+										@endif
+									@endif
                                 </td>
 							</tr>
 							@endforeach
@@ -69,6 +86,12 @@
 			</div>
 			<div class="modal-body">
 				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="inputPassword3" class="col-sm-2 control-label">预定渠道<span style="color:red">*</span></label>
+						<div class="col-sm-10">
+							<input type="text" name="forms" class="form-control" id="forms" disabled>
+						</div>
+					</div>
 					<div class="form-group">
 						<label for="inputPassword3" class="col-sm-2 control-label">预订人<span style="color:red">*</span></label>
 						<div class="col-sm-10">
@@ -97,7 +120,7 @@
 						<label for="inputPassword3" class="col-sm-2 control-label">付款状态<span style="color:red">*</span></label>
 						<div class="col-sm-10">
 							<label class="radio-inline user_role">
-								<input type="radio" name="pay_status" id="status1" value="1" checked="">
+								<input type="radio" name="pay_status" id="status1" value="1">
 								已付款
 							</label>
 							<label class="radio-inline user_role">
@@ -135,7 +158,7 @@ order_detail = function(id){
 		return false;
 	}
 	$.ajax({
-		url: '/admin/order/'+id,
+		url: '/admin/order/order_id/'+id,
 		type: 'GET',
 		dataType:'json',
 		success: function(result) {
@@ -146,6 +169,13 @@ order_detail = function(id){
 				$('#mobile').val(c.phone);
 				$('#category').val(c.category_name);
 				$('#order_amount').val(c.order_amount);
+				if(c.forms == 1){
+					$('#forms').val('线上预订');
+				}else if(c.forms == 0){
+					$('#forms').val('线下预定');
+				}else{
+					$('#forms').val('前台预定');
+				}
 				if(c.pay_status==1){
 					$('#status1').attr('checked','checked');
 				}else{
@@ -177,14 +207,14 @@ order_edit = function(){
 	var pay_status = $('input[name="pay_status"]:checked').val();
 	var order_status = $("#order_status").find("option:selected").val();
 	$.ajax({
-		url: '/admin/order/'+id,
+		url: '/admin/order/order_id/'+id,
 		type: 'POST',
 		dataType:'json',
 		data:{id:id,pay_status:pay_status,order_status:order_status,_token:"{{csrf_token()}}"},
 		success: function(result) {
 			if(result.code==1){
 				alert(result.msg);
-				window.location.href = '/admin/order';
+				window.location.href = '/admin/order/home';
 			}else{
 				alert(result.msg);
 			}

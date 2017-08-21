@@ -34,7 +34,7 @@
 					<span  class="bar3"><i class="iconfont icon-shimingrenzheng"></i></span>
 					<span>实名认证</span>
 					<i class="iconfont icon-icon right"></i>
-					<p class="right">@if($memberInfo->status==-1) 未认证 @elseif($memberInfo->status==0) 审核中 @else 已认证 @endif</p>
+					<p class="right">@if($memberInfo->verify==-1) 审核中 @elseif($memberInfo->status==0) 未认证 @else 已认证 @endif</p>
 				</a>
 				<span id="interval_line"></span>
 				<a href="/member/setting">
@@ -46,13 +46,13 @@
 
 			<!--tabbar-->
 			<div class="tabbar">
-				<a href="index.html">
+				<a href="/">
 					<div>
 						<i class="iconfont icon-shouye"></i>
 						<p>首页</p>
 					</div>
 				</a>
-				<a href="person_center.html">
+				<a href="/member">
 					<div style="color: #019ade">
 						<i class="iconfont icon-gerenzhongxin"></i>
 						<p>个人中心</p>

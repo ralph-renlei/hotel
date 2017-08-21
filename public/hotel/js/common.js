@@ -13,6 +13,8 @@ $(".submit_order").click(function() {
 	var str = $('#order_amount').text();
 	var order_amount = str.replace('￥','');
 	var id = $('#category_id').attr('data');
+	var goods_id = $('#goods_id').attr('data');
+	var goods_name = $('#goods_name').attr('data');
 	var category_name = $('#category_name').text();
 	$.ajax({
 		type: "POST",
@@ -26,15 +28,18 @@ $(".submit_order").click(function() {
 			end: end,
 			order_amount: order_amount,
 			id:id,
+			goods_id:goods_id,
+			goods_name:goods_name,
 			category_name:category_name,
 		},
 		success: function(res) {
 			if(res.code==1) {
 				window.location.href = '/member';
-
+			}else{
+				alert(res.msg);
+				window.location.href= '/';
 			}
-		}
-
+		},
 	});
 });
 

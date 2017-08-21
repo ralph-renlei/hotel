@@ -42,8 +42,9 @@ Route::get('/member/setting/new','MemberController@newphone');
 
 //--------------------------------房间预定---------------------------------
 Route::get('/reserve','ReserveController@index');
-Route::get('/reserve/orderonline','ReserveController@makeOrder');
+Route::get('/reserve/orderonline','ReserveController@makeOrder');//线上预订
 Route::post('/reserve/ordercommit','ReserveController@orderCommit');
+Route::get('/reserve/orderoffline/goods_id/{id}','ReserveController@orderoffline');
 
 //--------------------------------PC管理端---------------------------------
 Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
@@ -74,10 +75,13 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::get('/shop/total','OrderController@getDeliveryTotal');
     Route::post('category','GoodsController@getCategory');
 
-    Route::get('/order','OrderManageController@index');
-    Route::get('/order/{id}','OrderManageController@show');
-    Route::post('/order/{id}','OrderManageController@orderedit');
-    Route::post('/order/room_arrange','OrderManageController@room_arrange');
+    Route::get('/order/home','OrderManageController@index');
+    Route::get('/order/order_id/{id}','OrderManageController@show');
+    Route::post('/order/order_id/{id}','OrderManageController@orderedit');
+    Route::get('/order/loadarrange/{id}','OrderManageController@loadarrange');//加载房间分配
+    Route::get('/order/allowarrange/{id}','OrderManageController@allowarrange');//加载房间分配
+    Route::post('/order/room_arrange','OrderManageController@room_arrange');//分配房间
+    Route::get('/order/add','OrderManageController@loadadd');//加载添加订单
 
     Route::get('system', 'SystemController@cate');
     Route::get('system/config', 'SystemController@config');

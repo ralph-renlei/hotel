@@ -18,8 +18,8 @@
 		<div class="no_interval_wrap">
 			<div class="no_interval_on">
 				<div class="no_interval_cell order_title">
-					<span class="bigger_text" id="category_name">{{$category->name}}</span><span id="category_id" data="{{$category->id}}"></span>
-					<span>线下预订</span>
+					<span class="bigger_text" id="category_name">{{$category->name}}</span><span id="category_id" data="{{$category->id}}"></span><span id="goods_id" data="{{$goods_id}}"></span><span id="goods_name" data="{{$goods_name}}"></span>
+					<span>@if($forms==1) 线上预定 @else 线下预定 @endif</span>
 				</div>
 				<div class="no_interval_cell time_range">
 					<div class="start_time">

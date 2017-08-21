@@ -34,7 +34,7 @@
 					<span  class="bar3"><i class="iconfont icon-shimingrenzheng"></i></span>
 					<span>实名认证</span>
 					<i class="iconfont icon-icon right"></i>
-					<p class="right"><?php if($memberInfo->status==-1): ?> 未认证 <?php elseif($memberInfo->status==0): ?> 审核中 <?php else: ?> 已认证 <?php endif; ?></p>
+					<p class="right"><?php if($memberInfo->verify==-1): ?> 审核中 <?php elseif($memberInfo->status==0): ?> 未认证 <?php else: ?> 已认证 <?php endif; ?></p>
 				</a>
 				<span id="interval_line"></span>
 				<a href="/member/setting">
@@ -46,13 +46,13 @@
 
 			<!--tabbar-->
 			<div class="tabbar">
-				<a href="index.html">
+				<a href="/">
 					<div>
 						<i class="iconfont icon-shouye"></i>
 						<p>首页</p>
 					</div>
 				</a>
-				<a href="person_center.html">
+				<a href="/member">
 					<div style="color: #019ade">
 						<i class="iconfont icon-gerenzhongxin"></i>
 						<p>个人中心</p>

@@ -18,8 +18,8 @@
 		<div class="no_interval_wrap">
 			<div class="no_interval_on">
 				<div class="no_interval_cell order_title">
-					<span class="bigger_text" id="category_name"><?php echo e($category->name); ?></span><span id="category_id" data="<?php echo e($category->id); ?>"></span>
-					<span>线下预订</span>
+					<span class="bigger_text" id="category_name"><?php echo e($category->name); ?></span><span id="category_id" data="<?php echo e($category->id); ?>"></span><span id="goods_id" data="<?php echo e($goods_id); ?>"></span><span id="goods_name" data="<?php echo e($goods_name); ?>"></span>
+					<span><?php if($forms==1): ?> 线上预定 <?php else: ?> 线下预定 <?php endif; ?></span>
 				</div>
 				<div class="no_interval_cell time_range">
 					<div class="start_time">
