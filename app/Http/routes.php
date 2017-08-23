@@ -27,8 +27,9 @@ Route::get('region/area/{id}', 'RegionController@getArea');
 Route::get('region/street/{id}', 'RegionController@getStreet');
 Route::get('region/community/{id}', 'RegionController@getCommunity');
 Route::any('notify','Mobile\SwiftController@notify');
-Route::any('pay','Mobile\WxpayController@prepay');
-
+//Route::any('pay','Mobile\WxpayController@prepay');
+Route::get('/pay','Mobile\WxpayController@prepay');
+Route::post('/notify','Mobile\WxpayController@notify');
 //--------------------------------个人中心---------------------------------
 Route::get('/member','MemberController@index');
 Route::get('/member/info','MemberController@loadInfo');

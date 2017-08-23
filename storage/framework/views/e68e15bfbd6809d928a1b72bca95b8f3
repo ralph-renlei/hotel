@@ -9,10 +9,14 @@
 				</div>
 				<div class="panel-body">
 					<div class="row">
-						<form class="form-inline" action="<?php echo e(url('/admin/fund')); ?>" method="get">
+						<form class="form-inline" action="<?php echo e(url('/admin/order/home')); ?>" method="get">
 							<div class="form-group">
-								<label class="label_left">关键词</label>
-								<input  class="form-control" id="keyword" name="keyword" placeholder="请输入订单号或者商品名"/>
+								<label class="label_left">查看当天的订单情况</label>
+								<select class="form-control" name="start">
+									<?php foreach($time_array as $time): ?>
+									<option value="<?php echo e($time); ?>"/><?php echo e($time); ?></option>
+									<?php endforeach; ?>
+								</select>
 							</div>
 							<button type="submit" class="btn btn-default search_bottom">搜索</button>
 						</form>
@@ -45,22 +49,26 @@
                                 </td>
 							    <td class="do">
 									<button type="button" class="btn btn-default btn-sm" onclick="order_detail(<?php echo e($item->order_id); ?>)"  data-toggle="modal" data-target="#myModal">详情</button>
-									<?php if($item->forms == 1 || $item->forms == 2): ?>
-										<?php if($item->order_status==0): ?>
-											<a href="/admin/shop/goods"><button type="button" class="btn btn-default btn-sm">分配房间</button></a>
-										<?php elseif($item->order_status==1): ?>
-											<button type="button" class="btn btn-default btn-sm" disabled>已分配</button></a>
+									<?php if($item->pay_status == 1): ?>
+										<?php if($item->forms == 1 || $item->forms == 2): ?>
+											<?php if($item->order_status==0): ?>
+												<a href="/admin/shop/goods"><button type="button" class="btn btn-default btn-sm">分配房间</button></a>
+											<?php elseif($item->order_status==1): ?>
+												<button type="button" class="btn btn-default btn-sm">已分配</button></a>
+											<?php else: ?>
+												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
+											<?php endif; ?>
 										<?php else: ?>
-											<button type="button" class="btn btn-default btn-sm" disabled>订单完成</button></a>
+											<?php if($item->order_status==0): ?>
+												<a href="/admin/order/allowarrange/<?php echo e($item->order_id); ?>"><button type="button" class="btn btn-default btn-sm">同意申请</button></a>
+											<?php elseif($item->order_status==1): ?>
+												<button type="button" class="btn btn-default btn-sm">已分配</button></a>
+											<?php else: ?>
+												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
+											<?php endif; ?>
 										<?php endif; ?>
 									<?php else: ?>
-										<?php if($item->order_status==0): ?>
-										<a href="/admin/order/allowarrange/<?php echo e($item->order_id); ?>"><button type="button" class="btn btn-default btn-sm">同意申请</button></a>
-										<?php elseif($item->order_status==1): ?>
-											<button type="button" class="btn btn-default btn-sm" disabled>已分配</button></a>
-										<?php else: ?>
-											<button type="button" class="btn btn-default btn-sm" disabled>订单完成</button></a>
-										<?php endif; ?>
+										<button type="button" class="btn btn-default btn-sm" title="未付款无法分配">无法分配</button></a>
 									<?php endif; ?>
                                 </td>
 							</tr>

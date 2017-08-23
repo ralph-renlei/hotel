@@ -9,20 +9,20 @@ class MemberController extends Controller {
 	public function index()
 	{
 		//根据用户的微信 openid获取用户的头像，等信息，在页面显示
-		$memberInfo = User::where('openid','oG3Ulv_z-uJsb-uUmy6m62J5qxc0')->first();
+		$memberInfo = User::where('openid',session('user')['openid'])->first();
 		return view('member.person_center',['memberInfo'=>$memberInfo]);
 	}
 
 	public function loadInfo()
 	{
 		//根据openid 查询个人在系统中的信息   ***这里先用死的
-		$infoList = User::where('openid','oG3Ulv_z-uJsb-uUmy6m62J5qxc0')->first();
+		$infoList = User::where('openid',session('user')['openid'])->first();
 		return view('member.person_info',['infoList'=>$infoList]);
 	}
 
 	public function order(){
 		//根据用户 uid 查询用户订单，房型，数量，下单方式，入住时间，离开时间，预定状态，价格
-		$orderList = Order::where('uid',1)->get();
+		$orderList = Order::where('openid',session('user')['openid'])->get();
 		return view('member.my_order',['orderList'=>$orderList]);
 	}
 
@@ -34,7 +34,7 @@ class MemberController extends Controller {
 
 	public function credit()
 	{
-		$creditList = User::where('openid','oG3Ulv_z-uJsb-uUmy6m62J5qxc0')->first();
+		$creditList = User::where('openid',session('user')['openid'])->first();
 		if(!isset($creditList->idcard_front)){
 			return view('member.certificate');
 		}else{
@@ -51,7 +51,7 @@ class MemberController extends Controller {
 			'idcard_front'=>$request->input('photo1'),
 			'idcard_back'=>$request->input('photo2')
 		];
-		$cate = User::where('openid','oG3Ulv_z-uJsb-uUmy6m62J5qxc0')->update($data);
+		$cate = User::where('openid',session('user')['openid'])->update($data);
 		if($cate){
 			echo "<script>alert('已提交，等待审核');window.location.href='/member';</script>";
 		}
@@ -67,9 +67,9 @@ class MemberController extends Controller {
 		$code = SmsRecord::where('mobile',$request->input('mobile'))->orderBy('id','desc')->lists('token');
 		if($code[0] == $request->input('code')){
 			//判断当前提交的号码和数据库中的号码是否一致，不一致进行覆盖，一致，加载修改页面
-			$oldphone = User::where('openid','oG3Ulv_z-uJsb-uUmy6m62J5qxc0')->lists('mobile');
+			$oldphone = User::where('openid',session('user')['openid'])->lists('mobile');
 			if($oldphone[0] != $request->input('mobile')){
-				User::where('openid','oG3Ulv_z-uJsb-uUmy6m62J5qxc0')->update(['mobile'=>$request->input('mobile')]);
+				User::where('openid',session('user')['openid'])->update(['mobile'=>$request->input('mobile')]);
 				$return['code'] = self::CODE_SUCCESS;
 				$return['msg'] = self::SUCCESS_MSG;
 				$return['data'] = ['url'=>'/member'];

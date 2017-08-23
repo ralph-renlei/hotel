@@ -13,8 +13,8 @@
 	<body>
 		<div class="whole">
 			<div class="main_info">
-				<a href=""><img src="img/avatar.png" class="avatar" /></a>
-				<p class="username">小易</p>
+				<a href=""><img src="{{session('user')['headimgurl']}}" class="avatar" /></a>
+				<p class="username">{{session('user')['nickname']}}</p>
 			</div>
 			<div class="personbar_wrap">
 				<a href="/member/info">
@@ -34,7 +34,7 @@
 					<span  class="bar3"><i class="iconfont icon-shimingrenzheng"></i></span>
 					<span>实名认证</span>
 					<i class="iconfont icon-icon right"></i>
-					<p class="right">@if($memberInfo->verify==-1) 审核中 @elseif($memberInfo->status==0) 未认证 @else 已认证 @endif</p>
+					<p class="right">@if($memberInfo->verify==-1) 审核中 @elseif($memberInfo->verify==0) 未认证 @else 已认证 @endif</p>
 				</a>
 				<span id="interval_line"></span>
 				<a href="/member/setting">

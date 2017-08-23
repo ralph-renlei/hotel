@@ -46,7 +46,7 @@
 				</form>
 			</div>
 		</div>
-		<p class="button orange_btn" id="makecredit">@if($creditList->status==-1) 未认证 @elseif($creditList->status==0) 审核中 @else 已认证 @endif</p>
+		<p class="button orange_btn" id="makecredit">@if($creditList->verify==-1) 未认证 @elseif($creditList->verify==0) 审核中 @else 已认证 @endif</p>
 
 	</body>
 	<script src="{{asset('/hotel/js/jquery.min.js')}}" type="text/javascript" charset="utf-8"></script>

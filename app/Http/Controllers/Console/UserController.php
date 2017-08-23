@@ -84,7 +84,7 @@ class UserController extends Controller
         $user = User::find($id);
 
         if(!empty($user)){
-
+            $user->verify = $request->input('verify');
             $this->validate($request, [
                 'mobile' => 'required|regex:/^1[2-9]\d{9}$/|unique:users,mobile,'.$user->id.'|max:11',
                 'name'=>'required',

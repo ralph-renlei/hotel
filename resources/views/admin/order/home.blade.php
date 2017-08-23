@@ -10,10 +10,14 @@
 				</div>
 				<div class="panel-body">
 					<div class="row">
-						<form class="form-inline" action="{{ url('/admin/fund') }}" method="get">
+						<form class="form-inline" action="{{ url('/admin/order/home') }}" method="get">
 							<div class="form-group">
-								<label class="label_left">关键词</label>
-								<input  class="form-control" id="keyword" name="keyword" placeholder="请输入订单号或者商品名"/>
+								<label class="label_left">查看当天的订单情况</label>
+								<select class="form-control" name="start">
+									@foreach($time_array as $time)
+									<option value="{{$time}}"/>{{$time}}</option>
+									@endforeach
+								</select>
 							</div>
 							<button type="submit" class="btn btn-default search_bottom">搜索</button>
 						</form>
@@ -46,22 +50,26 @@
                                 </td>
 							    <td class="do">
 									<button type="button" class="btn btn-default btn-sm" onclick="order_detail({{$item->order_id}})"  data-toggle="modal" data-target="#myModal">详情</button>
-									@if($item->forms == 1 || $item->forms == 2)
-										@if($item->order_status==0)
-											<a href="/admin/shop/goods"><button type="button" class="btn btn-default btn-sm">分配房间</button></a>
-										@elseif($item->order_status==1)
-											<button type="button" class="btn btn-default btn-sm" disabled>已分配</button></a>
+									@if($item->pay_status == 1)
+										@if($item->forms == 1 || $item->forms == 2)
+											@if($item->order_status==0)
+												<a href="/admin/shop/goods"><button type="button" class="btn btn-default btn-sm">分配房间</button></a>
+											@elseif($item->order_status==1)
+												<button type="button" class="btn btn-default btn-sm">已分配</button></a>
+											@else
+												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
+											@endif
 										@else
-											<button type="button" class="btn btn-default btn-sm" disabled>订单完成</button></a>
+											@if($item->order_status==0)
+												<a href="/admin/order/allowarrange/{{$item->order_id}}"><button type="button" class="btn btn-default btn-sm">同意申请</button></a>
+											@elseif($item->order_status==1)
+												<button type="button" class="btn btn-default btn-sm">已分配</button></a>
+											@else
+												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
+											@endif
 										@endif
 									@else
-										@if($item->order_status==0)
-										<a href="/admin/order/allowarrange/{{$item->order_id}}"><button type="button" class="btn btn-default btn-sm">同意申请</button></a>
-										@elseif($item->order_status==1)
-											<button type="button" class="btn btn-default btn-sm" disabled>已分配</button></a>
-										@else
-											<button type="button" class="btn btn-default btn-sm" disabled>订单完成</button></a>
-										@endif
+										<button type="button" class="btn btn-default btn-sm" title="未付款无法分配">无法分配</button></a>
 									@endif
                                 </td>
 							</tr>

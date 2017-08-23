@@ -8,8 +8,21 @@ use WxHotel\Order;
 
 class OrderManageController extends Controller {
 	public function index(Request $request){
-		$orderlist = Order::orderBy('order_id','desc')->paginate(20);
-		return view('admin.order.home',['list'=>$orderlist]);
+		$keywords = '';
+		if(!empty($request->input('start'))){
+			$keywords = $request->input('start');;
+		}
+
+		//生成当前时间 前1个月的时间 ，查询近一个月内每天的订单情况
+		$time_array = [];
+		for($i = 0 ; $i < 30 ; $i++){
+			$data_array = explode('-',date('Y-m-d',time() - 3600 * 24 * $i));
+			$data_array[1] = (int)$data_array[1];
+			$time_array[] = implode('-',$data_array);
+		}
+
+		$orderlist = Order::where('start','like','%'.$keywords.'%')->orderBy('order_id','desc')->paginate(20);
+		return view('admin.order.home',['list'=>$orderlist,'time_array'=>$time_array]);
 	}
 
 	public function show($id)

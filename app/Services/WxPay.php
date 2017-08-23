@@ -341,7 +341,7 @@ class WxPay extends Wx
     }
 
     public function getAppID(){
-        return $this->appid;
+        return $this->appId;
     }
 
     public function setMchId($mch_id){

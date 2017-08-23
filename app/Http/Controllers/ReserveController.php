@@ -64,19 +64,20 @@ class ReserveController extends Controller {
 //		}
 
 		//人员判断
-		$member_book = \DB::select('select count(*) as count from orders where openid = "oG3Ulv_z-uJsb-uUmy6m62J5qxc0" and order_status!=2 ');
+		$member_book = \DB::select("select count(*) as count from orders where openid = '".session('user')['openid']."' and order_status!=2");
 		if($member_book[0]->count !=0){
 			$return['code'] = 0;
 			$return['msg'] = '你已经预定过客房';
 			return response()->json($return);
 		}
 
+		$uid = \DB::table('users')->where('openid',session('user')['openid'])->pluck('id');
 		//将数据写入数据库
 		$data = [
 			'order_sn'=>date('YmdHis',time()).rand(1111,9999),
 			'order_status'=>0,//等待审核
 			'pay_status'=>0,//未付款
-			'openid'=>'oG3Ulv_z-uJsb-uUmy6m62J5qxc0',
+			'openid'=>session('user')['openid'],
 			'uid'=>$uid,//从系统中获取
 			'goods_id'=>$request->input('goods_id'),
 			'goods_name'=>$request->input('goods_name'),
@@ -100,6 +101,7 @@ class ReserveController extends Controller {
 		if($result){
 			$return['code'] = self::CODE_SUCCESS;
 			$return['msg'] = self::SUCCESS_MSG;
+			$return['data'] = $data;
 			return response()->json($return);
 		}
 	}

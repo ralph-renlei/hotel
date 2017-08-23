@@ -34,7 +34,7 @@ $(".submit_order").click(function() {
 		},
 		success: function(res) {
 			if(res.code==1) {
-				window.location.href = '/member';
+				window.location.href = '/pay?uid=1&openid=oCg8G1KlgdVf4AC9CUcx6teDuBh4&category_name='+res.data.category_name+'&order_amount='+res.data.order_amount+'&goods_id='+res.data.goods_id;
 			}else{
 				alert(res.msg);
 				window.location.href= '/';

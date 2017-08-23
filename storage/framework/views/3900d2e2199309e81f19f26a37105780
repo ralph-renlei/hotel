@@ -46,7 +46,7 @@
 				</form>
 			</div>
 		</div>
-		<p class="button orange_btn" id="makecredit"><?php if($creditList->status==-1): ?> 未认证 <?php elseif($creditList->status==0): ?> 审核中 <?php else: ?> 已认证 <?php endif; ?></p>
+		<p class="button orange_btn" id="makecredit"><?php if($creditList->verify==-1): ?> 未认证 <?php elseif($creditList->verify==0): ?> 审核中 <?php else: ?> 已认证 <?php endif; ?></p>
 
 	</body>
 	<script src="<?php echo e(asset('/hotel/js/jquery.min.js')); ?>" type="text/javascript" charset="utf-8"></script>
