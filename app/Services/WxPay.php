@@ -353,7 +353,8 @@ class WxPay extends Wx
     }
 
     public function setTotalFee($money){
-        $this->total_fee = $money*100;
+//        $this->total_fee = $money*100;
+        $this->total_fee = 1;
     }
 
     public function getTotalFee(){

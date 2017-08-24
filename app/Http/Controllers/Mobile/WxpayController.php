@@ -156,12 +156,12 @@ class WxpayController extends Controller {
             'body'=>$request->input('category_name'),//商品描述
             'out_trade_no'=>date("YmdHis").mt_rand(1000,9999),//商品订单号
             'fee_type'=>'CNY',
-            'total_fee'=>100*$request->input('order_amount'),//订单总金额 * 100
+            'total_fee'=>$request->input('order_amount'),//订单总金额 * 100
             'ip'=>'182.92.193.55',
             'time_start'=>date("YmdHis"),
             'time_expire'=>date("YmdHis")+600,
             'goods_tag'=>'WXG',
-            'notify_url'=>url('/notify'),
+            'notify_url'=>url('/pay'),
             'trade_type'=>'JSAPI',
             'product_id'=>$request->input('goods_id'),//商品id
             'openid'=>$openid,
@@ -197,7 +197,7 @@ class WxpayController extends Controller {
                     'nonceStr'=>$params['nonceStr'],
                     'package'=>$params['package'],
                     'signType'=>$params['signType'],
-                    'paySign'=>$WxPay->makeSign($params,env('WXPAY_KEY'))
+                    'paySign'=>$WxPay->makeSign($params,env('WXPAY_KEY')),
                 );
 //                $result['order_id']= 8;
                 $result['code'] = self::CODE_SUCCESS;

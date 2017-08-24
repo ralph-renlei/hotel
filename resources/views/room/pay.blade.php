@@ -65,10 +65,10 @@
 			});
 		}
 
-		function onBridgeReady(appId,timeStamp,nonceStr,package,signType,paySign){
+		function onBridgeReady(id,timeStamp,nonceStr,package,signType,paySign){
 			WeixinJSBridge.invoke(
 					'getBrandWCPayRequest', {
-						"appId":appId,     //公众号名称，由商户传入
+						"appId":"wx7d47acb224c8c69c",     //公众号名称，由商户传入
 						"timeStamp":timeStamp,         //时间戳，自1970年以来的秒数
 						"nonceStr":nonceStr, //随机串
 						"package":package,
