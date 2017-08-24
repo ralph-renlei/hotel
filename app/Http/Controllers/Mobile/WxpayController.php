@@ -3,6 +3,7 @@
 use WxHotel\Http\Requests;
 use WxHotel\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use WxHotel\Order;
 use WxHotel\Services\Wx;
 use WxHotel\Services\WxPay;
 use WxHotel\Services\Level;
@@ -130,23 +131,6 @@ class WxpayController extends Controller {
         }
 
         $config=array(
-//            'appid'=>env('WECHAT_APPID'),
-//            'mch_id'=>env('WXPAY_MCHID'),
-//            'device_info'=>'WEB',
-//            'nonce_str'=>'',
-//            'sign'=>'',
-//            'sign_type'=>'MD5',
-//            'out_trade_no'=>date("YmdHis").mt_rand(1000,9999),
-//            'fee_type'=>'CNY',
-//            'ip'=>'182.92.193.55',
-//            'time_start'=>date("YmdHis"),
-//            'time_expire'=>date("YmdHis")+600,
-//            'goods_tag'=>'WXG',
-//            'notify_url'=>url('notify'),
-//            'trade_type'=>'JSAPI',
-//            'openid'=>$openid,
-//            'product_id'=>18973,
-//            'key'=>env('WXPAY_KEY')
             'appid'=>env('WECHAT_APPID'),
             'mch_id'=>env('WXPAY_MCHID'),
             'device_info'=>'WEB',
@@ -154,14 +138,15 @@ class WxpayController extends Controller {
             'sign'=>'',
             'sign_type'=>'MD5',
             'body'=>$request->input('category_name'),//商品描述
-            'out_trade_no'=>date("YmdHis").mt_rand(1000,9999),//商品订单号
+            'out_trade_no'=>session('order_sn'),//商品订单号
             'fee_type'=>'CNY',
-            'total_fee'=>$request->input('order_amount'),//订单总金额 * 100
+//            'total_fee'=>$request->input('order_amount'),//订单总金额
+            'total_fee'=>0.01,//订单总金额
             'ip'=>'182.92.193.55',
             'time_start'=>date("YmdHis"),
             'time_expire'=>date("YmdHis")+600,
             'goods_tag'=>'WXG',
-            'notify_url'=>url('/pay'),
+            'notify_url'=>url('/notify'),
             'trade_type'=>'JSAPI',
             'product_id'=>$request->input('goods_id'),//商品id
             'openid'=>$openid,
@@ -174,16 +159,6 @@ class WxpayController extends Controller {
         if(!empty($return['result']['return_code'])){
             if($return['result']['result_code'] == 'SUCCESS'
                 && $return['result']['return_code'] == 'SUCCESS'){
-//                $order = array(
-//                    'out_trade_no'=>$config['out_trade_no'],
-//                    'order_status'=>0,
-//                    'pay_status'=>0,
-//                    'uid'=>$User->id,
-//                    'uname'=>$User->nickname,
-//                    'mobile'=>$User->mobile,
-//                    'add_time'=>time(),
-//                );
-//                $Order =  UsersOrder::create($order);
                 $params=array(
                     'appId'=>env('WECHAT_APPID'),
                     'timeStamp'=>date("YmdHis"),
@@ -199,7 +174,6 @@ class WxpayController extends Controller {
                     'signType'=>$params['signType'],
                     'paySign'=>$WxPay->makeSign($params,env('WXPAY_KEY')),
                 );
-//                $result['order_id']= 8;
                 $result['code'] = self::CODE_SUCCESS;
                 $result['msg'] = self::SUCCESS_MSG;
                 $result['data'] = $data;
@@ -230,111 +204,14 @@ class WxpayController extends Controller {
         file_put_contents(storage_path('app/order_'.time().'.txt'),json_encode($result));
 
         if($result['return_code']=='SUCCESS' ){
-            $out_trade_no = $result['out_trade_no'];
-            $money_paid = $result['total_fee'];
-            $order = UsersOrder::where('out_trade_no',$out_trade_no)->first();
+            $out_trade_no = $result['out_trade_no'];//订单号
+            $money_paid = $result['total_fee'];//付款金额
+            $order = Order::where('order_sn',$out_trade_no)->first();
 
-            if(isset($order) && $order->order_status == 0){
-
-                    if($result['result_code']=='SUCCESS'){
-                        $order->money_paid = $money_paid/100;
-                        $order->pay_status = 1;
-                        $order->pay_time = time();
-                    }
-                    if(isset($result['transaction_id'])){
-                        $order->transaction_id = $result['transaction_id'];
-                    }
-                    $order->order_status = 1;
-                    $order->save();
+            if(isset($order) && $order->pay_status == 0){
 
                     if($result['result_code']=='SUCCESS'){
-                        $user = User::find($order->uid);
-                        $card = Card::find($order->card_id);
-                        $Vip = new Vip();
-                        $vip = $Vip->startVip($card,$user);
-                        if($vip->status==1){
-                            $affiliate_total = User::where('pid',$user->id)->count();
-                            $months_total = UsersOrder::where('pay_status',1)->where('uid',$user->id)->sum('months');
-                            $consume_total = Consume::where('uid',$user->id)->where('status',1)->count();
-                            if($consume_total && $months_total && $affiliate_total){
-                                $user->point = $affiliate_total*$months_total+$consume_total;
-                            }else if( $months_total && $affiliate_total){
-                                $user->point = $affiliate_total*$months_total;
-                            }else if($consume_total){
-                                $user->point = $consume_total;
-                            }
-                            $user->level = Level::getLevel($user->point);
-                            $user->vip = 1;
-                            $user->save();
-                            //
-                            if($user->pid){
-                                $parent = User::find($user->pid);
-                                $affiliate1 = Config::find('affiliate1');
-                                $affiliate2 = Config::find('affiliate2');
-                                $grand_parent = NULL;
-                                if($parent->pid>0){
-                                    $grand_parent = User::find($parent->pid);
-                                }
-
-                                if($parent->role == 'sale'){
-                                    $money = $order->money_paid*($affiliate1->val/100);
-                                    $parent->reward += $money;
-                                    $parent->save();
-                                    $data = array(
-                                        'uid'=>$parent->id,
-                                        'uname'=>$parent->nickname,
-                                        'money'=>$money,
-                                        'type'=>1,
-                                        'cate'=>0,
-                                        'note'=>'affiliate1'
-                                    );
-                                    Money::create($data);
-                                    if($grand_parent && $grand_parent->role=='sale'){
-                                        $money2 = $money*($affiliate2->val/100);
-                                        $grand_parent->reward += $money2;
-                                        $grand_parent->save();
-                                        $data = array(
-                                            'uid'=>$grand_parent->id,
-                                            'uname'=>$grand_parent->nickname,
-                                            'money'=>$money2,
-                                            'type'=>1,
-                                            'cate'=>0,
-                                            'note'=>'affiliate2'
-                                        );
-                                        Money::create($data);
-                                    }
-
-                                }elseif($parent->role == 'member'){
-                                    $money = $order->money_paid*($affiliate2->val/100);
-                                    $parent->reward += $money;
-                                    $parent->save();
-
-                                    $data = array(
-                                        'uid'=>$parent->id,
-                                        'uname'=>$parent->nickname,
-                                        'money'=>$money,
-                                        'type'=>1,
-                                        'cate'=>0,
-                                        'note'=>'affiliate2'
-                                    );
-                                    Money::create($data);
-                                    if($grand_parent && $grand_parent->role=='sale'){
-                                        $money2 = $money*($affiliate2->val/100);
-                                        $grand_parent->reward += $money2;
-                                        $grand_parent->save();
-                                        $data = array(
-                                            'uid'=>$grand_parent->id,
-                                            'uname'=>$grand_parent->nickname,
-                                            'money'=>$money2,
-                                            'type'=>1,
-                                            'cate'=>0,
-                                            'note'=>'affiliate2'
-                                        );
-                                        Money::create($data);
-                                    }
-                                }
-                            }
-                        }
+                        Order::where('order_sn',$order->order_sn)->update(['order_amount'=>$money_paid/100,'pay_status'=>1]);
                     }
                 }
             $xml_array = array(
@@ -344,5 +221,15 @@ class WxpayController extends Controller {
             $xml = $WxPay->toXml($xml_array);
             $WxPay->replyNotify($xml);
         }
+    }
+
+    public function pay_success(){
+        $order = Order::where('order_sn',session('order_sn'))->first();
+        return view('room.pay_success',['list'=>$order]);
+    }
+
+    public function pay_error(){
+        $order = Order::where('order_sn',session('order_sn'))->first();
+        return view('room.pay_fail',['list'=>$order]);
     }
 }

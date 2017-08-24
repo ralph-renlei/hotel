@@ -32,6 +32,9 @@ Route::get('/pay','ReserveController@pay');
 Route::get('/unifiedorder','Mobile\WxpayController@unifiedorder');
 Route::get('/prepay','Mobile\WxpayController@prepay');
 Route::post('/notify','Mobile\WxpayController@notify');
+Route::get('/pay_success','Mobile\WxpayController@pay_success');//支付成功
+Route::get('pay_error','Mobile\WxpayController@pay_error');//支付失败
+
 //--------------------------------个人中心---------------------------------
 Route::get('/member','MemberController@index');
 Route::get('/member/info','MemberController@loadInfo');

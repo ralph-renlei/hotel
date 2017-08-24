@@ -93,6 +93,8 @@ class ReserveController extends Controller {
 			'username'=>$request->input('username'),
 			'last'=>date('z',strtotime($request->input('end'))) - date('z',strtotime($request->input('start'))),
 		];
+		//将订单号存入session中，支付时调取 ，返回订单号
+		session(['order_sn'=>$data['order_sn']]);
 
 		$result = Order::create($data);
 		if($request->input('forms')==2){
