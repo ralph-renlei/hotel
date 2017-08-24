@@ -36,24 +36,24 @@ class HomeController extends Controller {
     public function index(Request $request)
     {
         //如果没有code，获取code
-        if(!($request->input('code'))){
-            if(!is_null(session('wx_code'))){
-            }else{
-                session(['wx_code'=>1]);
-                $this->getCode();
-                return;
-            }
-        }
+//        if(!($request->input('code'))){
+//            if(!is_null(session('wx_code'))){
+//            }else{
+//                session(['wx_code'=>1]);
+//                $this->getCode();
+//                return;
+//            }
+//        }
 
         //回调地址 携带code参数，
-        $code = $request->input('code');
+//        $code = $request->input('code');
         //获取access_token
-        $access_token = $this->getAccess_token($code);
+//        $access_token = $this->getAccess_token($code);
         //获取登录授权
-        $userInfo =  $this->getUserInfo($access_token);
+//        $userInfo =  $this->getUserInfo($access_token);
         //如果数据中没有此用户，创建这个用户
-        $user = User::where('openid',$userInfo['openid'])->first();
-        session(['user'=>$userInfo]);
+        $user = User::where('openid','oCg8G1KlgdVf4AC9CUcx6teDuBh4')->first();
+        session(['user'=>$user]);
         if(!$user){
             User::create(['openid'=>$userInfo['openid'],'nickname'=>$userInfo['nickname'],'sex'=>$userInfo['sex'],'avatar'=>$userInfo['headimgurl'],'country'=>$userInfo['country'],'province'=>$userInfo['province'],'city'=>$userInfo['city']]);
         }
@@ -85,7 +85,7 @@ class HomeController extends Controller {
         if(!is_file($tokenFile)){
             fopen($tokenFile,'w');
         }
-        $data = json_decode(file_get_contents($tokenFile,false,stream_context_create($arrContextOptions)),true); //转换为数组格式
+        $data = json_decode(file_get_contents($tokenFile),true); //转换为数组格式
 
         if ($data['expire_time'] > time()) {
             $access_token = $data['access_token'];
@@ -99,9 +99,7 @@ class HomeController extends Controller {
                 $url = 'https://api.weixin.qq.com/sns/oauth2/refresh_token?appid='.$appid.'&grant_type=refresh_token&refresh_token='.file_get_contents($refreshFile);
             }
 
-
-            $response = file_get_contents($url,false, stream_context_create($arrContextOptions));
-            $res = file_get_contents($url);//重新获取
+            $res = file_get_contents($url,false, stream_context_create($arrContextOptions));//重新获取
             $res = json_decode($res, true); // 对 JSON 格式的字符串进行编码
             $access_token = $res['access_token'];
             if ($access_token) {

@@ -29,7 +29,7 @@
 	<script src="{{ asset('js/mobile.common.js') }}" type="text/javascript" charset="utf-8"></script>
     <script>
         wx.config({
-            debug: false,
+            debug: true,
             appId: '{{ $signPackage['appId'] }}',
             timestamp: '{{ $signPackage['timestamp'] }}',
             nonceStr: '{{ $signPackage['nonceStr'] }}',

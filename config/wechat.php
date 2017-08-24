@@ -21,7 +21,7 @@ return [
     'secret'  => env('WECHAT_SECRET', 'ef8fcc35f5a7e23459534fa010a3036e'),     // AppSecret
     'token'   => env('WECHAT_TOKEN', 'lvye'),          // Token
     'aes_key' => env('WECHAT_AES_KEY', '20vxfYBU70t4Yo11w40tUD6BSuptx8TayywhphxL8TK'),                    // EncodingAESKey
-    'auto_login'=>env('WECHAT_AUTO_LOGIN',FALSE),
+    'auto_login'=>env('WECHAT_AUTO_LOGIN',TRUE),
     'mch_id'  =>env('WECHAT_MCHID','1487699012'),
     'key'   =>env('WECHAT_PAY_KEY','ef8fcc35f5a7e23459534fa010a3036e'),
     /*

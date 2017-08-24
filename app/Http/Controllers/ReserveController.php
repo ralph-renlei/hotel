@@ -75,7 +75,7 @@ class ReserveController extends Controller {
 		//将数据写入数据库
 		$data = [
 			'order_sn'=>date('YmdHis',time()).rand(1111,9999),
-			'order_status'=>0,//等待审核
+			'order_status'=>2,//等待审核
 			'pay_status'=>0,//未付款
 			'openid'=>session('user')['openid'],
 			'uid'=>$uid,//从系统中获取
@@ -118,6 +118,10 @@ class ReserveController extends Controller {
 
 		$category = Category::find($goodsinfo->category_id);
 		return view('room.reserve_offline',['goodsinfo'=>$goodsinfo,'category'=>$category]);
+	}
+
+	public function pay(Request $request){
+		return view('room.pay',['uid'=>$request->input('uid'),'openid'=>$request->input('openid'),'category_name'=>$request->input('category_name'),'order_amount'=>$request->input('order_amount'),'goods_id'=>$request->input('goods_id')]);
 	}
 
 }

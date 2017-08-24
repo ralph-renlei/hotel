@@ -93,6 +93,10 @@ class WxpayController extends Controller {
 		//
 	}
 
+    public function unifiedorder(){
+        $result = new WxPay(env('WECHAT_APPID'),env('WECHAT_SECRET'),'MD5');
+        return $result;
+    }
 
     public function prepay(Request $request){
         $result = array(
@@ -157,7 +161,7 @@ class WxpayController extends Controller {
             'time_start'=>date("YmdHis"),
             'time_expire'=>date("YmdHis")+600,
             'goods_tag'=>'WXG',
-            'notify_url'=>url('notify'),
+            'notify_url'=>url('/notify'),
             'trade_type'=>'JSAPI',
             'product_id'=>$request->input('goods_id'),//商品id
             'openid'=>$openid,
@@ -195,7 +199,7 @@ class WxpayController extends Controller {
                     'signType'=>$params['signType'],
                     'paySign'=>$WxPay->makeSign($params,env('WXPAY_KEY'))
                 );
-                $result['order_id']= 8;
+//                $result['order_id']= 8;
                 $result['code'] = self::CODE_SUCCESS;
                 $result['msg'] = self::SUCCESS_MSG;
                 $result['data'] = $data;
