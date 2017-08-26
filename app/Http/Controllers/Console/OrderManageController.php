@@ -114,7 +114,7 @@ class OrderManageController extends Controller {
 			\DB::table('orders')->where('order_id',$order_id)->update(['goods_id'=>$goods_id,'goods_name'=>$goods_name,'order_status'=>1]);//订单中加入房间信息，更改审核状态
 		});
 
-		$this->send_room_success_notice($category,$order_id,$order->start,$order->end);
+		$this->send_room_success_notice($category,$goods_name,$order->start,$order->end);
 	}
 
 	public function loadadd(){
@@ -132,7 +132,7 @@ class OrderManageController extends Controller {
 
 		//加载该类别下所有 未入住的房间
 		$rooms = Goods::where(['category_id'=>$request->input('category_id'),'open'=>1,'status'=>1])->get();
-		$userinfo = Order::where('openid',$request->input('openid'))->first();
+		$userinfo = Order::where('order_sn',$request->input('order_sn'))->first();
 		$categorys = Category::all();
 		return view('room.admin_assignroom',['rooms'=>$rooms,'userinfo'=>$userinfo,'categorys'=>$categorys,'id'=>$request->input('category_id'),'order_sn'=>$request->input('order_sn')]);
 	}
@@ -149,7 +149,7 @@ class OrderManageController extends Controller {
 			->where('goods.goods_id',$request->input('goods_id'))
 			->leftJoin('goods_category as b','b.id','=','goods.category_id')
 			->get();
-		$userinfo = \WxHotel\User::where('openid',$request->input('openid'))->first();
+		$userinfo = Order::where('order_sn',$request->input('order_sn'))->first();
 		return view('room.admin_allow',['room'=>$room,'userinfo'=>$userinfo,'order_sn'=>$request->input('order_sn')]);
 	}
 
