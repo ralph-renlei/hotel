@@ -9,9 +9,9 @@
     </ul>
 	<ul class="nav nav-sidebar" id="order_menu" style="display: none">
 	    <li><a href="{{ url('/admin/order/home') }}">订单列表</a></li>
-	    <li><a href="{{ url('/admin/order/charge') }}">充值列表</a></li>
-	    <li><a href="{{ url('/admin/order/user') }}">用户资金</a></li>
-	    <li><a href="{{ url('/admin/order/money') }}">资金流水</a></li>
+	    {{--<li><a href="{{ url('/admin/order/charge') }}">充值列表</a></li>--}}
+	    {{--<li><a href="{{ url('/admin/order/user') }}">用户资金</a></li>--}}
+	    {{--<li><a href="{{ url('/admin/order/money') }}">资金流水</a></li>--}}
     </ul>
 	<ul class="nav nav-sidebar" id="user_menu" style="display: none">
 	    <li><a href="{{ url('/admin/user/member') }}">消费者</a></li>

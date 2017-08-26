@@ -44,8 +44,11 @@
                                 <td><?php echo e($item->start); ?></td>
                                 <td><?php echo e($item->end); ?></td>
                                 <td>
-									<?php if($item->pay_status == 0): ?> 未付款	<?php else: ?> 已付款 <?php endif; ?> /
-								    <?php if($item->order_status==0): ?> 待审核 <?php elseif($item->order_status==1): ?> 预订成功 <?php else: ?> 已完成 <?php endif; ?>
+									<?php if($item->pay_status == 0): ?> 未付款	/ 不用处理
+									<?php else: ?> 已付款
+										/ <?php if($item->order_status == 0): ?> 新订单 <?php elseif($item->order_status == 1): ?> 已处理 <?php else: ?> 已完成 <?php endif; ?>
+									<?php endif; ?>
+
                                 </td>
 							    <td class="do">
 									<button type="button" class="btn btn-default btn-sm" onclick="order_detail(<?php echo e($item->order_id); ?>)"  data-toggle="modal" data-target="#myModal">详情</button>
@@ -60,9 +63,9 @@
 											<?php endif; ?>
 										<?php else: ?>
 											<?php if($item->order_status==0): ?>
-												<a href="/admin/order/allowarrange/<?php echo e($item->order_id); ?>"><button type="button" class="btn btn-default btn-sm">同意申请</button></a>
+												<a href="/admin/order/allowarrange/<?php echo e($item->order_id); ?>"><button type="button" class="btn btn-default btn-sm">同意入住</button></a>
 											<?php elseif($item->order_status==1): ?>
-												<button type="button" class="btn btn-default btn-sm">已分配</button></a>
+												<button type="button" class="btn btn-default btn-sm">已同意</button></a>
 											<?php else: ?>
 												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
 											<?php endif; ?>
@@ -141,8 +144,8 @@
 						<label class="col-sm-2 control-label">订单状态<span style="color:red">*</span></label>
 						<div class="col-sm-3" id="category">
 							<select class="form-control" name="order_status" id="order_status">
-								<option value="0" id="option0">等待审核</option>
-								<option value="1" id="option1">预定成功</option>
+								<option value="0" id="option0">新订单</option>
+								<option value="1" id="option1">已处理</option>
 								<option value="2" id="option2">已完成</option>
 							</select>
 						</div>
@@ -189,7 +192,7 @@ order_detail = function(id){
 				}else{
 					$('#status2').attr('checked','checked');
 				}
-				if(c.order_satus == 0){
+				if(c.order_status == 0){
 					$('#option0').attr('selected','selected');
 				}else if(c.order_status == 1){
 					$('#option1').attr('selected','selected');

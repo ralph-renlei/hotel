@@ -98,7 +98,7 @@
 		var order_id = $(this).val();
 		if(order_id == null || order_id==''){
 			alert('订单id不能为空');
-			return;
+			return false;
 		}
 		$.ajax({
 			url: '/admin/order/order_id/'+order_id,

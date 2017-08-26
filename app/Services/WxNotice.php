@@ -1,6 +1,7 @@
 <?php
 namespace WxHotel\Services;
 
+use WxHotel\Http\Controllers\Mobile\HomeController;
 use WxHotel\Services\JSSDK;
 
 //消息模板
@@ -78,6 +79,130 @@ class WxNotice extends JSSDK
 		);
 		$msg = array(
 			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>'http://www.yanshihealth.com/qrcode.jpg'
+		);
+		return $this->send(urldecode(json_encode($msg)));
+	}
+
+  /**
+	{{first.DATA}}
+	订单编号：{{keyword1.DATA}}
+	酒店名称：{{keyword2.DATA}}
+	入住时间：{{keyword3.DATA}}
+	下单金额：{{keyword4.DATA}}
+	支付方式：{{keyword5.DATA}}
+	{{remark.DATA}}
+   */
+	public function book_success($openid,$order_sn,$start_time,$order_amount,$url){
+		$template_id = 'PWiPgtUPLcgx_fBZnsDLPPrY6pziiqpSJDbodeoFkBI';
+		$txt = array(
+			'first'=>array('value'=>urlencode('恭喜你，您的酒店预订已提交成功')),
+			'keyword1'=>array('value'=>$order_sn),
+			'keyword2'=>array('value'=>urlencode('西安希尔顿酒店')),
+			'keyword3'=>array('value'=>$start_time),
+			'keyword4'=>array('value'=>$order_amount),
+			'keyword5'=>array('value'=>urlencode('微信支付')),
+			'remark'=>array('value'=>urlencode('祝您休息愉快'))
+		);
+		$msg = array(
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>$url,
+		);
+		return $this->send(urldecode(json_encode($msg)));
+	}
+
+	/**
+	{{first.DATA}}
+	订单号：{{keyword1.DATA}}
+	支付用户：{{keyword2.DATA}}
+	订单金额：{{keyword3.DATA}}
+	酒店房型：{{keyword4.DATA}}
+	抵离时间：{{keyword5.DATA}}
+	{{remark.DATA}}
+	 */
+	public function room_to_manager($openid,$realname,$order_amount,$category_name,$goods_name,$start,$end,$url){
+		$template_id = 'S5fEb4A8k7hyZ6vCfUDVBarSDtB22mksQ7uC5Mpg1Rg';
+		$txt = array(
+			'first'=>array('value'=>urlencode('您已成功收到用户订单')),
+			'keyword1'=>array('value'=>session('order_sn')),
+			'keyword2'=>array('value'=>urlencode($realname)),
+			'keyword3'=>array('value'=>urlencode($order_amount)),
+			'keyword4'=>array('value'=>urlencode($category_name)),
+			'keyword5'=>array('value'=>urlencode($start).'~'.urlencode($end)),
+			'remark'=>array('value'=>urlencode('请及时更新'))
+		);
+		$msg = array(
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>$url,
+		);
+		return $this->send(urldecode(json_encode($msg)));
+	}
+
+	/**
+	{{first.DATA}}
+	订单号：{{keyword1.DATA}}
+	支付用户：{{keyword2.DATA}}
+	订单金额：{{keyword3.DATA}}
+	酒店房型：{{keyword4.DATA}}
+	抵离时间：{{keyword5.DATA}}
+	{{remark.DATA}}
+	 */
+	public function room_arrange_notice($category_name,$goods_id,$start,$end){
+		$template_id = 'S60NKkC-w8s7Rx5psPIuAC4DF_ISVoF1n3VYIJxBH88';
+		$txt = array(
+			'first'=>array('value'=>urlencode('恭喜你，您的酒店预订已提交成功')),
+			'keyword1'=>array('value'=>$category_name),
+			'keyword2'=>array('value'=>$goods_id),
+			'keyword3'=>array('value'=>urlencode('正常入住')),
+			'keyword4'=>array('value'=>urlencode($start)),
+			'keyword5'=>array('value'=>urlencode($end)),
+			'remark'=>array('value'=>urlencode('祝您休息愉快'))
+		);
+		$msg = array(
+			'touser'=>session('user')['openid'],'template_id'=>$template_id,'data'=>$txt,'url'=>'',
+		);
+		return $this->send(urldecode(json_encode($msg)));
+	}
+
+
+
+	/**
+	{{first.DATA}}
+	申请用户：{{keyword1.DATA}}
+	申请类型：{{keyword2.DATA}}
+	申请时间：{{keyword3.DATA}}
+	{{remark.DATA}}
+	 */
+	public function verity_application($realname,$application_time,$openid,$url){
+		$template_id = 'JGQi_Fsk-Wf3UhgyZD72VNDpdsScjUQ4i7iKB3uPiAQ';
+		$txt = array(
+			'first'=>array('value'=>urlencode('顾客入住实名认证申请，请尽快核实')),
+			'keyword1'=>array('value'=>urlencode($realname)),
+			'keyword2'=>array('value'=>urlencode('身份证实名认证')),
+			'keyword3'=>array('value'=>urlencode($application_time)),
+			'remark'=>array('value'=>urlencode('请用手机或系统审核审核'))
+		);
+		$msg = array(
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>$url,
+		);
+		return $this->send(urldecode(json_encode($msg)));
+	}
+
+	/**
+	{{first.DATA}}
+	审核内容：{{keyword1.DATA}}
+	审核结果：{{keyword2.DATA}}
+	客服电话：{{keyword3.DATA}}
+	{{remark.DATA}}
+	 */
+	public function verifymsg(){
+		$template_id = 'tXS_P-C9LOkRvHuDr5uLJooUyaFDue2zilt45EPjp_E';
+		$txt = array(
+			'first'=>array('value'=>urlencode('您的身份认证审核已通过')),
+			'keyword1'=>array('value'=>urlencode('身份证审核')),
+			'keyword2'=>array('value'=>urlencode('审核已通过')),
+			'keyword3'=>array('value'=>urlencode('40000000')),
+			'remark'=>array('value'=>urlencode('您已通过审核'))
+		);
+		$msg = array(
+			'touser'=>session('user')['openid'],'template_id'=>$template_id,'data'=>$txt,'url'=>''
 		);
 		return $this->send(urldecode(json_encode($msg)));
 	}
@@ -167,10 +292,46 @@ class WxNotice extends JSSDK
 	
 	
 	public function send($data){
-		$url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token='.$this->getAccessToken();
+//		$url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token='.$this->getAccessToken();
+		$url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token='.$this->get_token();
 		$result = $this->httpPost($url, $data);
 		return $result;
 	}
 
+	public function get_token(){
+		//判断 存在access文件，并且token文件不过期，返回access_token
+		$tokenFile = storage_path() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'token.txt';
+		$arrContextOptions = array(
+			"ssl"=>array(
+				"verify_peer"=>false,
+				"verify_peer_name"=>false,
+			),
+		);
+		if(!is_file($tokenFile)){
+			fopen($tokenFile,'w');
+		}
+		$data = json_decode(file_get_contents($tokenFile),true); //转换为数组格式
+
+		if ($data['expire_time'] > time()) {
+			$access_token = $data['access_token'];
+		}else{
+//            fopen($tokenFile, 'w');//创建文件，或者覆盖 过期的access_token
+			$appid = env('WECHAT_APPID');
+			$secret = env('WECHAT_SECRET');
+			$url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$appid.'&secret='.$secret;
+
+			$res = file_get_contents($url,false, stream_context_create($arrContextOptions));//重新获取
+			$res = json_decode($res, true); // 对 JSON 格式的字符串进行编码
+			$access_token = $res['access_token'];
+			if ($access_token) {
+				$data['expire_time'] = time() + 7200; //保存2小时
+				$data['access_token'] = $access_token;
+				$fp = fopen($tokenFile, "w"); //只写文件
+				fwrite($fp, json_encode($data)); //写入json格式文件
+				fclose($fp); //关闭连接
+			}
+		}
+		return $access_token;
+	}
 }
 ?>

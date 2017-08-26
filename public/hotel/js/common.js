@@ -16,6 +16,16 @@ $(".submit_order").click(function() {
 	var goods_id = $('#goods_id').attr('data');
 	var goods_name = $('#goods_name').attr('data');
 	var category_name = $('#category_name').text();
+	var forms = $('#forms').val();
+	if(username == '' || phone == ''){
+		alert('您的信息必须填写');
+		return false;
+	}
+
+	if(!(/^1[3|4|5|7|8][0-9]{9}$/.test(phone))){
+		alert('手机号格式不正确');
+		return false;
+	}
 	$.ajax({
 		type: "POST",
 		url: "/reserve/ordercommit",
@@ -31,10 +41,11 @@ $(".submit_order").click(function() {
 			goods_id:goods_id,
 			goods_name:goods_name,
 			category_name:category_name,
+			forms:forms,
 		},
 		success: function(res) {
 			if(res.code==1) {
-				window.location.href = '/pay?uid=1&openid=oCg8G1KlgdVf4AC9CUcx6teDuBh4&category_name='+res.data.category_name+'&order_amount='+res.data.order_amount+'&goods_id='+res.data.goods_id;
+				window.location.href = "/pay?uid="+res.data.uid+"&openid="+res.data.openid+"&category_name="+res.data.category_name+"&order_amount="+res.data.order_amount+"&goods_id="+res.data.goods_id;
 				//window.location.href = '/unifiedorder';
 1			}else{
 				alert(res.msg);
@@ -192,6 +203,50 @@ function settime(v) {
 	} else {
 		//alert("请输入合法的手机号");
 	}
+}
+
+//管理员审核
+function agree() {
+	$.ajax({
+		type:"get",
+		url:"/member/mobile_credit_make",
+		async:true,
+		data:{}	,
+		success: function(res){
+			if(res.code == 1){
+				setTimeout(function() {
+					alert('已同意！');
+				}, 1000);
+			}
+		}
+	});
+}
+
+function reject() {
+	setTimeout(function() {
+		alert("已驳回！");
+	}, 1000);
+
+}
+
+function assignRoom(){
+	$.ajax({
+		type:"POST",
+		url:"/mobile_room_arrange",
+		async:true,
+		data:{
+			goods_id: $('#goods_id').val(),
+			goods_name:$('#goods_id').find('option:selected').text(),
+			category_name:$('#room_type').find('option:selected').text(),
+			order_sn:$('#order_sn').val(),
+		},
+
+		success: function(res){
+			if(res.code == 1){
+				alert('成功');
+			}
+		}
+	});
 }
 
 //时间选择

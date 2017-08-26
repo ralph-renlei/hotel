@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use WxHotel\Order;
+use WxHotel\Services\WxNotice;
 use WxHotel\SmsRecord;
 use WxHotel\User;
 
@@ -35,7 +36,7 @@ class MemberController extends Controller {
 	public function credit()
 	{
 		$creditList = User::where('openid',session('user')['openid'])->first();
-		if(!isset($creditList->idcard_front)){
+		if($creditList->verify == 0){
 			return view('member.certificate');
 		}else{
 			return view('member.certificate_photo',['creditList'=>$creditList]);
@@ -53,8 +54,24 @@ class MemberController extends Controller {
 		];
 		$cate = User::where('openid',session('user')['openid'])->update($data);
 		if($cate){
+			$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
+			$wx->verity_application($request->input('realname'),date('Y-m-d H:i:s',time()),session('user')['openid'],url('/member/mobile_credit_allow'));
 			echo "<script>alert('已提交，等待审核');window.location.href='/member';</script>";
 		}
+	}
+
+	public function mobile_credit_allow(){
+		$user = User::where('openid',session('user')['openid'])->first();
+		return view('room.admin_audit',['user'=>$user]);
+	}
+
+	public function mobile_credit_make(){
+		$result = User::where('openid',session('user')['openid'])->update(['verify'=>1]);
+		$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
+		$wx->verifymsg();
+		$return['code'] = 1;
+		$return['msg'] = '成功';
+		return response()->json($return);
 	}
 
 	public function setting()

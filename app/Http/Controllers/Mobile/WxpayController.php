@@ -5,6 +5,7 @@ use WxHotel\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use WxHotel\Order;
 use WxHotel\Services\Wx;
+use WxHotel\Services\WxNotice;
 use WxHotel\Services\WxPay;
 use WxHotel\Services\Level;
 
@@ -201,7 +202,7 @@ class WxpayController extends Controller {
         $result = array();
         $return = $WxPay->notify($result);
 
-        file_put_contents(storage_path('app/order_'.time().'.txt'),json_encode($result));
+//        file_put_contents(storage_path('app/order_'.time().'.txt'),json_encode($result));
 
         if($result['return_code']=='SUCCESS' ){
             $out_trade_no = $result['out_trade_no'];//订单号
@@ -225,7 +226,29 @@ class WxpayController extends Controller {
 
     public function pay_success(){
         $order = Order::where('order_sn',session('order_sn'))->first();
-        return view('room.pay_success',['list'=>$order]);
+        //订单中有 goods_id 同意 没有分配房间(給管理员发送的模板消息 要跳转的页面)
+        if(!empty($order->goods_id)){
+            $url = url('/mobile_room?category_id='.$order->category_id.'&order_sn='.$order->order_sn.'&openid='.$order->openid);
+        }else{
+            $url = url('/mobile_allow?goods_id='.$order->goods_id.'&order_sn='.$order->order_sn.'&openid='.$order->openid);
+        }
+
+        //查询这个用户是否实名认证，如果未实名认证，弹窗通知，跳转到认证页面
+        $user = User::where('openid',session('user')['openid'])->first();
+        if($user->verify == 0){
+            $verify = 0;
+        }else{
+            $verify = 1;
+        }
+
+        $wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
+        $result = $wx->book_success(session('user')['openid'],session('order_sn'),$order->start,$order->order_amount,'');//給预订者发送模板消息
+        $managers = User::where('role','admin')->lists('openid');//查询管理员
+        foreach($managers as $openid){
+            $wx->room_to_manager($openid,$order->username,$order->order_amount,$order->category_name,$order->goods_name,$order->start,$order->end,$url);//给管理者发送信息
+        }
+
+        return view('room.pay_success',['list'=>$order,'verify'=>$verify]);
     }
 
     public function pay_error(){

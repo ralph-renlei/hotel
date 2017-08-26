@@ -43,25 +43,17 @@ class ReserveController extends Controller {
 		$uid = 1;
 		$category_id = $request->input('id');
 		$category_name = $request->input('category_name');
+		$last = date('z',strtotime($request->input('end')))-date('z',strtotime($request->input('start')));
 
 		//后台下订单 添加用户，写入订单
 		if($request->input('forms')==2){
 			$category = Category::where('id',$request->input('category'))->first();
 			$order_amount = $category->normalprice;
-			$last = date('z',strtotime($request->input('end')))-date('z',strtotime($request->input('start')));
 			$order_amount = $last*$order_amount;
 			$category_id = $request->input('category');
 			$category_name = $category->name;
 			$uid = User::create(['name'=>$request->input('username'),'mobile'=>$request->input('phone')]);
 		}
-
-		//房型判断
-//		$category_number  = \DB::select('select count(*) as number from goods where category_id='.$category_id.' and open =1 and status = 1');
-//		if($category_number[0]->number == 0){
-//			$return['code'] = 0;
-//			$return['msg'] = '该房型客房已满';
-//			return response()->json($return);
-//		}
 
 		//人员判断
 		$member_book = \DB::select("select count(*) as count from orders where openid = '".session('user')['openid']."' and order_status!=2");
@@ -75,13 +67,13 @@ class ReserveController extends Controller {
 		//将数据写入数据库
 		$data = [
 			'order_sn'=>date('YmdHis',time()).rand(1111,9999),
-			'order_status'=>2,//等待审核
+			'order_status'=>0,//新订单
 			'pay_status'=>0,//未付款
 			'openid'=>session('user')['openid'],
 			'uid'=>$uid,//从系统中获取
 			'goods_id'=>$request->input('goods_id'),
 			'goods_name'=>$request->input('goods_name'),
-			'goods_price'=>$order_amount,
+			'goods_price'=>$order_amount/$last,
 			'order_amount'=>$order_amount,
 			'add_time'=>date("Y-m-d H:i:s",time()) ,
 			'forms'=>$request->input('forms'),//在线支付
@@ -91,7 +83,7 @@ class ReserveController extends Controller {
 			'category_name'=>$category_name,
 			'phone'=>$request->input('phone'),
 			'username'=>$request->input('username'),
-			'last'=>date('z',strtotime($request->input('end'))) - date('z',strtotime($request->input('start'))),
+			'last'=>$last,
 		];
 		//将订单号存入session中，支付时调取 ，返回订单号
 		session(['order_sn'=>$data['order_sn']]);
@@ -103,7 +95,7 @@ class ReserveController extends Controller {
 		if($result){
 			$return['code'] = self::CODE_SUCCESS;
 			$return['msg'] = self::SUCCESS_MSG;
-			$return['data'] = $data;
+			$return['data'] = ['uid'=>session('uid'),'openid'=>session('user')['openid']];
 			return response()->json($return);
 		}
 	}

@@ -30,6 +30,7 @@
 	</div>
 </div>
 <a href="index.html" class="goback">
+	<input type="hidden" id="verify" value="{{$verify}}"/>
 	<span class="theme_text" id="seconds">3</span>秒后<span class="theme_text">返回首页</span>
 </a>
 </body>
@@ -39,7 +40,12 @@
 	setInterval(function() {
 		seconds--;
 		if(seconds == 0) {
-			window.location.href = "/";
+			if( $('#verify').val() == 0){
+				alert('为了您的入住，请尽快实名认证');
+				window.location.href = "{{url('/member/credit')}}";
+			}else{
+				window.location.href = '/';
+			}
 		} else {
 			$("#seconds").text(seconds);
 		}

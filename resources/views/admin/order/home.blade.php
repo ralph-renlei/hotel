@@ -45,8 +45,11 @@
                                 <td>{{ $item->start }}</td>
                                 <td>{{ $item->end }}</td>
                                 <td>
-									@if($item->pay_status == 0) 未付款	@else 已付款 @endif /
-								    @if($item->order_status==0) 待审核 @elseif($item->order_status==1) 预订成功 @else 已完成 @endif
+									@if($item->pay_status == 0) 未付款	/ 不用处理
+									@else 已付款
+										/ @if($item->order_status == 0) 新订单 @elseif($item->order_status == 1) 已处理 @else 已完成 @endif
+									@endif
+
                                 </td>
 							    <td class="do">
 									<button type="button" class="btn btn-default btn-sm" onclick="order_detail({{$item->order_id}})"  data-toggle="modal" data-target="#myModal">详情</button>
@@ -61,9 +64,9 @@
 											@endif
 										@else
 											@if($item->order_status==0)
-												<a href="/admin/order/allowarrange/{{$item->order_id}}"><button type="button" class="btn btn-default btn-sm">同意申请</button></a>
+												<a href="/admin/order/allowarrange/{{$item->order_id}}"><button type="button" class="btn btn-default btn-sm">同意入住</button></a>
 											@elseif($item->order_status==1)
-												<button type="button" class="btn btn-default btn-sm">已分配</button></a>
+												<button type="button" class="btn btn-default btn-sm">已同意</button></a>
 											@else
 												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
 											@endif
@@ -141,8 +144,8 @@
 						<label class="col-sm-2 control-label">订单状态<span style="color:red">*</span></label>
 						<div class="col-sm-3" id="category">
 							<select class="form-control" name="order_status" id="order_status">
-								<option value="0" id="option0">等待审核</option>
-								<option value="1" id="option1">预定成功</option>
+								<option value="0" id="option0">新订单</option>
+								<option value="1" id="option1">已处理</option>
 								<option value="2" id="option2">已完成</option>
 							</select>
 						</div>
@@ -189,7 +192,7 @@ order_detail = function(id){
 				}else{
 					$('#status2').attr('checked','checked');
 				}
-				if(c.order_satus == 0){
+				if(c.order_status == 0){
 					$('#option0').attr('selected','selected');
 				}else if(c.order_status == 1){
 					$('#option1').attr('selected','selected');

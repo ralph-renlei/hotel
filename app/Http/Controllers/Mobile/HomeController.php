@@ -5,6 +5,7 @@ use WxHotel\Http\Controllers\Controller;
 use WxHotel\Services\JSSDK;
 use WxHotel\Services\Wx;
 use WxHotel\User;
+use DB;
 
 class HomeController extends Controller {
     /*
@@ -36,26 +37,29 @@ class HomeController extends Controller {
     public function index(Request $request)
     {
         //如果没有code，获取code
-//        if(!($request->input('code'))){
-//            if(!is_null(session('wx_code'))){
-//            }else{
-//                session(['wx_code'=>1]);
-//                $this->getCode();
-//                return;
-//            }
-//        }
+        if(!($request->input('code'))){
+            if(!is_null(session('wx_code'))){
+            }else{
+                session(['wx_code'=>1]);
+                $this->getCode();
+                return;
+            }
+        }
 
         //回调地址 携带code参数，
-//        $code = $request->input('code');
-        //获取access_token
-//        $access_token = $this->getAccess_token($code);
-        //获取登录授权
-//        $userInfo =  $this->getUserInfo($access_token);
+        $code = $request->input('code');
+//        获取access_token
+        $access_token = $this->getAccess_token($code);
+//        获取登录授权
+        $userInfo =  $this->getUserInfo($access_token);
+        session(['user'=>$userInfo]);
         //如果数据中没有此用户，创建这个用户
-        $user = User::where('openid','oCg8G1KlgdVf4AC9CUcx6teDuBh4')->first();
-        session(['user'=>$user]);
+        $user = User::where('openid',$userInfo['openid'])->first();
         if(!$user){
-            User::create(['openid'=>$userInfo['openid'],'nickname'=>$userInfo['nickname'],'sex'=>$userInfo['sex'],'avatar'=>$userInfo['headimgurl'],'country'=>$userInfo['country'],'province'=>$userInfo['province'],'city'=>$userInfo['city']]);
+            $uid = \DB::table('users')->insertGetId(['openid'=>$userInfo['openid'],'nickname'=>$userInfo['nickname'],'sex'=>$userInfo['sex'],'avatar'=>$userInfo['headimgurl'],'country'=>$userInfo['country'],'province'=>$userInfo['province'],'city'=>$userInfo['city']]);
+            session(['uid'=>$uid]);
+        }else{
+            session(['uid'=>$user->id]);
         }
 
         return view('room.index_online');
@@ -96,7 +100,8 @@ class HomeController extends Controller {
             $grant_type = 'authorization_code ';
             $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' . $appid . '&secret=' . $secret . '&code=' . $code . '&grant_type=' . $grant_type;
             if($code == NULL){
-                $url = 'https://api.weixin.qq.com/sns/oauth2/refresh_token?appid='.$appid.'&grant_type=refresh_token&refresh_token='.file_get_contents($refreshFile);
+                $url = 'https://api.weixin.qq.com/sns/oauth2/refresh_token?appid='.$appid.'&grant_type=refresh_token&refresh_token='.file_get_contents($refreshFile);//刷新token
+//                $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$appid.'&secret='.$secret;
             }
 
             $res = file_get_contents($url,false, stream_context_create($arrContextOptions));//重新获取

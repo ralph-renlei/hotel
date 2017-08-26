@@ -71,6 +71,23 @@
 		$('#makecredit').click(function(){
 			var front = $('input[name="front"]').attr('data_url');
 			var behind = $('input[name="behind"]').attr('data_url');
+			var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+
+			if($('#realname').val() == '' || $('#idcard_number').val() == ''){
+				alert('您的信息必须填写');
+				return;
+			}
+
+			if(reg.test($('#idcard_number').val()) === false){
+				alert("身份证输入不合法");
+				return  false;
+			}
+
+			if(front == undefined || behind == undefined){
+				alert('请上传照片');
+				return;
+			}
+
 			$('input[name="photo1"]').attr('value',front);
 			$('input[name="photo2"]').attr('value',behind);
 			$('#form1').submit();

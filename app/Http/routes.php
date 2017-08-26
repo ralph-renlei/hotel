@@ -26,12 +26,10 @@ Route::get('region/city/{id}', 'RegionController@getCity');
 Route::get('region/area/{id}', 'RegionController@getArea');
 Route::get('region/street/{id}', 'RegionController@getStreet');
 Route::get('region/community/{id}', 'RegionController@getCommunity');
-//Route::any('notify','Mobile\SwiftController@notify');
-//Route::any('pay','Mobile\WxpayController@prepay');
 Route::get('/pay','ReserveController@pay');
 Route::get('/unifiedorder','Mobile\WxpayController@unifiedorder');
-Route::get('/prepay','Mobile\WxpayController@prepay');
-Route::post('/notify','Mobile\WxpayController@notify');
+Route::get('/prepay','Mobile\WxpayController@prepay');//预下单
+Route::post('/notify','Mobile\WxpayController@notify');//异步通知
 Route::get('/pay_success','Mobile\WxpayController@pay_success');//支付成功
 Route::get('pay_error','Mobile\WxpayController@pay_error');//支付失败
 
@@ -42,6 +40,9 @@ Route::get('/member/order','MemberController@order');
 Route::get('/member/order_detail/{id}','MemberController@order_detail');
 Route::get('/member/credit','MemberController@credit');
 Route::post('/member/credit','MemberController@makeCredit');
+Route::get('/member/mobile_credit_allow','MemberController@mobile_credit_allow');
+Route::get('/member/mobile_credit_make','MemberController@mobile_credit_make');
+
 Route::get('/member/setting','MemberController@setting');
 Route::get('/member/setting/bind','MemberController@bind');
 Route::get('/member/setting/new','MemberController@newphone');
@@ -49,8 +50,11 @@ Route::get('/member/setting/new','MemberController@newphone');
 //--------------------------------房间预定---------------------------------
 Route::get('/reserve','ReserveController@index');
 Route::get('/reserve/orderonline','ReserveController@makeOrder');//线上预订
-Route::post('/reserve/ordercommit','ReserveController@orderCommit');
-Route::get('/reserve/orderoffline/goods_id/{id}','ReserveController@orderoffline');
+Route::post('/reserve/ordercommit','ReserveController@orderCommit');//生成订单
+Route::get('/reserve/orderoffline/goods_id/{id}','ReserveController@orderoffline');//线下预定
+Route::get('/mobile_room','Console\OrderManageController@mobile_room');//管理员通过手机分配房间
+Route::get('/mobile_allow','Console\OrderManageController@mobile_allow');//管理员通过手机同意
+Route::post('mobile_room_arrange','Console\OrderManageController@mobile_room_arrange');//分配房间写入数据库
 
 //--------------------------------PC管理端---------------------------------
 Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
@@ -88,6 +92,7 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::get('/order/allowarrange/{id}','OrderManageController@allowarrange');//加载房间分配
     Route::post('/order/room_arrange','OrderManageController@room_arrange');//分配房间
     Route::get('/order/add','OrderManageController@loadadd');//加载添加订单
+
 
     Route::get('system', 'SystemController@cate');
     Route::get('system/config', 'SystemController@config');
