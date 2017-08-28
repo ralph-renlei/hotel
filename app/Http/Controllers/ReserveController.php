@@ -40,7 +40,7 @@ class ReserveController extends Controller {
 	//提交订单
 	public function orderCommit(Request $request){
 		$order_amount = $request->input('order_amount');
-		$uid = 1;
+		$uid = session('uid');//通过 线上，线下，uid就是session中的uid ， 后台添加，就不是
 		$category_id = $request->input('id');
 		$category_name = $request->input('category_name');
 		$last = date('z',strtotime($request->input('end')))-date('z',strtotime($request->input('start')));
@@ -52,7 +52,7 @@ class ReserveController extends Controller {
 			$order_amount = $last*$order_amount;
 			$category_id = $request->input('category');
 			$category_name = $category->name;
-			$uid = User::create(['name'=>$request->input('username'),'mobile'=>$request->input('phone')]);
+			$uid = \DB::table('users')->insertGetId(['name'=>$request->input('username'),'mobile'=>$request->input('phone')]); //创建用户
 		}
 
 		//人员判断
@@ -63,7 +63,7 @@ class ReserveController extends Controller {
 			return response()->json($return);
 		}
 
-		$uid = \DB::table('users')->where('openid',session('user')['openid'])->pluck('id');
+//		$uid = \DB::table('users')->where('openid',session('user')['openid'])->pluck('id');
 		//将数据写入数据库
 		$data = [
 			'order_sn'=>date('YmdHis',time()).rand(1111,9999),
@@ -88,14 +88,17 @@ class ReserveController extends Controller {
 		//将订单号存入session中，支付时调取 ，返回订单号
 		session(['order_sn'=>$data['order_sn']]);
 
+		//更新用户的姓名和电话
+		User::where('openid',session('user')['openid'])->update(['mobile'=>$request->input('phone'),'name'=>$request->input('username')]);
+
 		$result = Order::create($data);
-		if($request->input('forms')==2){
-			return redirect('/admin/order/home');
+		if($request->input('forms')==1 || $request->input('forms') == 0){
+			return redirect('/member/order');
 		}
 		if($result){
 			$return['code'] = self::CODE_SUCCESS;
 			$return['msg'] = self::SUCCESS_MSG;
-			$return['data'] = ['uid'=>session('uid'),'openid'=>session('user')['openid']];
+			$return['data'] = ['uid'=>$uid,'openid'=>session('user')['openid']];
 			return response()->json($return);
 		}
 	}

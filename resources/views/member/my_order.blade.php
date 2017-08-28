@@ -23,7 +23,7 @@
 						<div class="no_interval_cell order_title">
 							<p>
 								<span class="bigger_text">西安希尔顿酒店</span>
-								<span>@if($list->forms == 1 ) 在线预订 @elseif($list->forms) 前台预定 @else 线下预定 @endif</span>
+								<span>@if($list->forms == 1 ) 在线预订 @elseif($list->forms == 2) 前台预定 @else 线下预定 @endif</span>
 							</p>
 							<p>
 								<span class="bigger_text">{{$list->goods_name}}</span>

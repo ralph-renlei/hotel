@@ -34,7 +34,6 @@
 									<td class="do">
 										<a href="<?php echo e(url('/admin/user/user/'.$item->id)); ?>"><button type="button" class="btn btn-default btn-sm">修改</button></a>
                                         <button type="button" class="btn btn-default btn-sm" onclick="app.user.del('<?php echo e($item->id); ?>')">删除</button>
-                                        <button type="button" class="btn btn-default btn-sm" onclick="app.user.del('<?php echo e($item->id); ?>')">详情</button>
 									</td>
 								</tr>
 							<?php endforeach; ?>

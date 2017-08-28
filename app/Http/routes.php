@@ -55,6 +55,8 @@ Route::get('/reserve/orderoffline/goods_id/{id}','ReserveController@orderoffline
 Route::get('/mobile_room','Console\OrderManageController@mobile_room');//管理员通过手机分配房间
 Route::get('/mobile_allow','Console\OrderManageController@mobile_allow');//管理员通过手机同意
 Route::post('mobile_room_arrange','Console\OrderManageController@mobile_room_arrange');//分配房间写入数据库
+Route::get('/power','Console\PowerController@control_power');//通断电
+Route::get('/test','Console\PowerController@save_boxes');//测试
 
 //--------------------------------PC管理端---------------------------------
 Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
@@ -126,6 +128,7 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::get('user/user/{id}','UserController@getUser');
     Route::post('user/user','UserController@postUser');
     Route::delete('user/user','UserController@delUser');
+    Route::post('/user/saveUser','UserController@saveUser');
     Route::get('/user/verify','UserController@verify');
     Route::get('/user/verify/image/{id}','UserController@getImage');
     Route::post('/user/verify/saveimage','UserController@saveImage');

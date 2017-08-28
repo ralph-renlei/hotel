@@ -161,8 +161,6 @@ class WxNotice extends JSSDK
 		return $this->send(urldecode(json_encode($msg)));
 	}
 
-
-
 	/**
 	{{first.DATA}}
 	申请用户：{{keyword1.DATA}}
@@ -203,6 +201,28 @@ class WxNotice extends JSSDK
 		);
 		$msg = array(
 			'touser'=>session('user')['openid'],'template_id'=>$template_id,'data'=>$txt,'url'=>''
+		);
+		return $this->send(urldecode(json_encode($msg)));
+	}
+
+	/**
+	{{first.DATA}}
+	酒店名称：{{keyword1.DATA}}
+	房间号：{{keyword2.DATA}}
+	时间：{{keyword3.DATA}}
+	{{remark.DATA}}
+	 */
+	public function close_accounts($openid,$goods_name){
+		$template_id = 'X-gUrjtyBPsoaOa-c2RE3_B9_wWwH2qxx6vPVb-b5qs';
+		$txt = array(
+			'first'=>array('value'=>urlencode('客人等待结账，请尽快查房')),
+			'keyword1'=>array('value'=>urlencode('西安希尔顿酒店')),
+			'keyword2'=>array('value'=>urlencode($goods_name)),
+			'keyword3'=>array('value'=>urlencode(date('Y-m-d H:i:s',time()))),
+			'remark'=>array('value'=>urlencode('请尽快处理'))
+		);
+		$msg = array(
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>''
 		);
 		return $this->send(urldecode(json_encode($msg)));
 	}

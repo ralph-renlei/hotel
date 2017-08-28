@@ -1,11 +1,13 @@
 <?php namespace WxHotel\Http\Controllers\Console;
 
+use App\Jobs\ClosePower;
 use EasyWeChat\User\User;
 use Illuminate\Http\Request;
 use DB;
 use WxHotel\Category;
 use WxHotel\Goods;
 use WxHotel\Order;
+use WxHotel\Services\Mantun;
 use WxHotel\Services\WxNotice;
 
 class OrderManageController extends Controller {
@@ -160,8 +162,9 @@ class OrderManageController extends Controller {
 		});
 
 		$order = Order::where('order_sn',session('order_sn'))->first();
-		if($order->order_status == 2){//如果订单状态正确，发送模板消息
+		if($order->order_status == 1){//如果订单状态正确，发送模板消息 通电
 			$this->send_room_success_notice($request->category_name,$request->input('goods_name'),$order->start,$order->end);
+			$this->open_power($request->input('goods_name'));
 		}
 		$return = [
 			'code'=>self::CODE_SUCCESS,
@@ -171,10 +174,64 @@ class OrderManageController extends Controller {
 		return response()->json($return);
 	}
 
-	//发送 入住 消息  开电
-	public function send_room_success_notice($category_name,$goods_id,$order_start,$order_end){
+	//发送 入住 消息
+	public function send_room_success_notice($category_name,$goods_name,$order_start,$order_end){
 		$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
-		$wx->room_arrange_notice($category_name,$goods_id,$order_start,$order_end);
+		$wx->room_arrange_notice($category_name,$goods_name,$order_start,$order_end);
 	}
+
+	//通电
+	public function open_power($goods_name){
+		$box = \DB::table('boxes')->where('room',$goods_name)->first();
+		$power = new PowerController();
+		$power_status = $power->control_power($box['mac'],'open');//开电
+		if($power_status == 0){//将此时的电量放入
+			$all_power = $power->daypower($box['mac'],date('Y',time()),date('m',time()),date('d',time()));
+			$start_power = 0;
+			foreach($all_power as $list){
+				$start_power = $start_power + $list['electricity'];
+			}
+		}
+		\DB::table('box_power')->insert(['box_id'=>$box['id'],'start'=>date('Y-m-d h:i:s'),'start_power'=>$start_power]);
+	}
+
+	//退房 断电
+	public function out_room(){
+		//查询正在 入住的订单
+		$order = Order::where(['openid'=>session('user')['openid'],'pay_status'=>1,'order_status'=>1])->first();
+		$box = \DB::table('boxes')->where('room',$order->goods_name)->first();
+		$power = new PowerController();
+		$all_power = $power->daypower($box['mac'],date('Y',time()),date('m',time()),date('d',time()));
+		$end_power = 0;
+		foreach($all_power as $list){
+			$end_power = $end_power + $list['electricity'];
+		}
+
+		\DB::transaction(function ()use($box,$order,$end_power) {
+			\DB::table('box_power')->where('box_id', $box['id'])->update(['end' => time(), 'end_power' => $end_power]);//跟新电量
+			\DB::table('orders')->where('order_sn',$order->order_sn)->update(['order_status'=>2]);//更新订单状态
+			\DB::table('goods')->where('goods_id',$order->goods_id)->update(['status'=>1]);//更新房间状态
+		});
+
+		//給管理员通知
+		$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
+		$managers = User::where('role','admin')->lists('openid');//查询管理员
+		foreach($managers as $openid){
+			$wx->close_accounts($openid,$order->goods_name);//给管理者发送信息
+		}
+
+		//断电
+		$obj = new ClosePower();
+		$obj->handle($order->goods_name);//调用定时队列，断电
+//		$this->close_power($order->goods_name);
+	}
+
+	public function close_power($goods_name){
+		$box = \DB::table('boxes')->where('room',$goods_name)->first();
+		$power = new PowerController();
+		$power_status = $power->control_power($box['mac'],'close');//断电
+	}
+
+
 
 }

@@ -35,7 +35,6 @@
 									<td class="do">
 										<a href="{{ url('/admin/user/user/'.$item->id) }}"><button type="button" class="btn btn-default btn-sm">修改</button></a>
                                         <button type="button" class="btn btn-default btn-sm" onclick="app.user.del('{{ $item->id }}')">删除</button>
-                                        <button type="button" class="btn btn-default btn-sm" onclick="app.user.del('{{ $item->id }}')">详情</button>
 									</td>
 								</tr>
 							@endforeach

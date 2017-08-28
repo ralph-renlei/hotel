@@ -17,30 +17,14 @@
 							</ul>
 						</div>
 					@endif
-					<form class="form-horizontal" role="form" method="POST" action="{{ url('/admin/user/user') }}">
+					<form class="form-horizontal" role="form" method="POST" action="{{ url('/admin/user/saveUser') }}">
 						<input type="hidden" name="_token" value="{{ csrf_token() }}">
 						<div class="form-group">
 							<label class="col-md-4 control-label">角色<span style="color:red">*</span></label>
 							<div class="col-md-6">
 									<label class="radio-inline user_role">
-										<input type="radio" name="role" id="role1" value="admin"/>
+										<input type="radio" name="role" id="role1" value="admin" checked/>
 										管理员
-									</label>
-									<label class="radio-inline user_role">
-										<input type="radio" name="role" id="role2" value="channel"/>
-										渠道
-									</label>
-                                    <label class="radio-inline user_role">
-                                        <input type="radio" name="role" id="role3" value="risk" checked="checked"/>
-                                        分控员
-                                    </label>
-                                    <label class="radio-inline user_role">
-                                        <input type="radio" name="role" id="role4" value="finance"/>
-                                        财务
-                                    </label>
-									<label class="radio-inline user_role">
-										<input type="radio" name="role" id="role5" value="member"/>
-										消费者
 									</label>
 							</div>
 						</div>
@@ -60,36 +44,6 @@
 							<label class="col-md-4 control-label">手机<span style="color:red">*</span></label>
 							<div class="col-md-6">
 								<input type="mobile" class="form-control" name="mobile" id="mobile" placeholder="请输入您的手机号码"/>
-							</div>
-						</div>
-                        <div class="form-group level">
-                            <label class="col-md-4 control-label">风控级别</label>
-                            <div class="col-md-6">
-                                <label class="radio-inline">
-                                    <input type="radio" name="level" id="level1" value="1" checked="checked"/>
-                                    上门核查员
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="level" id="level2" value="2"/>
-                                    内网风控员
-                                </label>
-                                <label class="radio-inline">
-                                    <input type="radio" name="level" id="level3" value="3"/>
-                                    渠道风控员
-                                </label>
-                            </div>
-                        </div>
-						<div class="form-group">
-							<label class="col-md-4 control-label">状态<span style="color:red">*</span></label>
-							<div class="col-md-6">
-								<label class="radio-inline">
-									<input type="radio" name="status" id="status1" value="1"  checked="checked"/>
-									启用
-								</label>
-								<label class="radio-inline">
-									<input type="radio" name="status" id="status2" value="0"/>
-									禁用
-								</label>
 							</div>
 						</div>
 						<div class="form-group">

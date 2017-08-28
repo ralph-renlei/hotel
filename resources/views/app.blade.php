@@ -27,7 +27,7 @@
 					<li id="home"><a href="{{ url('/admin') }}">管理中心</a></li>
 					<li id="shop"><a href="{{ url('/admin/shop/goods') }}">房间管理</a></li>
                     <li id="fund" ><a href="{{ url('/admin/order/home') }}">交易管理</a></li>
-                    <li id="user" ><a href="{{ url('/admin/user') }}">顾客管理</a></li>
+                    <li id="user" ><a href="{{ url('/admin/user/verify') }}">顾客管理</a></li>
 					<li id="system"><a href="{{ url('/admin/system/config') }}">系统配置</a></li>
 					@endif
 				</ul>

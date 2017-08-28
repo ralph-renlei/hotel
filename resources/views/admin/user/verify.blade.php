@@ -11,6 +11,7 @@
 							<table class="table">
 								<tr>
 									<th class="info">ID</th>
+									<th class="info">角色</th>
 									<th class="info">手机号码</th>
 									<th class="info">真实姓名</th>
 									<th class="info">注册时间</th>
@@ -20,6 +21,7 @@
 								@foreach ($users as $item)
 									<tr id="item_{{ $item->id }}">
 										<td class="data">{{ $item->id }}</td>
+										<td class="data">@if($item->role == 'admin') 管理员 @else 普通用户 @endif</td>
 										<td class="data">{{ $item->mobile }}</td>
 										<td class="data">{{ $item->name }}</td>
 										<td class="data">{{ $item->created_at }}</td>

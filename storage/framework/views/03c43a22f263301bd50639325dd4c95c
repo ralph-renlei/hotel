@@ -23,7 +23,7 @@
 						<div class="no_interval_cell order_title">
 							<p>
 								<span class="bigger_text">西安希尔顿酒店</span>
-								<span><?php if($list->forms == 1 ): ?> 在线预订 <?php else: ?> 线下预定 <?php endif; ?></span>
+								<span><?php if($list->forms == 1 ): ?> 在线预订 <?php elseif($list->forms): ?> 前台预定 <?php else: ?> 线下预定 <?php endif; ?></span>
 							</p>
 							<p>
 								<span class="bigger_text"><?php echo e($list->goods_name); ?></span>

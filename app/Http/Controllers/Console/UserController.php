@@ -72,85 +72,28 @@ class UserController extends Controller
 
     public function postUser(Request $request){
         $id = $request->input('id');
-        $mobile = $request->input('mobile');
-        $name = $request->input('name');
-        $status = $request->input('status');
-        $openid = $request->input('openid');
         $role = $request->input('role');
-        $level = $request->input('level');
-        $username = $request->input('username');
-        $email = $request->input('email');
+        $name = $request->input('name');
+        $openid = $request->input('openid');
+        $mobile = $request->input('mobile');
+        $idcard_no = $request->input('idcard_no');
+        $verify = $request->input('verify');
 
-        $user = User::find($id);
-
-        if(!empty($user)){
-            $user->verify = $request->input('verify');
-            $this->validate($request, [
-                'mobile' => 'required|regex:/^1[2-9]\d{9}$/|unique:users,mobile,'.$user->id.'|max:11',
-                'name'=>'required',
-                'status'=>'in:0,1,-1'
-            ]);
-
-            $user->mobile = $mobile;
-            $user->name = $name;
-           if(isset($status) && in_array((int)$status,array(1,0),true)){
-               $user->status = (int)$status;
-           }
-            $user->role = $role;
-            if($user->role=='risk'){
-                if(isset($level) && in_array((int)$level,array(1,2,3),true)){
-                    $user->level = (int)$level;
-                }
-            }
-            if(!empty($username)){
-                $user->username = $username;
-            }
-            if($openid){
-                $user->openid = $openid;
-            }
-            if(!empty($email)){
-                $user->email = $email;
-            }
-            $response = $user->save();
+        $result = User::where('id',$id)->update(['role'=>$role,'name'=>$name,'openid'=>$openid,'mobile'=>$mobile,'idcard_no'=>$idcard_no,'verify'=>$verify]);
+        if($result){
+            return redirect('/admin/user/verify');
         }else{
-            $this->validate($request, [
-                'mobile' => 'required|regex:/^1[2-9]\d{9}$/|unique:users,mobile|max:11',
-                'name'=>'required',
-                'status'=>'in:0,1,-1'
-            ]);
-            $data = array(
-                'username'=>$mobile,
-                'name'=>$name,
-                'mobile'=>$mobile,
-                'status'=>1,
-            );
-            $data['password'] = bcrypt(substr($mobile,5));
-            $user = User::create($data);
-            if($user){
-                $update_flag = true;
-                if($openid){
-                    $user->openid = $openid;
-                    $update_flag = true;
-                }
-				$pass = substr($user->mobile,5);
-				$user->password  = bcrypt($pass);
-                if($user->role=='risk'){
-                    if(isset($level) && in_array((int)$level,array(1,2,3),true)){
-                        $user->level = (int)$level;
-                    }else{
-                        $user->level = 1;
-                    }
-                    $update_flag = true;
-                }
-                if($update_flag) $user->save();
-                $response = TRUE;
-            }
-        }
-
-        if($response){
             return redirect('/admin/user/verify');
         }
-        return redirect()->back()->withErrors(['status' => '失败']);
+    }
+
+    public function saveUser(Request $request){
+        $role = $request->input('role');
+        $openid = $request->input('openid');
+        $name = $request->input('name');
+        $mobile = $request->input('mobile');
+        $request = User::create(['role'=>$role,'openid'=>$openid,'name'=>$name,'mobile'=>$mobile]);
+        return redirect('/admin/user/verify');
     }
 
     public function delUser(Request $request){

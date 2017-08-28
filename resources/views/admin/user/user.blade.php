@@ -20,9 +20,25 @@
 					<form class="form-horizontal" role="form" method="POST" action="{{ url('/admin/user/user') }}">
 						<input type="hidden" name="_token" value="{{ csrf_token() }}">
 						<div class="form-group">
+							<label class="col-md-4 control-label">角色</label>
+							<div class="col-sm-6" id="category">
+								<select class="form-control" name="role">
+									<option value="">请选择角色</option>
+									<option value="member" @if($user->role=='member') selected @endif>普通用户</option>
+									<option value="admin" @if($user->role=='admin') selected @endif>管理员</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
 							<label class="col-md-4 control-label">姓名</label>
 							<div class="col-md-6">
 								<input type="text" class="form-control" name="name" id="name" value="{{ $user->name }}" placeholder="请输入您的姓名"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-md-4 control-label">openid</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control" name="openid" id="name" value="{{ $user->openid }}" placeholder="请输入您的姓名"/>
 							</div>
 						</div>
 						<div class="form-group">
@@ -34,7 +50,7 @@
 						<div class="form-group">
 							<label class="col-md-4 control-label">身份证号</label>
 							<div class="col-md-6">
-								<input type="mobile" class="form-control" name="idcard_no" id="idcard_no" value="{{ $user->idcard_no }}" placeholder="请输入您的手机号码"/>
+								<input type="mobile" class="form-control" name="idcard_no" id="idcard_no" value="{{ $user->idcard_no }}" placeholder="请输入您的身份证号码"/>
 							</div>
 						</div>
 
@@ -45,7 +61,6 @@
 									<option value="">请选择分类</option>
 									<option value="1" @if($user->verify==1) selected @endif>已认证</option>
 									<option value="0" @if($user->verify==0) selected @endif>未认证</option>
-									<option value="-1" @if($user->verify==-1) selected @endif>审核中</option>
 								</select>
 							</div>
 						</div>
