@@ -7,7 +7,7 @@ use WxHotel\Services\Mantun;
 class PowerController extends Controller {
 	//获取 项目的所有电箱
 	public function boxes(){
-		$power = new Mantun('O000000006','F7A7B2F64C23CC22BACD89798C0CC76','huizhou001','hz888888','P00000000068');
+		$power = new Mantun(env('POWER_APPID'),env('POWER_APPSECRET'),env('POWER_USERNAME'),env('PASSWORD'),env('PROJECTCODE'));
 		//获取code
 		$code = $power->getCode();
 		//获取access_token
@@ -19,7 +19,7 @@ class PowerController extends Controller {
 
 	//获取日用电量
 	public function daypower($mac,$year,$month,$day){
-		$power = new Mantun('O000000006','F7A7B2F64C23CC22BACD89798C0CC76','huizhou001','hz888888','P00000000068');
+		$power = new Mantun(env('POWER_APPID'),env('POWER_APPSECRET'),env('POWER_USERNAME'),env('PASSWORD'),env('PROJECTCODE'));
 		//获取code
 		$code = $power->getCode();
 		//获取access_token
@@ -29,7 +29,7 @@ class PowerController extends Controller {
 
 	//控制通断电
 	public function control_power($mac,$openorclose){
-		$power = new Mantun('O000000006','F7A7B2F64C23CC22BACD89798C0CC76','huizhou001','hz888888','P00000000068');
+		$power = new Mantun(env('POWER_APPID'),env('POWER_APPSECRET'),env('POWER_USERNAME'),env('PASSWORD'),env('PROJECTCODE'));
 		//获取code
 		$code = $power->getCode();
 		//获取access_token
@@ -48,7 +48,7 @@ class PowerController extends Controller {
 
 	//获取警告
 	public function alarm($mac,$start,$end,$pageSize,$page){
-		$power = new Mantun('O000000006','F7A7B2F64C23CC22BACD89798C0CC76','huizhou001','hz888888','P00000000068');
+		$power = new Mantun(env('POWER_APPID'),env('POWER_APPSECRET'),env('POWER_USERNAME'),env('PASSWORD'),env('PROJECTCODE'));
 		//获取code
 		$code = $power->getCode();
 		//获取access_token

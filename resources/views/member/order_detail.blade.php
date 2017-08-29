@@ -19,7 +19,7 @@
 			<div class="no_interval_on">
 				<div class="no_interval_cell order_title">
 					<p>
-						<span class="bigger_text">西安希尔顿酒店</span>
+						<span class="bigger_text">淘源圆岭岗</span>
 						<span>@if($order_detail->forms == 1 ) 在线预订 @else 线下预定 @endif</span>
 					</p>
 					<p>
@@ -56,7 +56,11 @@
 						<p>总价: <span class="bigger_text">￥{{$order_detail->order_amount}}</span></p>
 					</div>
 				</div>
-				
+				<div class="no_interval_cell">
+					<div class="">
+						<p><a class="orange_btn reserve_btn" href="/pay?uid={{session('uid')}}&openid={{session('user')['openid']}}&category_name={{$order_detail->category_name}}&order_amount={{$order_detail->order_amount}}&goods_id={{$order_detail->goods_id}}">立即支付</a></p>
+					</div>
+				</div>
 
 			</div>
 		</div>

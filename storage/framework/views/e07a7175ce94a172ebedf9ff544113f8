@@ -44,6 +44,11 @@
 							<td>
 								<a href="<?php echo e(url('/admin/shop/goods/show/'.$item->goods_id)); ?>"><button type="button" class="btn btn-default btn-sm">修改</button></a>
 								<button type="button" class="btn btn-default btn-sm" onclick="app.goods.del('<?php echo e($item->goods_id); ?>')">删除</button>
+								<?php if(!$item->qrcode): ?>
+								<a href="/admin/shop/goods/qrcode/<?php echo e($item->goods_id); ?>". ><button type="button" class="btn btn-default btn-sm">生成二维码</button></a>
+								<?php else: ?>
+								<a href="/admin/shop/goods/show_qrcode/<?php echo e($item->goods_id); ?>". ><button type="button" class="btn btn-default btn-sm">查看二维码</button></a>
+								<?php endif; ?>
 								<?php if($item->open==1): ?>
 									<?php if($item->status == 1): ?> <a href="<?php echo e(url('/admin/order/loadarrange/'.$item->goods_id)); ?>"><button type="button" class="btn btn-default btn-sm">安排入住</button></a>
 									<?php elseif($item->status == 0): ?> <button type="button" class="btn btn-default btn-sm" disabled>客房已满</button>

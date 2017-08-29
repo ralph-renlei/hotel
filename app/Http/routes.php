@@ -15,6 +15,7 @@
 //---------------------------基础通用模块--------------------------------
 
 Route::get('/', 'Mobile\HomeController@index');
+Route::get('/goods_id/{id}', 'ReserveController@offlineIndex');
 Route::get('wechat/valid','WechatController@valid');
 
 Route::post('upload/image','UploadController@image');
@@ -57,6 +58,9 @@ Route::get('/mobile_allow','Console\OrderManageController@mobile_allow');//管�
 Route::post('mobile_room_arrange','Console\OrderManageController@mobile_room_arrange');//分配房间写入数据库
 Route::get('/power','Console\PowerController@control_power');//通断电
 Route::get('/test','Console\PowerController@save_boxes');//测试
+Route::get('/rest','Console\OrderManageController@makeRest');//入住
+Route::get('/out_room','Console\OrderManageController@out_room');//退房
+
 
 //--------------------------------PC管理端---------------------------------
 Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
@@ -81,6 +85,8 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::get('/shop/goods/show/{id}','GoodsController@show');
     Route::get('/shop/goods/create','GoodsController@create');
     Route::post('/shop/goods/store','GoodsController@store');
+    Route::get('/shop/goods/qrcode/{id}','GoodsController@qrcode');//生成二维码
+    Route::get('/shop/goods/show_qrcode/{id}','GoodsController@show_qrcode');//生成二维码
     Route::delete('/shop/goods','GoodsController@deleteItem');
     Route::post('/shop/goods/item','GoodsController@postAudit');
     Route::post('/shop/status','OrderController@postStatus');

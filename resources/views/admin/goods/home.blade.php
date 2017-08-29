@@ -45,6 +45,11 @@
 							<td>
 								<a href="{{ url('/admin/shop/goods/show/'.$item->goods_id) }}"><button type="button" class="btn btn-default btn-sm">修改</button></a>
 								<button type="button" class="btn btn-default btn-sm" onclick="app.goods.del('{{ $item->goods_id }}')">删除</button>
+								@if(!$item->qrcode)
+								<a href="/admin/shop/goods/qrcode/{{$item->goods_id}}". ><button type="button" class="btn btn-default btn-sm">生成二维码</button></a>
+								@else
+								<a href="/admin/shop/goods/show_qrcode/{{$item->goods_id}}". ><button type="button" class="btn btn-default btn-sm">查看二维码</button></a>
+								@endif
 								@if($item->open==1)
 									@if($item->status == 1) <a href="{{ url('/admin/order/loadarrange/'.$item->goods_id) }}"><button type="button" class="btn btn-default btn-sm">安排入住</button></a>
 									@elseif($item->status == 0) <button type="button" class="btn btn-default btn-sm" disabled>客房已满</button>

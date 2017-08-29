@@ -1,5 +1,12 @@
 $("#check_out").click(function() {
 	if(confirm('确定退房？十分钟后将自动断电！')) {
+		$.ajax({
+			type: "get",
+			url: "/out_room",
+			async: true,
+			data: {},
+			success: function(res) {},
+		});
 		setTimeout(function() {
 			alert("欢迎您下次光临！");
 		}, 1000);
@@ -47,7 +54,7 @@ $(".submit_order").click(function() {
 			if(res.code==1) {
 				window.location.href = "/pay?uid="+res.data.uid+"&openid="+res.data.openid+"&category_name="+res.data.category_name+"&order_amount="+res.data.order_amount+"&goods_id="+res.data.goods_id;
 				//window.location.href = '/unifiedorder';
-1			}else{
+			}else{
 				alert(res.msg);
 				window.location.href= '/';
 			}

@@ -83,31 +83,29 @@ class WxNotice extends JSSDK
 		return $this->send(urldecode(json_encode($msg)));
 	}
 
-  /**
+	/**
+	订单确认通知
 	{{first.DATA}}
-	订单编号：{{keyword1.DATA}}
-	酒店名称：{{keyword2.DATA}}
+	酒店名称：{{keyword1.DATA}}
+	确认号：{{keyword2.DATA}}
 	入住时间：{{keyword3.DATA}}
-	下单金额：{{keyword4.DATA}}
-	支付方式：{{keyword5.DATA}}
 	{{remark.DATA}}
-   */
-	public function book_success($openid,$order_sn,$start_time,$order_amount,$url){
-		$template_id = 'PWiPgtUPLcgx_fBZnsDLPPrY6pziiqpSJDbodeoFkBI';
+	 */
+	public function order_sure($openid,$order_sn,$start_time){
+		$template_id = '2ghLucvN8A32KxPAspQ_HUl6oZSoSbm10XGAwJOUFLA';
 		$txt = array(
-			'first'=>array('value'=>urlencode('恭喜你，您的酒店预订已提交成功')),
-			'keyword1'=>array('value'=>$order_sn),
-			'keyword2'=>array('value'=>urlencode('西安希尔顿酒店')),
+			'first'=>array('value'=>urlencode('您好，您的订单已提交，等待处理')),
+			'keyword1'=>array('value'=>urlencode(env('APP_NAME'))),
+			'keyword2'=>array('value'=>$order_sn),
 			'keyword3'=>array('value'=>$start_time),
-			'keyword4'=>array('value'=>$order_amount),
-			'keyword5'=>array('value'=>urlencode('微信支付')),
-			'remark'=>array('value'=>urlencode('祝您休息愉快'))
+			'remark'=>array('value'=>urlencode('请在个人中心查看！'))
 		);
 		$msg = array(
-			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>$url,
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>'',
 		);
 		return $this->send(urldecode(json_encode($msg)));
 	}
+
 
 	/**
 	{{first.DATA}}
@@ -207,6 +205,32 @@ class WxNotice extends JSSDK
 
 	/**
 	{{first.DATA}}
+	房间类型：{{keyword1.DATA}}
+	房间号：{{keyword2.DATA}}
+	入住类型：{{keyword3.DATA}}
+	抵店时间：{{keyword4.DATA}}
+	预离时间：{{keyword5.DATA}}
+	{{remark.DATA}}
+	 */
+	public function rest_notice($openid,$category,$goods_name,$start,$end){
+		$template_id = 'S60NKkC-w8s7Rx5psPIuAC4DF_ISVoF1n3VYIJxBH88';
+		$txt = array(
+			'first'=>array('value'=>urlencode(env('APP_NAME'))),
+			'keyword1'=>array('value'=>urlencode($category)),
+			'keyword2'=>array('value'=>urlencode($goods_name)),
+			'keyword3'=>array('value'=>urlencode('正常入住')),
+			'keyword3'=>array('value'=>urlencode($start)),
+			'keyword3'=>array('value'=>urlencode($end)),
+			'remark'=>array('value'=>urlencode('祝您休息愉快'))
+		);
+		$msg = array(
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>''
+		);
+		return $this->send(urldecode(json_encode($msg)));
+	}
+
+	/**
+	{{first.DATA}}
 	酒店名称：{{keyword1.DATA}}
 	房间号：{{keyword2.DATA}}
 	时间：{{keyword3.DATA}}
@@ -216,7 +240,7 @@ class WxNotice extends JSSDK
 		$template_id = 'X-gUrjtyBPsoaOa-c2RE3_B9_wWwH2qxx6vPVb-b5qs';
 		$txt = array(
 			'first'=>array('value'=>urlencode('客人等待结账，请尽快查房')),
-			'keyword1'=>array('value'=>urlencode('西安希尔顿酒店')),
+			'keyword1'=>array('value'=>urlencode(env('APP_NAME'))),
 			'keyword2'=>array('value'=>urlencode($goods_name)),
 			'keyword3'=>array('value'=>urlencode(date('Y-m-d H:i:s',time()))),
 			'remark'=>array('value'=>urlencode('请尽快处理'))

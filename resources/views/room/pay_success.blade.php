@@ -44,7 +44,7 @@
 				alert('为了您的入住，请尽快实名认证');
 				window.location.href = "{{url('/member/credit')}}";
 			}else{
-				window.location.href = '/';
+				window.location.href = '{{url('/member/order')}}';
 			}
 		} else {
 			$("#seconds").text(seconds);

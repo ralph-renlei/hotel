@@ -9,6 +9,26 @@ use WxHotel\UsersOrder;
 use DB;
 
 class ReserveController extends Controller {
+	public function offlineIndex($id){
+		$goods = \DB::table('goods')->join('goods_category','goods.category_id','=','goods_category.id')->select('goods.*','goods_category.name as category_name')->where('goods.goods_id',$id)->first();
+		//判断此房间 是否入住，是否为此人预定
+		//判断房间是否入住
+		$room_status  = \DB::table('room_status')->select('id')->where('goods_name',$goods->name)->get();
+		if($room_status){
+			echo "<script>alert('已有人入住')</script>";
+			return;
+		}
+
+		//判断房间和人是否一致
+		$order = Order::where(['openid'=>session('user')['openid'],'order_status'=>1,'pay_status'=>1,'goods_name'=>$goods->name])->first();
+		if(is_null($order)){//可以预定
+			$flag = 'book';
+		}else{
+			$flag = 'rest';
+		}
+		return view('room.index_offline',['goods'=>$goods,'flag'=>$flag]);
+	}
+
 	//获取用户所选时间内上线的房型  获取入住时间，离店时间
 	public function index(Request $request){
 		$categorys = Category::where('status',1)->get();
@@ -92,9 +112,6 @@ class ReserveController extends Controller {
 		User::where('openid',session('user')['openid'])->update(['mobile'=>$request->input('phone'),'name'=>$request->input('username')]);
 
 		$result = Order::create($data);
-		if($request->input('forms')==1 || $request->input('forms') == 0){
-			return redirect('/member/order');
-		}
 		if($result){
 			$return['code'] = self::CODE_SUCCESS;
 			$return['msg'] = self::SUCCESS_MSG;

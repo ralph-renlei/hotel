@@ -23,7 +23,7 @@
 				<img src="<?php echo e(asset('/hotel/img/main.png')); ?>" class="reserve_img left" />
 				<div class="right_info">
 					<div class="right_top clearfix">
-						<p class="bigger_text left">西安希尔顿酒店</p>
+						<p class="bigger_text left">淘源圆岭岗</p>
 						<i class="iconfont right icon-dingwei"></i>
 					</div>
 					<div class="right_top clearfix">

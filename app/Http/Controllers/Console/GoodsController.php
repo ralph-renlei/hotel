@@ -1,6 +1,7 @@
 <?php namespace WxHotel\Http\Controllers\Console;
 
 use WxHotel\Http\Requests;
+use WxHotel\Services\QRcode;
 use WxHotel\Store;
 use Illuminate\Http\Request;
 use WxHotel\Goods;
@@ -159,6 +160,28 @@ class GoodsController extends Controller {
 		$category2=Category::where('parent',$parentId)->get();
 //		$this->var['category2']=$category2;
 		return response()->json($category2);
+	}
+
+	public function qrcode($id){
+		$value = url('/goods_id/'.$id); //二维码内容
+		$errorCorrectionLevel = 'L'; //容错级别
+		$matrixPointSize = 6; //生成图片大小
+
+		// 生成二维码图片
+		QRcode::png($value, 'qrcode/'.$id.'.png', $errorCorrectionLevel, $matrixPointSize, 2);
+		$image_url = url('/qrcode/'.$id.'.png');
+		$result = Goods::where('goods_id',$id)->update(['qrcode'=>$image_url]);
+		if($result){
+			echo "<script>alert('生成二维码成功');window.history.back();</script>";
+		}
+	}
+
+	public function show_qrcode($id){
+		$goods = Goods::find($id);
+		if(is_null($goods->qrcode)){
+			echo "<script>alert('请先生成二维码');window.history.back();</script>";
+		}
+		return view('admin.goods.qrcode',['goods'=>$goods]);
 	}
 	/**
 	 * Show the form for editing the specified resource.

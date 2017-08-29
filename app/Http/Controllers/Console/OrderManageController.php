@@ -124,14 +124,8 @@ class OrderManageController extends Controller {
 		return view('admin.order.loadadd',['categories'=>$categorys]);
 	}
 
-	//分配房间
+	//给房型分配房间（线上）
 	public function mobile_room(Request $request){
-		$user = \WxHotel\User::where('openid',$request->input('openid'))->first();
-		if($user->verify == 0){
-			echo "<script>alert('请等待该用户实名认证后，分配房间');window.location.href='/';</script>";
-			return;
-		}
-
 		//加载该类别下所有 未入住的房间
 		$rooms = Goods::where(['category_id'=>$request->input('category_id'),'open'=>1,'status'=>1])->get();
 		$userinfo = Order::where('order_sn',$request->input('order_sn'))->first();
@@ -139,14 +133,8 @@ class OrderManageController extends Controller {
 		return view('room.admin_assignroom',['rooms'=>$rooms,'userinfo'=>$userinfo,'categorys'=>$categorys,'id'=>$request->input('category_id'),'order_sn'=>$request->input('order_sn')]);
 	}
 
-	//同意房间入住
+	//同意房间分配（线下）
 	public function mobile_allow(Request $request){
-		$user = \WxHotel\User::where('openid',$request->input('openid'))->first();
-		if($user->verify == 0){
-			echo "<script>alert('请等待该用户实名认证后，分配房间');window.location.href='/';</script>";
-			return;
-		}
-
 		$room = \DB::table('goods')->select('goods.*','b.name as category_name')
 			->where('goods.goods_id',$request->input('goods_id'))
 			->leftJoin('goods_category as b','b.id','=','goods.category_id')
@@ -155,16 +143,15 @@ class OrderManageController extends Controller {
 		return view('room.admin_allow',['room'=>$room,'userinfo'=>$userinfo,'order_sn'=>$request->input('order_sn')]);
 	}
 
+	//房间分配
 	public function mobile_room_arrange(Request $request){
 		\DB::transaction(function () use($request){
-			\DB::table('goods')->where('goods_id',$request->input('goods_id'))->update(['status'=>0]);//更改房间的状态
 			\DB::table('orders')->where('order_sn',session('order_sn'))->update(['goods_id'=>$request->input('goods_id'),'goods_name'=>$request->input('goods_name'),'order_status'=>1]);//订单中加入房间信息，更改订单状态 为已处理
 		});
 
 		$order = Order::where('order_sn',session('order_sn'))->first();
-		if($order->order_status == 1){//如果订单状态正确，发送模板消息 通电
+		if($order->order_status == 1){//如果订单状态正确，发送模板消息
 			$this->send_room_success_notice($request->category_name,$request->input('goods_name'),$order->start,$order->end);
-			$this->open_power($request->input('goods_name'));
 		}
 		$return = [
 			'code'=>self::CODE_SUCCESS,
@@ -174,11 +161,56 @@ class OrderManageController extends Controller {
 		return response()->json($return);
 	}
 
-	//发送 入住 消息
+	//发送 预订成功 消息
 	public function send_room_success_notice($category_name,$goods_name,$order_start,$order_end){
 		$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
 		$wx->room_arrange_notice($category_name,$goods_name,$order_start,$order_end);
 	}
+
+	//入住 判断是否实名认证
+	public function makeRest(Request $request){ //goods_name  openid
+		//判断房间是否入住
+		$room_status  = \DB::table('room_status')->select('id')->where('goods_name',$request->input('goods_name'))->get();
+		if($room_status){
+			echo "<script>alert('已有人入住')</script>";
+			return;
+		}
+
+		//判断房间和人是否一致
+		$order = Order::where(['openid'=>$request->input('openid'),'order_status'=>1,'pay_status'=>1,'goods_name'=>$request->input('goods_name')])->first();
+		if(is_null($order)){
+			echo "<script>alert('查询不到订单')</script>";
+			return;
+		}
+
+		if($order->goods_name != $request->input('goods_name')){
+			echo "<script>alert('房间号与您的订单不符');</script>";
+			return;
+		}
+
+		//通过openid 判断是否认证
+		$user = \WxHotel\User::where('openid',$request->input('openid'))->first();
+		if($user->verify == 0){
+			$url = url('/member/credit');
+			echo "<script>alert('请先实名认证');window.location.href='.$url.'</script>";
+			return;
+		}
+
+		//修改房间状态  添加到room_status  通电 发送模板消息
+		\DB::transaction(function () use($request,$order){
+			\DB::table('goods')->where('goods_name',$request->input('goods_name'))->update(['status'=>0]);
+			\DB::table('room_status')->insert(['order_id'=>$order->order_id,'name'=>$order->username,'mobile'=>$order->phone,'start_time'=>$order->start,'end_time'=>$order->end,'goods_name'=>$order->goods_name,'category'=>$order->category_name,'number'=>1]);
+		});
+
+		$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
+		$managers = User::where('role','admin')->lists('openid');//查询管理员
+		foreach($managers as $openid) {
+			$wx->rest_notice($openid, $order->category_name, $order->goods_name, $order->start, $order->end);//给管理者发送信息
+		}
+
+		$this->open_power($order->goods_name);
+	}
+
 
 	//通电
 	public function open_power($goods_name){
@@ -226,6 +258,7 @@ class OrderManageController extends Controller {
 //		$this->close_power($order->goods_name);
 	}
 
+	//断电
 	public function close_power($goods_name){
 		$box = \DB::table('boxes')->where('room',$goods_name)->first();
 		$power = new PowerController();

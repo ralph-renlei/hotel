@@ -242,7 +242,7 @@ class WxpayController extends Controller {
         }
 
         $wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
-        $result = $wx->book_success(session('user')['openid'],session('order_sn'),$order->start,$order->order_amount,'');//給预订者发送模板消息
+        $result = $wx->order_sure(session('user')['openid'],session('order_sn'),$order->start);//給预订者发送模板消息
         $managers = User::where('role','admin')->lists('openid');//查询管理员
         foreach($managers as $openid){
             $wx->room_to_manager($openid,$order->username,$order->order_amount,$order->category_name,$order->goods_name,$order->start,$order->end,$url);//给管理者发送信息
