@@ -29,13 +29,55 @@ class ReserveController extends Controller {
 		return view('room.index_offline',['goods'=>$goods,'flag'=>$flag]);
 	}
 
-	//获取用户所选时间内上线的房型  获取入住时间，离店时间
+	//获取用户所选时间内上线的房型  判断用户入住时间内所有的房型，如果是满员的，就返回满员信息
 	public function index(Request $request){
 		$categorys = Category::where('status',1)->get();
-		$last = date('z',strtotime($request->input('end'))) - date('z',strtotime($request->input('start')));
+		$start = strtotime($request->input('start'));
+		$end = strtotime($request->input('end'));
+		$last = date('z',$end) - date('z',$start);
+
+		$book_long = env('BOOK_LONG');
+		$book_preset = env('BOOK_PRESET');
+		if($last>env('BOOK_LONG')){
+			echo "<script>alert('您预定的时间太长');window.history.back();</script>";
+			return;
+		}
+		if(date('z',$start) > (date('z',time())+env('BOOK_PRESER'))){
+			echo "<script>alert('您预定的时间太超前');window.history.back();</script>";
+			return;
+		}
+
+
+		//获取所有类型 > 房间号  如果有预定，剔除一个房间号   数组为空的，客满
+		$room_status_arr = \DB::table('room_status')->get();//获取所有房间状态
+		$category_name = \DB::table('goods_category')->select('id','name')->get();//获取所有类别
+		$goods_name = \DB::table('goods')->select('category_id','name')->get();//查询所有房间号
+
+		$new_arr = [];//记录所有的房型 房间
+		foreach($category_name as $parent){
+			$new_arr[$parent->name] = [];
+			foreach($goods_name as $son){
+				if($parent->id == $son->category_id){
+					$new_arr[$parent->name][] = $son->name;
+				}
+			}
+		}
+
+		foreach($room_status_arr as $demo){
+				//查询订单的时间状态
+				if(!((date('z',$start) < date('z',strtotime($demo->start_time)) && date('z',$end) < date('z',strtotime($demo->start_time))) || (date('z',$start) >= date('z',strtotime($demo->end_time)) && date('z',$end)>date('z',strtotime($demo->end_time))))){
+					foreach($new_arr[$demo->category] as $key=>$one){
+						if($one == $demo->goods_name){
+							unset($new_arr[$demo->category][$key]);//将这个区间内有预定的房间剔除
+						}
+					}
+				}
+		}
+
 		foreach($categorys as $category){
-			$result = \DB::select('select count(*) as number from goods where category_id='.$category->id.' and open =1 and status = 1');
-			$category->number = $result[0]->number;
+			if(count($new_arr[$category->name]) == 0){
+				$category->number = 0;
+			}
 		}
 		return view('room.reserve_online',['categorys'=>$categorys,'start'=>$request->input('start'),'end'=>$request->input('end'),'last'=>$last]);
 	}
@@ -78,6 +120,10 @@ class ReserveController extends Controller {
 		//人员判断
 		$member_book = \DB::select("select count(*) as count from orders where openid = '".session('user')['openid']."' and order_status!=2");
 		if($member_book[0]->count !=0){
+			if($request->input('forms')==2){
+				echo "<script>alert('此客户有未完成的订单!');window.location.href='/admin/order/home'</script>";
+				return;
+			}
 			$return['code'] = 0;
 			$return['msg'] = '你已经预定过客房';
 			return response()->json($return);
@@ -112,6 +158,10 @@ class ReserveController extends Controller {
 		User::where('openid',session('user')['openid'])->update(['mobile'=>$request->input('phone'),'name'=>$request->input('username')]);
 
 		$result = Order::create($data);
+		if($request->input('forms')==2){
+			echo "<script>alert('下单成功!');window.location.href='/admin/order/home'</script>";
+			return;
+		}
 		if($result){
 			$return['code'] = self::CODE_SUCCESS;
 			$return['msg'] = self::SUCCESS_MSG;

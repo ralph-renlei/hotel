@@ -14,7 +14,7 @@
 								<label class="label_left">查看当天的订单情况</label>
 								<select class="form-control" name="start">
 									<?php foreach($time_array as $time): ?>
-									<option value="<?php echo e($time); ?>"/><?php echo e($time); ?></option>
+									<option value="<?php echo e($time); ?>" <?php if($time == $keywords): ?> selected <?php endif; ?>/><?php echo e($time); ?></option>
 									<?php endforeach; ?>
 								</select>
 							</div>
@@ -45,17 +45,18 @@
                                 <td><?php echo e($item->end); ?></td>
                                 <td>
 									<?php if($item->pay_status == 0): ?> 未付款	/ 不用处理
+									<?php elseif($item->pay_status == 2): ?> 已退款
+									<?php elseif($item->pay_status == 3): ?> 申请退款
 									<?php else: ?> 已付款
 										/ <?php if($item->order_status == 0): ?> 新订单 <?php elseif($item->order_status == 1): ?> 已处理 <?php else: ?> 已完成 <?php endif; ?>
 									<?php endif; ?>
-
                                 </td>
 							    <td class="do">
-									<button type="button" class="btn btn-default btn-sm" onclick="order_detail(<?php echo e($item->order_id); ?>)"  data-toggle="modal" data-target="#myModal">详情</button>
+									<button type="button" class="btn btn-default btn-sm" onclick="order_detail(<?php echo e($item->order_id); ?>)" data-toggle="modal" data-target="#myModal">详情</button>
 									<?php if($item->pay_status == 1): ?>
 										<?php if($item->forms == 1 || $item->forms == 2): ?>
 											<?php if($item->order_status==0): ?>
-												<a href="/admin/shop/goods"><button type="button" class="btn btn-default btn-sm">分配房间</button></a>
+												<a href="/admin/shop/status"><button type="button" class="btn btn-default btn-sm">分配房间</button></a>
 											<?php elseif($item->order_status==1): ?>
 												<button type="button" class="btn btn-default btn-sm">已分配</button></a>
 											<?php else: ?>
@@ -70,6 +71,8 @@
 												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
 											<?php endif; ?>
 										<?php endif; ?>
+									<?php elseif($item->pay_status == 3): ?>
+										<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#no2Modal">申请退款</button></a>
 									<?php else: ?>
 										<button type="button" class="btn btn-default btn-sm" title="未付款无法分配">无法分配</button></a>
 									<?php endif; ?>
@@ -162,6 +165,43 @@
 	</div>
 </div>
 
+<div class="modal fade in" id="no2Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="display: none;"><div class="modal-backdrop fade in"></div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" onclick="app.system.cancel();">×</span><span class="sr-only" onclick="app.system.cancel();">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel">退款申请</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="inputPassword3" class="col-sm-2 control-label">订单id<span style="color:red">*</span></label>
+						<div class="col-sm-4">
+							<input type="text" name="id_refund" class="form-control" id="id_refund" value="" placeholder="请填写订单id">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputPassword3" class="col-sm-2 control-label">实付金额<span style="color:red">*</span></label>
+						<div class="col-sm-4">
+							<input type="text" name="order_amount" class="form-control" id="order_amount" value="" placeholder="请填写实付金额">
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">退款金额<span style="color:red">*</span></label>
+						<div class="col-sm-4">
+							<input type="text" name="refund_fee" class="form-control" id="refund_fee" value="" placeholder="请填写退款金额">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" onclick="app.system.cancel();">关闭</button>
+				<button type="button" class="btn btn-primary" onclick="refund()">保存</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script type="text/javascript">
 order_detail = function(id){
 	if(!id){
@@ -222,6 +262,36 @@ order_edit = function(){
 		type: 'POST',
 		dataType:'json',
 		data:{id:id,pay_status:pay_status,order_status:order_status,_token:"<?php echo e(csrf_token()); ?>"},
+		success: function(result) {
+			if(result.code==1){
+				alert(result.msg);
+				window.location.href = '/admin/order/home';
+			}else{
+				alert(result.msg);
+			}
+		},
+		error:function(jqXHR,textStatus, errorThrown ){
+			alert(errorThrown);
+		}
+	});
+}
+
+refund = function(){
+	var id = $('#id_refund').val();
+	var order_amount = $('#order_amount').val();
+	var refund_fee = $('#refund_fee').val();
+	if(refund_fee == ''){
+		alert('请填写退款金额');
+	}
+	if(Number(order_amount) < Number(refund_fee)){
+		alert('退款金额多余实付金额');
+	}
+
+	$.ajax({
+		url: '/refund',
+		type: 'get',
+		dataType:'json',
+		data:{id:id,refund_fee:refund_fee},
 		success: function(result) {
 			if(result.code==1){
 				alert(result.msg);

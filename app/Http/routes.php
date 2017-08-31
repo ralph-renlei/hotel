@@ -33,10 +33,13 @@ Route::get('/prepay','Mobile\WxpayController@prepay');//预下单
 Route::post('/notify','Mobile\WxpayController@notify');//异步通知
 Route::get('/pay_success','Mobile\WxpayController@pay_success');//支付成功
 Route::get('pay_error','Mobile\WxpayController@pay_error');//支付失败
+Route::get('/refund','Mobile\WxpayController@refund');//申请退款
+Route::get('/refundquery','Mobile\WxpayController@refundquery');//查询退款
 
 //--------------------------------个人中心---------------------------------
 Route::get('/member','MemberController@index');
 Route::get('/member/info','MemberController@loadInfo');
+Route::post('/member/changesex','MemberController@changesex');
 Route::get('/member/order','MemberController@order');
 Route::get('/member/order_detail/{id}','MemberController@order_detail');
 Route::get('/member/credit','MemberController@credit');
@@ -79,6 +82,7 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::get('shop/price', 'SystemController@priceList');//房价管理
     Route::get('shop/price/add', 'SystemController@priceAdd');//房价管理
     Route::post('shop/price/store', 'SystemController@priceStore');//房价管理
+    Route::get('shop/status','GoodsController@room_status');//房态管理
     Route::get('shop/price/{id}', 'SystemController@priceShow');//修改
     Route::post('shop/price/save', 'SystemController@priceStore');//修改
     Route::get('/shop/goods','GoodsController@index');
@@ -100,7 +104,7 @@ Route::group(['prefix' => 'admin','namespace' => 'Console'], function()
     Route::get('/order/allowarrange/{id}','OrderManageController@allowarrange');//加载房间分配
     Route::post('/order/room_arrange','OrderManageController@room_arrange');//分配房间
     Route::get('/order/add','OrderManageController@loadadd');//加载添加订单
-
+    Route::get('/order/refundrecord','OrderManageController@refund_record');//加载退款记录
 
     Route::get('system', 'SystemController@cate');
     Route::get('system/config', 'SystemController@config');

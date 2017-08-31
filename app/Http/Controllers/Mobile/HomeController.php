@@ -8,32 +8,6 @@ use WxHotel\User;
 use DB;
 
 class HomeController extends Controller {
-    /*
-    |--------------------------------------------------------------------------
-    | Home Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller renders your application's "dashboard" for users that
-    | are authenticated. Of course, you are free to change or remove the
-    | controller as you wish. It is just here to get your app started!
-    |
-    */
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-//    public function __construct()
-//    {
-//        $this->middleware('auth');
-//    }
-
-    /**
-     * Show the application dashboard to the user.
-     *
-     * @return Response
-     */
     public function index(Request $request)
     {
         //如果没有code，获取code
@@ -56,7 +30,8 @@ class HomeController extends Controller {
         //如果数据中没有此用户，创建这个用户
         $user = User::where('openid',$userInfo['openid'])->first();
         if(!$user){
-            $uid = \DB::table('users')->insertGetId(['openid'=>$userInfo['openid'],'nickname'=>$userInfo['nickname'],'sex'=>$userInfo['sex'],'avatar'=>$userInfo['headimgurl'],'country'=>$userInfo['country'],'province'=>$userInfo['province'],'city'=>$userInfo['city']]);
+            $uid = \DB::table('users')->insertGetId(['openid'=>$userInfo['openid'],'nickname'=>$userInfo['nickname'],'sex'=>$userInfo['sex'],'avatar'=>$userInfo['headimgurl'],'country'=>$userInfo['country'],
+                'province'=>$userInfo['province'],'city'=>$userInfo['city'],'created_at'=>date('Y-m-d H:i:s',time())]);
             session(['uid'=>$uid]);
         }else{
             session(['uid'=>$user->id]);

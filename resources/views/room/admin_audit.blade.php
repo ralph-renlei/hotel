@@ -20,7 +20,8 @@
 			<div class="no_interval_on">
 				<div class="no_interval_cell">
 					<span class="">真实姓名：</span >
-					<input type="text" name="realname" id="realname" value="{{$user->username}}" readonly="readonly"/>
+					<input type="text" name="realname" id="realname" value="{{$user->name}}" readonly="readonly"/>
+					<input type="hidden" name="openid" id="openid" value="{{$user->openid}}"/>
 					<a class="blue_btn right" id="contact" href="tel:15771801111">
 						联系客户
 					</a>
@@ -51,6 +52,4 @@
 	</body>
 	<script src="{{asset('/hotel/js/jquery.min.js')}}" type="text/javascript" charset="utf-8"></script>
 	<script src="{{asset('/hotel/js/common.js')}}" type="text/javascript" charset="utf-8"></script>
-	
-
 </html>

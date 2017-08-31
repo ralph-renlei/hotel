@@ -54,6 +54,7 @@
 						goods_name:$('#goods_name').val(),
 						category_name:"{{$room[0]->category_name}}",
 						order_sn:$('#order_sn').val(),
+						forms:0,
 					},
 
 					success: function(res){

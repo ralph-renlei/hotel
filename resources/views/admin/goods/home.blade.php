@@ -16,7 +16,7 @@
 								<th class="info">房间名称（编号）</th>
 								<th class="info">所属类型</th>
 								<th class="info">开关房</th>
-								<th class="info">入住状态</th>
+								<th class="info">当前状态</th>
 								<th class="info">操作</th>
 							</tr>
 							@foreach($goods as $item)
@@ -49,14 +49,6 @@
 								<a href="/admin/shop/goods/qrcode/{{$item->goods_id}}". ><button type="button" class="btn btn-default btn-sm">生成二维码</button></a>
 								@else
 								<a href="/admin/shop/goods/show_qrcode/{{$item->goods_id}}". ><button type="button" class="btn btn-default btn-sm">查看二维码</button></a>
-								@endif
-								@if($item->open==1)
-									@if($item->status == 1) <a href="{{ url('/admin/order/loadarrange/'.$item->goods_id) }}"><button type="button" class="btn btn-default btn-sm">安排入住</button></a>
-									@elseif($item->status == 0) <button type="button" class="btn btn-default btn-sm" disabled>客房已满</button>
-									@else <button type="button" class="btn btn-default btn-sm" disabled>不能安排</button>
-									@endif
-								@else
-								<button type="button" class="btn btn-default btn-sm" disabled>不能入住</button>
 								@endif
 							</td>
 							</tr>

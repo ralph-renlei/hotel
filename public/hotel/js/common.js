@@ -218,7 +218,7 @@ function agree() {
 		type:"get",
 		url:"/member/mobile_credit_make",
 		async:true,
-		data:{}	,
+		data:{'openid':$('#openid').val(),'flag':'ok'},
 		success: function(res){
 			if(res.code == 1){
 				setTimeout(function() {
@@ -230,10 +230,19 @@ function agree() {
 }
 
 function reject() {
-	setTimeout(function() {
-		alert("已驳回！");
-	}, 1000);
-
+	$.ajax({
+		type:'get',
+		url:"/member/mobile_credit_make",
+		async:true,
+		data:{'openid':$('#openid').val(),'flag':'no'},
+		success: function(res){
+			if(res.code == 0){
+				setTimeout(function() {
+					alert('已驳回！');
+				}, 1000);
+			}
+		}
+	});
 }
 
 function assignRoom(){

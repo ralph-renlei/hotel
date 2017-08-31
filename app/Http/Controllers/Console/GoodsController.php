@@ -1,6 +1,7 @@
 <?php namespace WxHotel\Http\Controllers\Console;
 
 use WxHotel\Http\Requests;
+use WxHotel\Order;
 use WxHotel\Services\QRcode;
 use WxHotel\Store;
 use Illuminate\Http\Request;
@@ -183,37 +184,57 @@ class GoodsController extends Controller {
 		}
 		return view('admin.goods.qrcode',['goods'=>$goods]);
 	}
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
+	public function room_status(Request $request){
+		$keywords = '';
+		if(!empty($request->input('start'))){
+			$keywords = $request->input('start');
+		}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		//
+		//时间变化
+		$time_array = [];
+		for($i = 0 ; $i < 7 ; $i++){
+			$data_array = explode('-',date('Y-m-d',time() + 3600 * 24 * $i));
+			$data_array[1] = (int)$data_array[1];
+			$time_array[] = implode('-',$data_array);
+		}
+
+		if(!$keywords){
+			$keywords = $time_array[0];
+		}
+
+		//房间某天预定：某天时间 >= 开始时间  && 某天时间< 结束时间
+		$room_status_arr = \DB::table('room_status')->get();
+		$goods_name = \DB::table('goods')->lists('name');//查询所有房间号
+		$new_arr = [];//有记录的房间array
+		foreach($room_status_arr as $demo){
+			if(in_array($demo->goods_name,$goods_name)){//这个房间短期内有预定，查询时间范围
+				//查询这个订单
+				if(date('z',strtotime($keywords)) >= date('z',strtotime($demo->start_time)) && date('z',strtotime($keywords)) < date('z',strtotime($demo->end_time)) ){
+					$new_arr[] = $demo;//将某天内已经预定的房间写入数组
+				}
+			}
+		}
+
+		//将一个临时字段写入数据库，不能预定
+		$goods = Goods::orderBy('category_id','desc')->orderBy('goods_id','DESC')->get();
+		foreach($goods as &$one){
+			$one->category = Category::where('id',$one->category_id)->first();
+			if($new_arr){
+				foreach($new_arr as $new){
+					if($new->goods_name == $one->name){
+						$one->room_status = '已预定';//不可分配
+						break;
+					}else{
+						$one->room_status = '可以预定';//
+					}
+				}
+			}else{
+				$one->room_status = '可以预定';
+			}
+		}
+
+		return view('admin.goods.room_status',['goods'=>$goods,'time_array'=>$time_array,'keywords'=>$keywords]);
 	}
 
 }

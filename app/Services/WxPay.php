@@ -43,6 +43,11 @@ class WxPay extends Wx
     protected $openid= NULL;
     protected $timeStamp = NULL;
     protected $key = NULL;
+    protected $out_refund_no = NULL;//商户退款单号
+    protected $refund_fee = NULL;//退款金额
+   /* protected $refund_fee_type = NULL;//货币种类
+    protected $refund_desc = NULL;//退款原因
+    protected $refund_account = NULL;//退款资金来源*/
     public function __construct($appid, $appscret, $config)
     {
         parent::__construct($appid, $appscret, $config['sign_type']);
@@ -132,6 +137,45 @@ class WxPay extends Wx
         return $result;
     }
 
+    public function refund(){
+        $url = 'https://api.mch.weixin.qq.com/secapi/pay/refund';
+        $params = $this->refundParams();
+        $data = array();
+        foreach($params as $param=>$flag){
+            $value =  $this->__get($param);
+            if(isset($value)){
+                $data[$param] = $value;
+            }
+        }
+        $data['notify_url'] = $this->notify_url;
+        $this->setSign($data,$this->key);
+        $data['sign'] = $this->getSign();
+        $xml = $this->toXml($data);
+        $response = $this->httpPemPost($url,$xml);
+        $result = $this->fromXml($response);
+        return $result ;
+    }
+
+    public function refundParams(){
+        $return = array(
+            'appid'=>1,
+            'mch_id'=>1,
+            'nonce_str'=>1,
+            'sign'=>1,
+            'sign_type'=>1,
+            'transaction_id'=>1,
+            'out_trade_no'=>1,
+            'out_refund_no'=>1,
+            'nonce_str'=>1,
+            'total_fee'=>1,
+            'refund_fee'=>1,
+//            'refund_fee_type'=>0,
+//            'refund_desc'=>0,
+//            'refund_account'=>0,
+        );
+        return $return;
+    }
+
     public function orderQueryParams(){
         $return = array(
             'appid'=>1,
@@ -187,10 +231,13 @@ class WxPay extends Wx
         return $return;
     }
 
+
+
     protected function _config($config){
         $this->nonce_str=$this->createNonceStr();
         $this->key = $config['key'];
         $this->notify_url=$config['notify_url'];
+
 
         if(isset($config['spbill_create_ip'])){
             $this->setSpbillCreateIp($config['spbill_create_ip']);
@@ -285,6 +332,25 @@ class WxPay extends Wx
         if(isset($config['fee_type'])){
             $this->setFeeType($config['fee_type']);
         }
+
+        if(isset($config['out_refund_no'])){//商户退款单号
+            $this->setOut_refund_no($config['out_refund_no']);
+        }
+
+        if(isset($config['refund_fee'])){//商户退款单号
+            $this->setRefund_fee($config['refund_fee']*100);
+        }
+
+      /*   if(isset($config['refund_fee_type'])){
+            $this->setRefund_fee_type($config['refund_fee_type']);
+        }
+         if(isset($config['refund_desc'])){
+            $this->setRefund_desc($config['refund_desc']);
+        }
+         if(isset($config['refund_account'])){
+            $this->setRefund_account($config['refund_account']);
+        }*/
+
     }
 
     /**
@@ -515,6 +581,67 @@ class WxPay extends Wx
     public function getProductId(){
         return $this->product_id;
     }
+
+//if(isset($config['out_refund_no'])){//商户退款单号
+//$this->setOut_refund_no($config['out_refund_no']);
+//}
+//
+//if(isset($config['refund_fee'])){//商户退款单号
+//    $this->setRefund_fee($config['refund_fee']);
+//}
+//
+//if(isset($config['refund_fee_type'])){
+//    $this->setRefund_fee_type($config['refund_fee_type']);
+//}
+//if(isset($config['refund_desc'])){
+//    $this->setRefund_desc($config['refund_desc']);
+//}
+//if(isset($config['refund_account'])){
+//    $this->setRefund_account($config['refund_account']);
+//}
+    public function getOut_refund_no(){
+        return $this->out_refund_no;
+    }
+
+    public function setOut_refund_no($setOut_refund_no)
+    {
+        $this->setOut_refund_no = $setOut_refund_no;
+    }
+
+    public function getRefund_fee()
+    {
+        return $this->refund_fee;
+    }
+
+    public function setRefund_fee($refund_fee)
+    {
+        $this->refund_fee = $refund_fee;
+    }
+
+    /*public function getRefund_fee_type(){
+        return $this->refund_fee_type;
+    }
+
+    public function setRefund_fee_type($refund_fee_type){
+        $this->refund_fee_type = $refund_fee_type;
+    }
+
+    public function getRefund_desc(){
+        return $this->refund_desc;
+    }
+
+    public function setRefund_desc($refund_desc){
+        $this->refund_desc = $refund_desc;
+    }
+
+    public function getRefund_account(){
+        return $this->refund_account;
+    }
+
+    public function setRefund_account($refund_account){
+        $this->refund_account = $refund_account;
+    }*/
+
     public function __get($name)
     {
         if(strpos($name,'_')>0){

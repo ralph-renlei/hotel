@@ -89,7 +89,7 @@
 					<div class="right_wrap">
 						<p>{{$category->name}}</p>
 						@if($category->number == 0)
-							<a class="orange_btn reserve_btn" href="javascript:void(0);">客满</a>
+							<a class="orange_btn reserve_btn" href="javascript:void(0);" title="该时间段客房爆满">客满</a>
 						@else
 							<a class="orange_btn reserve_btn" href="javascript:void(0);" onclick="orderonline({{$category->id}})">预定</a>
 						@endif

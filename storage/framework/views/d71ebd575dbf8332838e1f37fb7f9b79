@@ -39,13 +39,13 @@
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-2 control-label">开始时间<span style="color:red">*</span></label>
                                 <div class="col-sm-3">
-                                    <input class="Wdate form-control" type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" name="start">
+                                    <input class=" form-control" type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="start">
                                 </div>
                             </div><br><br>
                             <div class="form-group">
                                 <label for="inputEmail3" class="col-sm-2 control-label">结束时间<span style="color:red">*</span></label>
                                 <div class="col-sm-3">
-                                    <input class="Wdate form-control" type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" name="end">
+                                    <input class=" form-control" type="text" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="end">
                                 </div>
                             </div><br><br>
                         </form>

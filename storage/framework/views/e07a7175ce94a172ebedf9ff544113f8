@@ -15,7 +15,7 @@
 								<th class="info">房间名称（编号）</th>
 								<th class="info">所属类型</th>
 								<th class="info">开关房</th>
-								<th class="info">入住状态</th>
+								<th class="info">当前状态</th>
 								<th class="info">操作</th>
 							</tr>
 							<?php foreach($goods as $item): ?>
@@ -48,14 +48,6 @@
 								<a href="/admin/shop/goods/qrcode/<?php echo e($item->goods_id); ?>". ><button type="button" class="btn btn-default btn-sm">生成二维码</button></a>
 								<?php else: ?>
 								<a href="/admin/shop/goods/show_qrcode/<?php echo e($item->goods_id); ?>". ><button type="button" class="btn btn-default btn-sm">查看二维码</button></a>
-								<?php endif; ?>
-								<?php if($item->open==1): ?>
-									<?php if($item->status == 1): ?> <a href="<?php echo e(url('/admin/order/loadarrange/'.$item->goods_id)); ?>"><button type="button" class="btn btn-default btn-sm">安排入住</button></a>
-									<?php elseif($item->status == 0): ?> <button type="button" class="btn btn-default btn-sm" disabled>客房已满</button>
-									<?php else: ?> <button type="button" class="btn btn-default btn-sm" disabled>不能安排</button>
-									<?php endif; ?>
-								<?php else: ?>
-								<button type="button" class="btn btn-default btn-sm" disabled>不能入住</button>
 								<?php endif; ?>
 							</td>
 							</tr>

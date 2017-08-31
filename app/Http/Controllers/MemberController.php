@@ -9,6 +9,8 @@ use WxHotel\User;
 class MemberController extends Controller {
 	public function index()
 	{
+		$info = User::where('openid','oCg8G1KlgdVf4AC9CUcx6teDuBh4')->first();
+		session(['user'=>$info]);
 		//根据用户的微信 openid获取用户的头像，等信息，在页面显示
 		$memberInfo = User::where('openid',session('user')['openid'])->first();
 		return view('member.person_center',['memberInfo'=>$memberInfo]);
@@ -19,6 +21,18 @@ class MemberController extends Controller {
 		//根据openid 查询个人在系统中的信息   ***这里先用死的
 		$infoList = User::where('openid',session('user')['openid'])->first();
 		return view('member.person_info',['infoList'=>$infoList]);
+	}
+
+	public function changesex(Request $request){
+		$result = User::where('openid',$request->input('openid'))->update(['sex'=>$request->input('sex')]);
+		$url = url('/member/info');
+		if($result){
+			echo "<script>alert('修改成功');window.location.href='$url'</script>";
+			return;
+		}else{
+			echo "<script>alert('修改失败');window.history.back();</script>";
+			return;
+		}
 	}
 
 	public function order(){
@@ -55,22 +69,31 @@ class MemberController extends Controller {
 		$cate = User::where('openid',session('user')['openid'])->update($data);
 		if($cate){
 			$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
-			$wx->verity_application($request->input('realname'),date('Y-m-d H:i:s',time()),session('user')['openid'],url('/member/mobile_credit_allow'));
+			$managers = User::where('role','admin')->lists('openid');//查询管理员
+			foreach($managers as $openid) {
+				$wx->verity_application($request->input('realname'),date('Y-m-d H:i:s',time()),$openid,url('/member/mobile_credit_allow?openid='.session('user')['openid']));//給管理员发送模板消息
+			}
 			echo "<script>alert('已提交，等待审核');window.location.href='/member';</script>";
 		}
 	}
 
-	public function mobile_credit_allow(){
-		$user = User::where('openid',session('user')['openid'])->first();
+	public function mobile_credit_allow(Request $request){
+		$user = User::where('openid',$request->input('openid'))->first();
 		return view('room.admin_audit',['user'=>$user]);
 	}
 
-	public function mobile_credit_make(){
-		$result = User::where('openid',session('user')['openid'])->update(['verify'=>1]);
+	public function mobile_credit_make(Request $request){
 		$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
-		$wx->verifymsg();
+		if($request->input('flag') == 'ok'){
+			$result = User::where('openid',$request->input('openid'))->update(['verify'=>1]);
+			$wx->verifymsg($request->input('openid'));
+			$return['code'] = 1;
+			$return['msg'] = '成功';
+			return response()->json($return);
+		}
+		$wx->verifyerror($request->input('openid'),url('/member/credit'));
 		$return['code'] = 1;
-		$return['msg'] = '成功';
+		$return['msg'] = '已驳回';
 		return response()->json($return);
 	}
 

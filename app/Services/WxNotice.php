@@ -142,7 +142,7 @@ class WxNotice extends JSSDK
 	抵离时间：{{keyword5.DATA}}
 	{{remark.DATA}}
 	 */
-	public function room_arrange_notice($category_name,$goods_id,$start,$end){
+	public function room_arrange_notice($openid,$category_name,$goods_id,$start,$end){
 		$template_id = 'S60NKkC-w8s7Rx5psPIuAC4DF_ISVoF1n3VYIJxBH88';
 		$txt = array(
 			'first'=>array('value'=>urlencode('恭喜你，您的酒店预订已提交成功')),
@@ -154,7 +154,25 @@ class WxNotice extends JSSDK
 			'remark'=>array('value'=>urlencode('祝您休息愉快'))
 		);
 		$msg = array(
-			'touser'=>session('user')['openid'],'template_id'=>$template_id,'data'=>$txt,'url'=>'',
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>'',
+		);
+		return $this->send(urldecode(json_encode($msg)));
+	}
+
+	//没有房间
+	public function room_arrange_error($openid){
+		$template_id = 'S60NKkC-w8s7Rx5psPIuAC4DF_ISVoF1n3VYIJxBH88';
+		$txt = array(
+			'first'=>array('value'=>urlencode('很抱歉，该房间或房型已被分配')),
+			'keyword1'=>array('value'=>''),
+			'keyword2'=>array('value'=>''),
+			'keyword3'=>array('value'=>urlencode('未能入住')),
+			'keyword4'=>array('value'=>''),
+			'keyword5'=>array('value'=>''),
+			'remark'=>array('value'=>urlencode('请联系管理员，或申请退款'))
+		);
+		$msg = array(
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>'',
 		);
 		return $this->send(urldecode(json_encode($msg)));
 	}
@@ -188,7 +206,7 @@ class WxNotice extends JSSDK
 	客服电话：{{keyword3.DATA}}
 	{{remark.DATA}}
 	 */
-	public function verifymsg(){
+	public function verifymsg($openid){
 		$template_id = 'tXS_P-C9LOkRvHuDr5uLJooUyaFDue2zilt45EPjp_E';
 		$txt = array(
 			'first'=>array('value'=>urlencode('您的身份认证审核已通过')),
@@ -198,7 +216,22 @@ class WxNotice extends JSSDK
 			'remark'=>array('value'=>urlencode('您已通过审核'))
 		);
 		$msg = array(
-			'touser'=>session('user')['openid'],'template_id'=>$template_id,'data'=>$txt,'url'=>''
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>''
+		);
+		return $this->send(urldecode(json_encode($msg)));
+	}
+
+	public function verifyerror($openid,$url){
+		$template_id = 'tXS_P-C9LOkRvHuDr5uLJooUyaFDue2zilt45EPjp_E';
+		$txt = array(
+			'first'=>array('value'=>urlencode('您的身份认证审核未通过')),
+			'keyword1'=>array('value'=>urlencode('身份证审核')),
+			'keyword2'=>array('value'=>urlencode('审核未通过')),
+			'keyword3'=>array('value'=>urlencode('40000000')),
+			'remark'=>array('value'=>urlencode('请重新提交审核资料'))
+		);
+		$msg = array(
+			'touser'=>$openid,'template_id'=>$template_id,'data'=>$txt,'url'=>$url,
 		);
 		return $this->send(urldecode(json_encode($msg)));
 	}

@@ -6,9 +6,11 @@
 		<li><a href="{{ url('/admin/shop/cate') }}">房型管理</a></li>
 	    <li><a href="{{ url('/admin/shop/goods') }}">房间管理</a></li>
 	    <li><a href="{{ url('/admin/shop/price') }}">房价管理</a></li>
+	    <li><a href="{{ url('/admin/shop/status') }}">房态管理</a></li>
     </ul>
 	<ul class="nav nav-sidebar" id="order_menu" style="display: none">
 	    <li><a href="{{ url('/admin/order/home') }}">订单列表</a></li>
+	    <li><a href="{{ url('/admin/order/refundrecord') }}">退款记录</a></li>
 	    {{--<li><a href="{{ url('/admin/order/charge') }}">充值列表</a></li>--}}
 	    {{--<li><a href="{{ url('/admin/order/user') }}">用户资金</a></li>--}}
 	    {{--<li><a href="{{ url('/admin/order/money') }}">资金流水</a></li>--}}
