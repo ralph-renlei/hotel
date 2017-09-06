@@ -55,14 +55,15 @@ class GoodsController extends Controller {
 	 */
 	public function store(Request $request)
 	{
-//		print_r($request->all());exit;
 		$id = $request->input('id');
 		$name = $request->input('name');
+		$mac = $request->input('mac');
 		$category=$request->input('category');
 		$this->validate($request,
 			[
 				'name'=>'required|max:30|min:2',
 				'category'=>'integer',
+				'mac'=>'required',
 			]
 			);
 		$regex = '@(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))@';
@@ -73,6 +74,7 @@ class GoodsController extends Controller {
 		$data = array(
 			'name'=>$name,
 			'category_id'=>$category,
+			'mac'=>$mac,
 		);
 
 		$goods = NULL;
@@ -156,15 +158,8 @@ class GoodsController extends Controller {
 		return view('admin.goods.show',$var);
 	}
 
-	public function getCategory(Request $request){
-		$parentId=$request->input('id');
-		$category2=Category::where('parent',$parentId)->get();
-//		$this->var['category2']=$category2;
-		return response()->json($category2);
-	}
-
 	public function qrcode($id){
-		$value = url('/goods_id/'.$id); //二维码内容
+		$value = url('/goods_id?goods_id='.$id); //二维码内容
 		$errorCorrectionLevel = 'L'; //容错级别
 		$matrixPointSize = 6; //生成图片大小
 
@@ -173,7 +168,7 @@ class GoodsController extends Controller {
 		$image_url = url('/qrcode/'.$id.'.png');
 		$result = Goods::where('goods_id',$id)->update(['qrcode'=>$image_url]);
 		if($result){
-			echo "<script>alert('生成二维码成功');window.history.back();</script>";
+			echo "<script>alert('生成二维码成功');window.location.href = '/admin/shop/goods';</script>";
 		}
 	}
 
@@ -235,6 +230,53 @@ class GoodsController extends Controller {
 		}
 
 		return view('admin.goods.room_status',['goods'=>$goods,'time_array'=>$time_array,'keywords'=>$keywords]);
+	}
+
+	public function power_count(Request $request)
+	{
+		if(!$request->input('end')){
+			$end = date('Y-m-d',time()-3600*24);
+			$start = date('Y-m-d',time()-3066*48);
+		}else{
+			$end = date('Y-m-d',strtotime($request->input('end'))-3600*24);
+			$start = date('Y-m-d',strtotime($request->input('end'))-3600*48);
+		}
+
+		//查询每天的用电量
+		$data = \DB::table('goods')->select('goods.goods_id','goods.name','goods.mac','b.count_power')
+			->rightJoin('box_power as b','goods.mac','=','b.box_mac')
+			->where(['b.end'=>$end,'b.start'=>$start])
+			->get();
+
+		$goods_arr = \DB::table('goods')->select('goods_id','name','mac')->get();//将data中没有数据添加
+		foreach($goods_arr as $key=>$demo){//goods 中有的数据 data中没有，就添加进去
+			foreach($data as $list){
+				if($demo->mac == $list->mac){
+					unset($goods_arr[$key]);
+					break;
+				}
+			}
+		}
+
+		if($goods_arr){
+			foreach($goods_arr as $list2){
+				$list2->count_power = 0;
+				$data[] = $list2;
+			}
+		}
+
+		//电量字符串，房间字符串
+		$power_str = "";
+		$room_str = "";
+		foreach($data as $result){
+			$power_str = $power_str.','.$result->count_power;
+			$room_str = $room_str.','.$result->name;
+		}
+
+		$power_str = trim($power_str,',');
+		$room_str = trim($room_str,',');
+
+		return view('admin.goods.power_count',['power_str'=>$power_str,'room_str'=>$room_str,'hotel_name'=>env('CUSTOM_PHONE')]);
 	}
 
 }

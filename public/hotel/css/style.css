@@ -207,7 +207,8 @@ body {
 /*设置*/
 
 input[type='number'],
-input[type='text'] {
+input[type='text'],
+input[type='password']{
 	border: none;
 	outline: none;
 }
@@ -394,7 +395,9 @@ input[type='file']{
 
 
 /*填写订单*/
-
+.order_container{
+	margin-bottom: 100px;
+}
 .order_title {
 	padding: 13px 0px 9px 0px;
 }
@@ -411,9 +414,9 @@ input[type='file']{
 }
 
 .range {
-	width: 30px;
-	height: 30px;
-	line-height: 30px;
+	width: 33px;
+	height: 33px;
+	line-height: 33px;
 	border-radius: 30px;
 	border: 1px solid #ddd;
 	text-align: center;
@@ -421,8 +424,8 @@ input[type='file']{
 }
 
 .order_range {
-	top: 20px;
-	left: 190px;
+	top: 18px;
+	left: 210px;
 }
 
 .bottom_bar {
@@ -431,6 +434,7 @@ input[type='file']{
 	bottom: 0px;
 	left: 0px;
 	background: #fff;
+	border-top: 1px solid #ddd;
 }
 
 .bottom_bar .left {
@@ -456,7 +460,7 @@ input[type='file']{
 }
 
 .bigger_text {
-	font-size: 16px;
+	font-size: 14px;
 	color: #000;
 }
 
@@ -627,3 +631,4 @@ select{
 	padding: 4px;
 	height: 30px;
 }
+

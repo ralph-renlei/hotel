@@ -95,7 +95,7 @@ class WxNotice extends JSSDK
 		$template_id = '2ghLucvN8A32KxPAspQ_HUl6oZSoSbm10XGAwJOUFLA';
 		$txt = array(
 			'first'=>array('value'=>urlencode('您好，您的订单已提交，等待处理')),
-			'keyword1'=>array('value'=>urlencode(env('APP_NAME'))),
+			'keyword1'=>array('value'=>urlencode(env('HOTEL_NAME'))),
 			'keyword2'=>array('value'=>$order_sn),
 			'keyword3'=>array('value'=>$start_time),
 			'remark'=>array('value'=>urlencode('请在个人中心查看！'))
@@ -248,7 +248,7 @@ class WxNotice extends JSSDK
 	public function rest_notice($openid,$category,$goods_name,$start,$end){
 		$template_id = 'S60NKkC-w8s7Rx5psPIuAC4DF_ISVoF1n3VYIJxBH88';
 		$txt = array(
-			'first'=>array('value'=>urlencode(env('APP_NAME'))),
+			'first'=>array('value'=>urlencode(env('HOTEL_NAME'))),
 			'keyword1'=>array('value'=>urlencode($category)),
 			'keyword2'=>array('value'=>urlencode($goods_name)),
 			'keyword3'=>array('value'=>urlencode('正常入住')),
@@ -273,7 +273,7 @@ class WxNotice extends JSSDK
 		$template_id = 'X-gUrjtyBPsoaOa-c2RE3_B9_wWwH2qxx6vPVb-b5qs';
 		$txt = array(
 			'first'=>array('value'=>urlencode('客人等待结账，请尽快查房')),
-			'keyword1'=>array('value'=>urlencode(env('APP_NAME'))),
+			'keyword1'=>array('value'=>urlencode(env('HOTEL_NAME'))),
 			'keyword2'=>array('value'=>urlencode($goods_name)),
 			'keyword3'=>array('value'=>urlencode(date('Y-m-d H:i:s',time()))),
 			'remark'=>array('value'=>urlencode('请尽快处理'))

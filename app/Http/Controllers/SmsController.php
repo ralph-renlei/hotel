@@ -12,6 +12,7 @@ namespace WxHotel\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+use WxHotel\Services\Alidayu;
 use WxHotel\Services\Sms;
 use WxHotel\SmsRecord;
 use WxHotel\User;
@@ -53,12 +54,10 @@ class SmsController extends Controller
     }
 
     public function sendCode(Request $request){
-        $mobile = $request->input('mobile');
-        $sms_record = new SmsRecord();
-        $sms = new Sms($sms_record);
         $return = array(
             'code'=>self::CODE_FAIL,'data'=>NULL,'msg'=>self::FAIL_MSG
         );
+        $mobile = $request->input('mobile');
         if(empty($mobile)){
             return response()->json($return);
         }
@@ -67,9 +66,11 @@ class SmsController extends Controller
             $return['msg'] = self::PARAM_INVALID_MSG;
             return response()->json($return);
         }
-        $result = $sms->send_valid_sms($mobile);
+        $sms_record = new Alidayu();
+        $result = $sms_record->registCode($mobile);
 
-        if(isset($result) && isset($result['code']) && $result['code']==0){
+        if(isset($result->result)){
+            SmsRecord::create(['mobile'=>$mobile,'token'=>$result->code]);
             $return['code'] = self::CODE_SUCCESS;
             $return['msg'] = self::SUCCESS_MSG;
             return response()->json($return);

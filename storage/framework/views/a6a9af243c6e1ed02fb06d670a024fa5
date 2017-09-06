@@ -24,7 +24,7 @@
 						<i class="iconfont right icon-dingwei"></i>
 					</div>
 					<div class="right_top clearfix">
-						<p class="bigger_text left">029-88888888</p>
+						<p class="bigger_text left">18814040788</p>
 						<i class="iconfont right icon-dianhua"></i>
 					</div>
 				</div>

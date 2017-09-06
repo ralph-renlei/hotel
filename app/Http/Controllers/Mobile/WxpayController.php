@@ -110,7 +110,7 @@ class WxpayController extends Controller {
         return response()->json($result);
     }
 
-    public function refund(Request $request){
+     public function refund(Request $request){
         $result = array(
             'code'=>self::CODE_FAIL,
             'msg'=>self::FAIL_MSG
@@ -118,8 +118,10 @@ class WxpayController extends Controller {
 
         $order = Order::where('order_id',$request->input('id'))->first();//查询订单
         //将部分信息写入数据库
+       /* $orders_refund_id = \DB::table('orders_refund')->insertGetId(['uid'=>$order->uid,'out_refund_no'=>$order->order_sn,'mch_id'=>env('WXPAY_MCHID'),'order_id'=>$request->input('id'),'transaction_id'=>$order->transaction_id,
+            'total_fee'=>$order->order_amount*100,'refund_fee'=>$request->input('refund_fee')*100,'refund_success_time'=>date('Y-m-d H:i:s',time())]);*/
         $orders_refund_id = \DB::table('orders_refund')->insertGetId(['uid'=>$order->uid,'out_refund_no'=>$order->order_sn,'mch_id'=>env('WXPAY_MCHID'),'order_id'=>$request->input('id'),'transaction_id'=>$order->transaction_id,
-            'total_fee'=>1,'refund_fee'=>1]);
+            'total_fee'=>0.01,'refund_fee'=>0.01,'refund_success_time'=>date('Y-m-d H:i:s',time())]);
         $refund=array(
             'appid'=>env('WECHAT_APPID'),//应用ID，固定
             'mch_id'=>env('WXPAY_MCHID'),//商户号，固定
@@ -127,8 +129,10 @@ class WxpayController extends Controller {
             'out_refund_no'=>$order->order_sn,//商户内部唯一退款单号
             'out_trade_no'=>$order->order_sn,//商户订单号,pay_sn码 1.1二选一,微信生成的订单号，在支付通知中有返回
             // 'transaction_id'=>'4008582001201708309122927539',//微信订单号 1.2二选一,商户侧传给微信的订单号
-            'refund_fee'=>$request->input('refund_fee'),//退款金额
-            'total_fee'=>$order->amount,//总金额
+//            'refund_fee'=>$request->input('refund_fee')*100,//退款金额
+            'refund_fee'=>1,//退款金额
+//            'total_fee'=>$order->order_amount*100,//总金额
+            'total_fee'=>1,//总金额
         );
         ksort($refund);
         $str = '';
@@ -170,38 +174,39 @@ class WxpayController extends Controller {
                 if($data['result_code'] == 'SUCCESS'){
                     //将另一部分信息写入数据库
                     $flag = \DB::table('orders_refund')->where('id',$orders_refund_id)->update(['refund_id'=>$data['refund_id']]);
+					\DB::table('orders')->where('order_id',$request->input('id'))->update(['pay_status'=>2,'order_status'=>2]);
                     if($flag){
-                        $this->refundquery($request->input('id'));
+                        $result = $this->refundquery($request->input('id'));
+                        return response()->json($result);
                     }
-                    $result['code'] = self::CODE_SUCCESS;
-                    $result['msg'] = self::SUCCESS_MSG;
                 }
             }else{
                 $result['code'] = self::CODE_PARAM;
+                $result['msg'] = '退款失败';
+                return response()->json($result);
             }
         }else{
             $error=curl_errno($ch);
             curl_close($ch);
-            echo "<script>alert('请求失败，请重试');window.history.back();</script>";
-            return;
+            $result = array(
+                'code'=>self::CODE_FAIL,
+                'msg'=>'请求失败，请重试',
+            );
+            return response()->json($result);
         }
     }
 
-    public function refundquery(Request $request)
+    public function refundquery($id)
     {
-        $result = array(
-            'code'=>self::CODE_FAIL,
-            'msg'=>self::FAIL_MSG
-        );
-
-        $order = Order::where('order_id',$request->input('id'))->first();//查询订单
-        $orders_refund = \DB::table('orders_refund')->where('order_id',$request->input('id'))->first();
+        $order = Order::where('order_id',$id)->first();//查询订单
+        $orders_refund = \DB::table('orders_refund')->where('order_id',$id)->first();
         if(!$orders_refund->refund_id){
             //该笔退款没有成功
             $result = array(
                 'code'=>self::CODE_FAIL,
                 'msg'=>'该笔退款没有成功',
             );
+            return $result;
         }
         //将部分信息写入数据库
         $refund=array(
@@ -252,22 +257,27 @@ class WxpayController extends Controller {
                 if($data['result_code'] == 'SUCCESS'){
                     //将另一部分信息写入数据库
                     \DB::table('orders_refund')->where('id',$orders_refund->id)->update(['refund_count'=>$data['refund_count'],'refund_channel'=>$data['refund_channel_0'],
-                        'refund_account'=>$data['refund_account_0'],'refund_recv_account'=>$data['refund_recv_accout_0'],'refund_success_time'=>$data['refund_success_time_0']]);
-                    $result['code'] = self::CODE_SUCCESS;
-                    $result['msg'] = self::SUCCESS_MSG;
+                        'refund_account'=>$data['refund_account_0'],'refund_recv_account'=>$data['refund_recv_accout_0']]);
+                    $result = array(
+                        'code'=>self::CODE_SUCCESS,
+                        'msg'=>'退款成功',
+                    );
+                    return $result;
                 }
-            }else{
-                $result['code'] = self::CODE_PARAM;
             }
         }else{
             $error=curl_errno($ch);
             curl_close($ch);
-            echo "<script>alert('请求失败，请重试');window.history.back();</script>";
-            return;
+            $result = array(
+                'code'=>self::CODE_FAIL,
+                'msg'=>'请求失败，请重试',
+            );
+            return $result;
         }
     }
 
-    public function notify(Request $request,$id){
+
+    public function notify(Request $request){
         $result = array();
         $config = array(
             'appid'=>env('WECHAT_APPID'),
@@ -330,6 +340,33 @@ class WxpayController extends Controller {
         }
 
         return view('room.pay_success',['list'=>$order,'verify'=>$verify]);
+    }
+
+    public function pay_success_offline(){
+        $order = Order::where('order_sn',session('order_sn'))->first();
+        //订单中有 goods_id 同意 没有分配房间(給管理员发送的模板消息 要跳转的页面)
+        if(!$order->goods_id){
+            $url = url('/mobile_room?category_id='.$order->category_id.'&order_sn='.$order->order_sn.'&openid='.$order->openid);
+        }else{
+            $url = url('/mobile_allow?goods_id='.$order->goods_id.'&order_sn='.$order->order_sn.'&openid='.$order->openid);
+        }
+
+        //查询这个用户是否实名认证，如果未实名认证，弹窗通知，跳转到认证页面
+        $user = User::where('openid',session('user')['openid'])->first();
+        $wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
+        $result = $wx->order_sure(session('user')['openid'],session('order_sn'),$order->start);//給预订者发送模板消息
+        $managers = User::where('role','admin')->lists('openid');//查询管理员
+        foreach($managers as $openid){
+            $wx->room_to_manager($openid,$order->username,$order->order_amount,$order->category_name,$order->goods_name,$order->start,$order->end,$url);//给管理者发送信息
+        }
+
+        $wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
+        $managers = User::where('role','admin')->lists('openid');//查询管理员
+        foreach($managers as $openid) {
+            $wx->verity_application($order->username,date('Y-m-d H:i:s',time()),$openid,url('/member/mobile_credit_allow?openid='.session('user')['openid']));//給管理员发送模板消息
+        }
+
+        return view('room.pay_success_offline',['list'=>$order]);
     }
 
     public function pay_error(){

@@ -75,7 +75,7 @@
 
 			if($('#realname').val() == '' || $('#idcard_number').val() == ''){
 				alert('您的信息必须填写');
-				return;
+				return false;
 			}
 
 			if(reg.test($('#idcard_number').val()) === false){
@@ -85,7 +85,7 @@
 
 			if(front == undefined || behind == undefined){
 				alert('请上传照片');
-				return;
+				return false;
 			}
 
 			$('input[name="photo1"]').attr('value',front);

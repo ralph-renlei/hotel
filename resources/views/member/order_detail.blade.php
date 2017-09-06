@@ -27,6 +27,14 @@
 						<span>1间</span>
 					</p>
 				</div>
+				<div class="no_interval_cell">
+					<div class="">
+						<p>订单号: <span class="bigger_text">{{$order_detail->order_sn}} </span></p><br>
+						<p>实付款: <span class="bigger_text">￥{{$order_detail->order_amount}}</span></p><br>
+						<p>入住人: <span class="bigger_text">{{$order_detail->username}} &nbsp; {{$order_detail->phone}}</span></p><br>
+						<p>下单时间: <span class="bigger_text">{{$order_detail->add_time}} </span></p><br>
+					</div>
+				</div>
 				<div class="no_interval_cell time_range">
 					<div class="start_time">
 						入住时间：
@@ -44,7 +52,7 @@
 					<div class="">
 						<p>订单状态: <span class="orange_text">
 								@if($order_detail->order_status == 0) 已预订,等待酒店确认
-								@elseif($order_detail->order_status == 1) 预订成功，可以入住
+								@elseif($order_detail->order_status == 1) 酒店已经处理
 								@else 订单已完成
 								@endif</span></p>
 						<p>入住的房间号: <span class="orange_text">{{$order_detail->goods_name}}</span></p>
@@ -52,13 +60,13 @@
 				</div>
 				<div class="no_interval_cell">
 					<div class="">
-						<p>手机号: <span class="bigger_text">{{$order_detail->phone}}</span></p>
-						<p>总价: <span class="bigger_text">￥{{$order_detail->order_amount}}</span></p>
-					</div>
-				</div>
-				<div class="no_interval_cell">
-					<div class="">
+						@if($order_detail->order_status == 0 && $order_detail->pay_status == 0)
 						<p><a class="orange_btn reserve_btn" href="/pay?uid={{session('uid')}}&openid={{session('user')['openid']}}&category_name={{$order_detail->category_name}}&order_amount={{$order_detail->order_amount}}&goods_id={{$order_detail->goods_id}}">立即支付</a></p>
+						@endif
+						@if($order_detail->order_status == 2)
+						<p><a class="orange_btn reserve_btn" href="/member/order_del?order_id={{$order_detail->order_id}}">删除订单</a></p>
+						@endif
+						<p><span>对订单有疑问或申请退款，可拨打 18814040788 </span></p>
 					</div>
 				</div>
 

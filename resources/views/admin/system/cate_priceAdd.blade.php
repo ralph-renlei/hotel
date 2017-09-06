@@ -10,6 +10,7 @@
                         <form class="form-horizontal" role="form" id="price_store">
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">分类<span style="color:red">*</span></label>
+                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" onclick="app.system.cancel();">×</span><span class="sr-only" onclick="app.system.cancel();">Close</span></button>
                                 <div class="col-sm-3" id="category">
                                     <select class="form-control" name="category" id="category">
                                         <option value ="0">请选择分类</option>

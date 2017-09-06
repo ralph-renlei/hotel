@@ -1,7 +1,6 @@
 <?php namespace WxHotel\Http\Controllers\Console;
 
 use App\Jobs\ClosePower;
-use EasyWeChat\User\User;
 use Illuminate\Http\Request;
 use DB;
 use WxHotel\Category;
@@ -9,28 +8,30 @@ use WxHotel\Goods;
 use WxHotel\Order;
 use WxHotel\Services\Mantun;
 use WxHotel\Services\WxNotice;
+use WxHotel\User;
 
 class OrderManageController extends Controller {
 	public function index(Request $request){
+		$categorys = Category::all();//获取所有分类，添加订单使用
 		$keywords = '';
 		if(!empty($request->input('start'))){
 			$keywords = $request->input('start');
+			$time_arr = explode('-',$keywords);
+			if(strpos($time_arr[1],'0') == 0){
+				$time_arr[1] = str_replace('0','',$time_arr[1]);
+			}
+			if(strpos($time_arr[2],'0') == 0){
+				$time_arr[2] = str_replace('0','',$time_arr[2]);
+			}
+			$keywords = implode('-',$time_arr);
 		}
 
-		//生成当前时间 前1个月的时间 ，查询近一个月内每天的订单情况
-		$time_array = [0=>'全部'];
-		for($i = 0 ; $i < 30 ; $i++){
-			$data_array = explode('-',date('Y-m-d',time() - 3600 * 24 * $i));
-			$data_array[1] = (int)$data_array[1];
-			$time_array[] = implode('-',$data_array);
-		}
-
-		if($keywords == '全部'){
+		if($keywords == ''){
 			$orderlist = Order::orderBy('order_id','desc')->orderBy('pay_status','desc')->paginate(20);
 		}else{
 			$orderlist = Order::where('start','like','%'.$keywords.'%')->orderBy('order_id','desc')->orderBy('pay_status','desc')->paginate(20);
 		}
-		return view('admin.order.home',['list'=>$orderlist,'time_array'=>$time_array,'keywords'=>$keywords]);
+		return view('admin.order.home',['list'=>$orderlist,'keywords'=>$keywords,'categorys'=>$categorys]);
 	}
 
 	public function show($id)
@@ -124,6 +125,7 @@ class OrderManageController extends Controller {
 		});
 
 		$this->send_room_success_notice($order->openid,$category,$goods_name,$order->start,$order->end);
+		echo "<script>alert('成功');window.location.href='/admin/order/home'</script>";
 	}
 
 	public function loadadd(){
@@ -198,6 +200,7 @@ class OrderManageController extends Controller {
 
 		$order = Order::where('order_sn',$request->input('order_sn'))->first();
 		if($order->order_status == 1){//如果订单状态正确，发送模板消息
+						\DB::table('room_status')->insert(['order_id'=>$order->order_id,'name'=>$order->username,'mobile'=>$order->phone,'start_time'=>$order->start,'end_time'=>$order->end,'goods_name'=>$order->goods_name,'category'=>$order->category_name,'number'=>1]);
 			$this->send_room_success_notice($order->openid,$request->category_name,$request->input('goods_name'),$order->start,$order->end);
 		}
 		$return = [
@@ -217,10 +220,10 @@ class OrderManageController extends Controller {
 	public function makeRest(Request $request){ //goods_name  openid
 		//判断房间是否入住
 		$room_status  = \DB::table('room_status')->select('id')->where('goods_name',$request->input('goods_name'))->get();
-		if($room_status){
-			echo "<script>alert('已有人入住')</script>";
-			return;
-		}
+//		if($room_status){
+//			echo "<script>alert('已有人入住')</script>";
+//			return;
+//		}
 
 		//判断房间和人是否一致
 		$order = Order::where(['openid'=>$request->input('openid'),'order_status'=>1,'pay_status'=>1,'goods_name'=>$request->input('goods_name')])->first();
@@ -237,88 +240,107 @@ class OrderManageController extends Controller {
 		//通过openid 判断是否认证
 		$user = \WxHotel\User::where('openid',$request->input('openid'))->first();
 		if($user->verify == 0){
-			$url = url('/member/credit');
-			echo "<script>alert('请先实名认证');window.location.href='.$url.'</script>";
+			echo "<script>alert('请先实名认证');window.location.href='/member/credit'</script>";
 			return;
 		}
 
-		//修改房间状态  添加到room_status  通电 发送模板消息
-		\DB::transaction(function () use($request,$order){
-			\DB::table('goods')->where('goods_name',$request->input('goods_name'))->update(['status'=>0]);
-			\DB::table('room_status')->insert(['order_id'=>$order->order_id,'name'=>$order->username,'mobile'=>$order->phone,'start_time'=>$order->start,'end_time'=>$order->end,'goods_name'=>$order->goods_name,'category'=>$order->category_name,'number'=>1]);
-		});
-
+		//修改房间状态  添加到 room_status  通电 发送模板消息
 		$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
-		$managers = User::where('role','admin')->lists('openid');//查询管理员
+		$managers = \WxHotel\User::where('role','admin')->lists('openid');//查询管理员
 		foreach($managers as $openid) {
 			$wx->rest_notice($openid, $order->category_name, $order->goods_name, $order->start, $order->end);//给管理者发送信息
 		}
 
 		$this->open_power($order->goods_name);
+		echo "<script>alert('恭喜您，房间已开电，欢迎入住！')</script>";
 	}
 
 
 	//通电
 	public function open_power($goods_name){
-		$box = \DB::table('boxes')->where('room',$goods_name)->first();
+		$mac = \DB::table('goods')->where('name',$goods_name)->pluck('mac');//通过mac控制通断电
 		$power = new PowerController();
-		$power_status = $power->control_power($box['mac'],'open');//开电
+		$power_status = $power->control_power($mac,'open');//开电
 		if($power_status == 0){//将此时的电量放入
-			$all_power = $power->daypower($box['mac'],date('Y',time()),date('m',time()),date('d',time()));
-			$start_power = 0;
-			foreach($all_power as $list){
-				$start_power = $start_power + $list['electricity'];
+			$all_power = $power->daypower($mac,date('Y',time()),date('m',time()),date('d',time()));
+			if($all_power = []){
+				$start_power = 0;
+			}else{
+				$start_power = 0;
+				foreach($all_power as $list){
+					$start_power = $start_power + $list['electricity'];
+				}
 			}
 		}
-		\DB::table('box_power')->insert(['box_id'=>$box['id'],'start'=>date('Y-m-d h:i:s'),'start_power'=>$start_power]);
+		\DB::table('goods')->where('name',$goods_name)->update(['status'=>0]);
+		\DB::table('box_power')->insert(['box_mac'=>$mac,'start'=>date('Y-m-d'),'start_power'=>$start_power]);
 	}
 
 	//退房 断电
-	public function out_room(){
+	public function out_room(Request $request){
 		//查询正在 入住的订单
 		$order = Order::where(['openid'=>session('user')['openid'],'pay_status'=>1,'order_status'=>1])->first();
-		$box = \DB::table('boxes')->where('room',$order->goods_name)->first();
-		$power = new PowerController();
-		$all_power = $power->daypower($box['mac'],date('Y',time()),date('m',time()),date('d',time()));
-		$end_power = 0;
-		foreach($all_power as $list){
-			$end_power = $end_power + $list['electricity'];
+
+		if(is_null($order)){
+			echo "<script>alert('查询不到订单')</script>";
+			return;
 		}
 
-		\DB::transaction(function ()use($box,$order,$end_power) {
-			\DB::table('box_power')->where('box_id', $box['id'])->update(['end' => time(), 'end_power' => $end_power]);//跟新电量
+		if($order->goods_name != $request->input('goods_name')){
+			echo "<script>alert('房间号与您的订单不符');</script>";
+			return;
+		}
+
+		$mac = \DB::table('goods')->where('name',$order->goods_name)->pluck('mac');
+		$start_power = \DB::table('box_power')->where('box_mac')->pluck('start_power');
+		$power = new PowerController();
+		$all_power = $power->daypower($mac,date('Y',time()),date('m',time()),date('d',time()));
+		if($all_power = []){
+			$end_power = 0;
+		}else{
+			$end_power = 0;
+			foreach($all_power as $list){
+				$end_power = $end_power + $list['electricity'];
+			}
+		}
+
+		$count_power  = $end_power - $start_power;
+		\DB::transaction(function ()use($mac,$order,$end_power,$count_power) {
+			\DB::table('box_power')->where('box_mac', $mac)->update(['end' => date('Y-m-d',time()), 'end_power' => $end_power,'count_power'=>$count_power]);//跟新电量
 			\DB::table('orders')->where('order_sn',$order->order_sn)->update(['order_status'=>2]);//更新订单状态
 			\DB::table('goods')->where('goods_id',$order->goods_id)->update(['status'=>1]);//更新房间状态
+			\DB::table('room_status')->where('order_id',$order->order_id)->delete();//删除房间状态表数据
 		});
 
 		//給管理员通知
 		$wx = new WxNotice(env('WECHAT_APPID'),env('WECHAT_SECRET'));
-		$managers = User::where('role','admin')->lists('openid');//查询管理员
+		$managers = \WxHotel\User::where('role','admin')->lists('openid');//查询管理员
 		foreach($managers as $openid){
 			$wx->close_accounts($openid,$order->goods_name);//给管理者发送信息
 		}
 
 		//断电
-		$obj = new ClosePower();
-		$obj->handle($order->goods_name);//调用定时队列，断电
-//		$this->close_power($order->goods_name);
+		$this->close_power($order->goods_name);
+		$return = [];
+		$return['code'] == 0;
+		$return['msg'] == '退房成功';
+		return response()->json($return);
 	}
 
 	//断电
 	public function close_power($goods_name){
-		$box = \DB::table('boxes')->where('room',$goods_name)->first();
+		$mac = \DB::table('goods')->where('name',$goods_name)->pluck('mac');
 		$power = new PowerController();
-		$power_status = $power->control_power($box['mac'],'close');//断电
+		$power_status = $power->control_power($mac,'close');//断电
 	}
 
 	//退款
 	public function refund_record()
 	{
-		$list = \DB::table('orders')->select('orders.*','b.total_fee','b.refund_success_time')
+		$list = \DB::table('orders')->select('orders.*','b.total_fee','b.refund_success_time','b.refund_fee')
 			->rightJoin('orders_refund AS b', 'b.order_id', '=', 'orders.order_id')
 			->orderBy('orders.order_id','desc')
 			->paginate(20);
 		return view('admin.order.refund_record',['list'=>$list]);
 	}
-
 }

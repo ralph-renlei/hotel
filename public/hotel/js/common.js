@@ -1,11 +1,17 @@
 $("#check_out").click(function() {
-	if(confirm('确定退房？十分钟后将自动断电！')) {
+	var goods_name = $('#goods_name').val();
+	var openid = $('#openid').val();
+	if(confirm('请确保已收拾好随身物品，即将断电！')) {
 		$.ajax({
 			type: "get",
 			url: "/out_room",
 			async: true,
-			data: {},
-			success: function(res) {},
+			data: {goods_name:goods_name,openid:openid},
+			success: function(res) {
+				if(res.code == 0){
+					alert(res.msg);
+				}
+			},
 		});
 		setTimeout(function() {
 			alert("欢迎您下次光临！");
@@ -189,7 +195,7 @@ $(".send_code").bind("click", function() {
 });
 
 // 发送验证码倒计时
-var countdown = 60;
+var countdown = 0;
 function settime(v) {
 	if(checkMobile($(v).parent().prev().children().eq(1).children()) || checkMobile($(v).prev())) {
 		if(countdown == 0) {
@@ -267,26 +273,70 @@ function assignRoom(){
 
 //时间选择
 function init_date() {
-	var nowDate = new Date();
-	var nowyear = nowDate.getFullYear();
-	var nowmonth = nowDate.getMonth() + 1;
-	var nowday = nowDate.getDate();
-	var tomorrowday = Number(nowday) + 1;
-	var today = nowyear + '-' + nowmonth + '-' + nowday;
-	var tomorrow = nowyear + '-' + nowmonth + '-' + tomorrowday;
+	var today = new Date().getTime();
+	var tommorow = today + 86400000;
+	function fmtDate(obj){
+		var date =  new Date(obj);
+		var y = 1900+date.getYear();
+		var m = "0"+(date.getMonth()+1);
+		var d = "0"+date.getDate();
+		return y+"-"+m.substring(m.length-2,m.length)+"-"+d.substring(d.length-2,d.length);
+	}
+
+	function getMyDay(date){
+		var week;
+		if(date.getDay()==0){
+			week="周日";
+		}
+		if(date.getDay()==1) {week="周一";}
+		if(date.getDay()==2) {week="周二";}
+		if(date.getDay()==3) {week="周三";}
+		if(date.getDay()==4) {week="周四";}
+		if(date.getDay()==5) {week="周五";}
+		if(date.getDay()==6) {week="周六";}
+		return week;
+	}
+	var currentdate = fmtDate(today);
+	var tomorrowdate = fmtDate(tommorow);
+//	var currentdate = year + "-" + month + "-" + today;
+//	var tomorrowdate = year + "-" + month + "-" + tomorrow;
+
+	$(".sInput").text(currentdate);
+	$(".eInput").text(tomorrowdate);
+
+	var w1 = getMyDay(new Date($(".sInput").text()));
+	$(".markToday").text(w1);
+	var w2 = getMyDay(new Date($(".eInput").text()));
+	$(".markTom").text(w2);
 
 	var dateRange1 = new pickerDateRange('date1', {
-		stopToday: false,
-		isTodayValid: true,
-		startDate: today,
-		endDate: tomorrow,
-		needCompare: false,
-		defaultText: ' 离开 ',
-		autoSubmit: false,
-		inputTrigger: 'input_trigger1',
-		theme: 'ta',
-		autoSubmit: 'true'
-		
+		stopToday : false,
+		isTodayValid : true,
+		startDate: currentdate,
+		endDate: tomorrowdate,
+		needCompare : false,
+		defaultText : ' 离开 ',
+		autoSubmit : false,
+		inputTrigger : 'input_trigger1',
+		theme : 'ta',
 	});
 
+}
+
+// 获取localStorage中存的时间
+function getLocalstorage(){
+	var stime = localStorage.getItem('stime');
+	var etime = localStorage.getItem('etime');
+	var sweek = localStorage.getItem('sweek');
+	var eweek = localStorage.getItem('eweek');
+	var allday = localStorage.getItem('allday');
+
+	$("#stime").text(stime);
+	$("#etime").text(etime);
+	$("#sweek").text(sweek);
+	$("#eweek").text(eweek);
+	$("#allday").text(allday);
+
+
+	console.log(stime);
 }

@@ -15,7 +15,7 @@
 //---------------------------基础通用模块--------------------------------
 
 Route::get('/', 'Mobile\HomeController@index');
-Route::get('/goods_id/{id}', 'ReserveController@offlineIndex');
+Route::get('/goods_id', 'ReserveController@offlineIndex');
 Route::get('wechat/valid','WechatController@valid');
 
 Route::post('upload/image','UploadController@image');
@@ -28,10 +28,12 @@ Route::get('region/area/{id}', 'RegionController@getArea');
 Route::get('region/street/{id}', 'RegionController@getStreet');
 Route::get('region/community/{id}', 'RegionController@getCommunity');
 Route::get('/pay','ReserveController@pay');
+Route::get('/pay_offline','ReserveController@pay_offline');
 Route::get('/unifiedorder','Mobile\WxpayController@unifiedorder');
 Route::get('/prepay','Mobile\WxpayController@prepay');//预下单
 Route::post('/notify','Mobile\WxpayController@notify');//异步通知
 Route::get('/pay_success','Mobile\WxpayController@pay_success');//支付成功
+Route::get('/pay_success_offline','Mobile\WxpayController@pay_success_offline');//支付成功
 Route::get('pay_error','Mobile\WxpayController@pay_error');//支付失败
 Route::get('/refund','Mobile\WxpayController@refund');//申请退款
 Route::get('/refundquery','Mobile\WxpayController@refundquery');//查询退款
@@ -42,6 +44,7 @@ Route::get('/member/info','MemberController@loadInfo');
 Route::post('/member/changesex','MemberController@changesex');
 Route::get('/member/order','MemberController@order');
 Route::get('/member/order_detail/{id}','MemberController@order_detail');
+Route::get('/member/order_del','MemberController@order_del');
 Route::get('/member/credit','MemberController@credit');
 Route::post('/member/credit','MemberController@makeCredit');
 Route::get('/member/mobile_credit_allow','MemberController@mobile_credit_allow');
@@ -55,7 +58,8 @@ Route::get('/member/setting/new','MemberController@newphone');
 Route::get('/reserve','ReserveController@index');
 Route::get('/reserve/orderonline','ReserveController@makeOrder');//线上预订
 Route::post('/reserve/ordercommit','ReserveController@orderCommit');//生成订单
-Route::get('/reserve/orderoffline/goods_id/{id}','ReserveController@orderoffline');//线下预定
+Route::post('/reserve/ordercommit_offline','ReserveController@ordercommit_offline');//生成订单
+Route::get('/reserve/orderoffline','ReserveController@orderoffline');//线下预定
 Route::get('/mobile_room','Console\OrderManageController@mobile_room');//管理员通过手机分配房间
 Route::get('/mobile_allow','Console\OrderManageController@mobile_allow');//管理员通过手机同意
 Route::post('mobile_room_arrange','Console\OrderManageController@mobile_room_arrange');//分配房间写入数据库
@@ -63,7 +67,7 @@ Route::get('/power','Console\PowerController@control_power');//通断电
 Route::get('/test','Console\PowerController@save_boxes');//测试
 Route::get('/rest','Console\OrderManageController@makeRest');//入住
 Route::get('/out_room','Console\OrderManageController@out_room');//退房
-
+Route::get('/admin/shop/power_count','Console\GoodsController@power_count');
 
 //--------------------------------PC管理端---------------------------------
 Route::group(['prefix' => 'admin','namespace' => 'Console'], function()

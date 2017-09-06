@@ -19,11 +19,11 @@
 			<div class="no_interval_on">
 				<div class="no_interval_cell">
 					<span class="">姓名：</span >
-					<input type="text" name="username" id="username" value="{{$userinfo->name}}" readonly="readonly"/>
+					<input type="text" name="username" id="username" value="{{$userinfo->username}}" readonly="readonly"/>
 				</div>
 				<div class="no_interval_cell">
 					<span >手机：</span >
-					<input type="text" name="phone" id="phone" value="{{$userinfo->mobile}}" readonly="readonly"/>
+					<input type="text" name="phone" id="phone" value="{{$userinfo->phone}}" readonly="readonly"/>
 				</div>
 				<div class="no_interval_cell">
 					<span >房型：</span >

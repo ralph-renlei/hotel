@@ -22,7 +22,7 @@
 					<div class="no_interval_on">
 						<div class="no_interval_cell order_title">
 							<p>
-								<span class="bigger_text">淘源圆岭岗</span>
+								<span class="bigger_text">淘源圆岭岗（点击查看详情）</span>
 								<span>@if($list->forms == 1 ) 在线预订 @elseif($list->forms == 2) 前台预定 @else 线下预定 @endif</span>
 							</p>
 							<p>
@@ -45,7 +45,15 @@
 						</div>
 						<div class="no_interval_cell">
 							<div class="">
-								<p>状态: <span class="orange_text"> @if($list->order_status == 0) 已提交,等待酒店处理（@if($list->pay_status == 0) 未支付 @else 已支付 @endif） @elseif($list->order_status == 1) 已处理，可以入住 	@else 订单已完成 @endif
+								<p>状态: <span class="orange_text">
+										@if($list->order_status == 0) 已提交,等待酒店处理
+										@elseif($list->order_status == 1) 订单已处理
+										@else 订单已完成
+										@endif
+										（@if($list->pay_status == 0)未支付
+											@elseif($list->pay_status == 1)已支付
+											@else已退款
+											@endif）
 										</span></p>
 								<p>总价: <span class="orange_text">￥{{$list->order_amount}}</span></p>
 							</div>

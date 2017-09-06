@@ -40,7 +40,7 @@
 					if(result.code==1){
 						alert(result.msg);
 						setTimeout(function(){
-							window.location.reload();
+							window.location.href = '/admin/shop/cate';
 						},500);
 					}else{
 						alert(result.msg);

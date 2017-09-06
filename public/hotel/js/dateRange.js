@@ -78,7 +78,7 @@
     };
     //将对象赋给__method变量
     var __method = this;
-	
+
     this.inputId = inputId;
 	this.inputCompareId = inputId + 'Compare';
 	this.compareInputDiv = 'div_compare_'+inputId;
@@ -121,7 +121,9 @@
     // 表单中开始、结束、开始对比、结束对比时间
     this.startDateId = this.mOpts.startDateId + '_' + suffix;
     this.endDateId = this.mOpts.endDateId + '_' + suffix;
+
     this.compareCheckboxId = this.mOpts.compareCheckboxId + '_' + suffix;
+
     this.startCompareDateId = this.mOpts.startCompareDateId + '_' + suffix;
     this.endCompareDateId = this.mOpts.endCompareDateId + '_' + suffix;
     // 初始化日期选择器面板的HTML代码串
@@ -196,7 +198,7 @@
 	]
 	};
 	//把checkbox放到页面的相应位置,放置到inputid后面 added by johnnyzheng
-	
+
 	if(this.mOpts.theme == 'ta'){
 		$(checkBoxWrapper[this.mOpts.theme].join('')).insertAfter($('#div_' + this.inputId));
 	}else{
@@ -295,6 +297,26 @@
      */
     $('#' + this.submitBtn).bind('click', function() {
         __method.close(1);
+        $(".sInput").text($('#' + __method.mOpts.startDateId).val());
+        $(".eInput").text($('#' + __method.mOpts.endDateId).val());
+        $(".allDate").text(DateDay);
+
+        function getMyDay(date){
+            var week;
+            if(date.getDay()==0) week="周日"
+            if(date.getDay()==1) week="周一"
+            if(date.getDay()==2) week="周二"
+            if(date.getDay()==3) week="周三"
+            if(date.getDay()==4) week="周四"
+            if(date.getDay()==5) week="周五"
+            if(date.getDay()==6) week="周六"
+            return week;
+            }  
+   var w1 = getMyDay(new Date($(".sInput").text()));
+    $(".markToday").text(w1);
+    var w2 = getMyDay(new Date($(".eInput").text()));
+    $(".markTom").text(w2);            
+
         __method.mOpts.success({'startDate': $('#' + __method.mOpts.startDateId).val(), 
 								'endDate': $('#' + __method.mOpts.endDateId).val(), 
 								'needCompare' : $('#' + __method.mOpts.compareCheckboxId).val(),
@@ -1017,11 +1039,8 @@ pickerDateRange.prototype.selectDate = function(ymd) {
  * @param {Object} __method 时期选择器超级对象
  */ 
 pickerDateRange.prototype.show = function(isCompare, __method) {
-	//蒙版
+		//蒙版
 	$(".mask_body").css('display','inline-block');
-	
-	
-	
 	$('#' + __method.dateRangeDiv).css('display', isCompare ? 'none' : '');
 	$('#' + __method.dateRangeCompareDiv).css('display', isCompare ? '' : 'none');
     var pos = isCompare ?  $('#' + this.inputCompareId).offset() : $('#' + this.inputId).offset();
@@ -1043,8 +1062,7 @@ pickerDateRange.prototype.show = function(isCompare, __method) {
     $("#" + this.calendarId).css('left', left  + 'px');
     //$("#" + this.calendarId).css('top', pos.top + (offsetHeight ? offsetHeight- 1 : (__method.mOpts.theme=='ta'?35:22)) + 'px');
 //	$("#" + this.calendarId).css('top', pos.top + (__method.mOpts.theme=='ta'?35:22) + 'px');
-	$("#" + this.calendarId).css('top', 100 + 'px');
-	
+	$("#" + this.calendarId).css('top', '150px');
 	//第一次显示的时候，一定要初始化输入框
 	isCompare ? this.changeInput(this.startCompareDateId) : this.changeInput(this.startDateId);
     return false;
@@ -1054,8 +1072,8 @@ pickerDateRange.prototype.show = function(isCompare, __method) {
  * @description 关闭日期选择框
  * @param {Boolean} btnSubmit 是否是点击确定按钮关闭的 
  */
+ var DateDay;
 pickerDateRange.prototype.close = function(btnSubmit) {
-
 	var __method = this;
     //by zacharycai 关闭后就解绑了
     //$(document).unbind('click');
@@ -1069,26 +1087,43 @@ pickerDateRange.prototype.close = function(btnSubmit) {
 			$('#' + this.inputId).val($('#' + this.startDateId).val());
 			$('#' + this.inputCompareId).val($('#' + this.startCompareDateId).val());
 		}else{
-			$('#' + this.inputId).val($('#' + this.startDateId).val() + ('' == $('#' + this.endDateId).val() ? '' : this.mOpts.defaultText + $('#' + this.endDateId).val()));
+			$('#' + this.inputId).val($('#' + this.startDateId).val() + ('  ' == $('#' + this.endDateId).val() ? '' : this.mOpts.defaultText + $('#' + this.endDateId).val()));
 		}
 		//判断当前天是否可选，来决定从后往前推修改日期是从哪一点开始
 		var nDateTime = ((true == this.mOpts.isTodayValid && '' != this.mOpts.isTodayValid)) ? new Date().getTime() : new Date().getTime() - (1 * 24 * 60 * 60 * 1000);
-		var bDateTime = this.str2date($('#' + this.startDateId).val()).getTime();
+		var bDateTime = this.str2date($('#' + this.startDateId).val()).getTime();  
 		var eDateTime = this.str2date($('#' + this.endDateId).val()).getTime();
 		//如果endDateTime小于bDateTime 相互交换
+		//为日历内的开始日期
+//  $('#' + this.startDateId).css('border','2px solid red'); 
+    //为日历内的结束日期
+//  $('#' + this.endDateId).css('border','2px solid green'); 
 		if(eDateTime < bDateTime){
 			var tmp = $('#' + this.startDateId).val();
 			$('#' + this.startDateId).val($('#' + this.endDateId).val());
 			$('#' + this.endDateId).val(tmp);
 		}
-		 var _val = this.mOpts.shortOpr == true ? $('#' + this.startDateId).val() : ($('#' + this.startDateId).val() + ('' == $('#' + this.endDateId).val() ? '' : this.mOpts.defaultText + $('#' + this.endDateId).val()));
-		// 把开始、结束时间显示到输入框 (PS:如果选择的今日，昨日，则只填入一个日期)
+		 var _val = this.mOpts.shortOpr == true ? $('#' + this.startDateId).val() : ($('#' + this.startDateId).val() + ('  ' == $('#' + this.endDateId).val() ? '' : this.mOpts.defaultText + $('#' + this.endDateId).val()));
+//		console.log(_val);
+		
+        // 把开始、结束时间显示到输入框 (PS:如果选择的今日，昨日，则只填入一个日期) 日历显示框
 		var input = document.getElementById(this.inputId);
+        // input.style.border="3px solid blue";
+        // var sInput = document.createElement("div");
+        // var eInput = document.createElement("div");
+        // sInput.style.width="100%";
+        // sInput.style.height="40px";
+        // sInput.style.border="1px solid lightgreen";
+        // eInput.style.width="100%";
+        // eInput.style.height="40px";
+        // sInput.style.border="1px solid lightblue";
+        // input.appendChild(sInput);
+        // input.appendChild(eInput);
 		if(input && input.tagName == 'INPUT'){
-			$('#' + this.inputId).val(_val);
+			// $('#' + this.inputId).val(_val);
 			$('#'+this.inputCompareId).is(':visible') && $('#'+this.inputCompareId).val(_compareVal);
 		}else{
-			$('#' + this.inputId).html(_val);
+			// $('#' + this.inputId).html(_val);
 			$('#'+this.inputCompareId).is(':visible') && $('#'+this.inputCompareId).html(_compareVal);
 		}
 		//	//在js侧就做好日期校准，以前面的日期选择的跨度为准，如果后面的跨度超过了当前可用时间，则以当前可用时间向前推 added by johnnyzheng 11-29
@@ -1124,12 +1159,19 @@ pickerDateRange.prototype.close = function(btnSubmit) {
 		}
 		// 计算相隔天数
 		var step = (bDateTime - eDateTime) / 86400000;
+        DateDay = -step;
 
 		// 更改目标元素值
 		$('#' + this.mOpts.startDateId).val($('#' + this.startDateId).val());
 		$('#' + this.mOpts.endDateId).val($('#' + this.endDateId).val());
 		$('#' + this.mOpts.startCompareDateId).val($('#' + this.startCompareDateId).val());
 		$('#' + this.mOpts.endCompareDateId).val($('#' + this.endCompareDateId).val());
+		
+		//将时间打印
+//		console.log($('#' + this.startDateId).val());
+//		console.log($('#' + this.endDateId).val());
+		
+		
 		//点击确定按钮进行查询后将取消所有的今天 昨天 最近7天的快捷链接 added by johnnyzheng 11-29
 		for(var property in this.periodObj){
 			if($('#' + this.mOpts[property])){
@@ -1139,6 +1181,7 @@ pickerDateRange.prototype.close = function(btnSubmit) {
 	}
 	// 隐藏日期选择框 延迟200ms 关闭日期选择框
 	$("#" + __method.calendarId).css('display', 'none');
+	// 蒙版
 	$(".mask_body").css('display','none');
 	
     return false;
@@ -1150,6 +1193,7 @@ pickerDateRange.prototype.close = function(btnSubmit) {
  * @param {Num} month 月
  */ 
 pickerDateRange.prototype.fillDate = function(year, month, index) {
+    // 继承父级元素对象
     var __method = this;
 	var isTaTheme = this.mOpts.theme == 'ta';
     // 当月第一天
@@ -1265,6 +1309,7 @@ pickerDateRange.prototype.fillDate = function(year, month, index) {
 	}
     // 当前月的所有日期(包括空白位置填充的日期)
     var tdClass = '', deviation = 0, ymd = '';
+    var nowDate = new Date();
     for(var d = dateBegin; d.getTime() <= dateEnd.getTime(); d.setDate(d.getDate() + 1)) {
         if(d.getTime() < firstDayOfMonth.getTime()) { // 当前月之前的日期
             tdClass = this.mOpts.theme + '_' + this.mOpts.disableGray;
@@ -1284,8 +1329,10 @@ pickerDateRange.prototype.fillDate = function(year, month, index) {
                     tdClass = this.mOpts.theme + '_' + this.mOpts.disableGray;
                     deviation = '2';
                 }
-            }
-			else {
+            }else if(d.getTime() < nowDate.getTime()){
+                tdClass = this.mOpts.theme + '_' + this.mOpts.disableGray;
+                deviation = '5';                
+            }else{
                 tdClass = '';
             }
 			//让周末不可选不可选
@@ -1330,7 +1377,6 @@ pickerDateRange.prototype.fillDate = function(year, month, index) {
 
             }
         }
-
         // 如果是周日
         if(0 == d.getDay()) {
             tr = document.createElement('tr');
@@ -1371,12 +1417,9 @@ pickerDateRange.prototype.fillDate = function(year, month, index) {
  * @param {String} str 时间字符串
  */ 
 pickerDateRange.prototype.str2date = function(str) {
-//	if(str){
-		var ar = str.split('-');
-   		// 返回日期格式
-    	return new Date(ar[0], ar[1] - 1, ar[2]);
-//	}
-
+    var ar = str.split('-');
+    // 返回日期格式
+    return new Date(ar[0], ar[1] - 1, ar[2]);
 };
 
 /**
@@ -1385,9 +1428,10 @@ pickerDateRange.prototype.str2date = function(str) {
  * @param {String} e 待比较时间串2
  */
 pickerDateRange.prototype.compareStrDate = function(b, e) {
+    // 结束日期
     var bDate = this.str2date(b);
+    // 入住日期
     var eDate = this.str2date(e);
-
     // 1 大于; 0 等于; -1 小于
     if(bDate.getTime() > eDate.getTime()) {
         return 1;
@@ -1435,7 +1479,7 @@ pickerDateRange.prototype.changeInput = function(ipt) {
         $('#' + allInputs[i]).removeClass(this.mOpts.theme + '_' + this.mOpts.compareCss);
     }
 
-    // 为指定输入框添加样式
+    // 为指定输入框添加样式(日历框内的起始日期)
     $('#' + ipt).addClass(cla);
 	//背景图repeat
 	$('#' + ipt).css('background-repeat', 'repeat');

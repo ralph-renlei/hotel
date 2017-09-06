@@ -113,7 +113,7 @@
 					$('#category').val(c.category_name);
 					$('#number').val(1);
 					$('#start').val(c.start);
-					$('#end').val(c.start);
+					$('#end').val(c.end);
 				}else{
 					alert(result.msg);
 				}

@@ -5,7 +5,7 @@
 		@include('menu')
 		<div class="col-md-9 col-md-offset-1">
 			<div class="panel panel-default">
-				<div class="panel-heading">房间分配</div>
+				<div class="panel-heading">添加订单</div>
 				<div class="panel-body">
 					@if (count($errors) > 0)
 						<div class="alert alert-danger">

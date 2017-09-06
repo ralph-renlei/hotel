@@ -92,7 +92,7 @@ class UserController extends Controller
         $openid = $request->input('openid');
         $name = $request->input('name');
         $mobile = $request->input('mobile');
-        $request = User::create(['role'=>$role,'openid'=>$openid,'name'=>$name,'mobile'=>$mobile]);
+        $request = User::create(['role'=>$role,'openid'=>$openid,'name'=>$name,'mobile'=>$mobile,'created_at'=>date('Y-m-d H:i:s',time())]);
         return redirect('/admin/user/verify');
     }
 

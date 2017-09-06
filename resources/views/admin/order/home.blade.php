@@ -6,18 +6,14 @@
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					订单列表 &nbsp;&nbsp;<a class="glyphicon glyphicon-plus" href="/admin/order/add">添加</a>
+					订单列表 &nbsp;&nbsp;<a class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#no3Modal">添加</a>
 				</div>
 				<div class="panel-body">
 					<div class="row">
 						<form class="form-inline" action="{{ url('/admin/order/home') }}" method="get">
 							<div class="form-group">
 								<label class="label_left">查看当天的订单情况</label>
-								<select class="form-control" name="start">
-									@foreach($time_array as $time)
-									<option value="{{$time}}" @if($time == $keywords) selected @endif/>{{$time}}</option>
-									@endforeach
-								</select>
+								<input class=" form-control" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="start" id="start" value="">
 							</div>
 							<button type="submit" class="btn btn-default search_bottom">搜索</button>
 						</form>
@@ -47,7 +43,6 @@
                                 <td>
 									@if($item->pay_status == 0) 未付款	/ 不用处理
 									@elseif($item->pay_status == 2) 已退款
-									@elseif($item->pay_status == 3) 申请退款
 									@else 已付款
 										/ @if($item->order_status == 0) 新订单 @elseif($item->order_status == 1) 已处理 @else 已完成 @endif
 									@endif
@@ -72,12 +67,15 @@
 												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
 											@endif
 										@endif
-									@elseif($item->pay_status == 3)
-										<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#no2Modal">申请退款</button></a>
-									@else
+									@elseif($item->pay_status == 0)
 										<button type="button" class="btn btn-default btn-sm" title="未付款无法分配">无法分配</button></a>
+									@else
+										<button type="button" class="btn btn-default btn-sm" title="已退款">已退款</button></a>
 									@endif
-                                </td>
+									@if($item->pay_status == 1 && $item->order_status != 2)
+									    <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#no2Modal">申请退款</button></a>
+									@endif
+								</td>
 							</tr>
 							@endforeach
 						</table>
@@ -183,7 +181,7 @@
 					<div class="form-group">
 						<label for="inputPassword3" class="col-sm-2 control-label">实付金额<span style="color:red">*</span></label>
 						<div class="col-sm-4">
-							<input type="text" name="order_amount" class="form-control" id="order_amount" value="" placeholder="请填写实付金额">
+							<input type="text" name="shifu_amount" class="form-control" id="shifu_amount" value="" placeholder="请填写实付金额">
 						</div>
 					</div>
 					<div class="form-group">
@@ -202,7 +200,91 @@
 	</div>
 </div>
 
+<div class="modal fade in" id="no3Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="display: none;"><div class="modal-backdrop fade in"></div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" onclick="app.system.cancel();">×</span><span class="sr-only" onclick="app.system.cancel();">Close</span></button>
+				<h4 class="modal-title" id="myModalLabel">添加订单</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+					<input type="hidden" name="_token" value="{{csrf_token()}}" id="_token"/>
+					<input type="hidden" name="forms" value="2">
+					<div class="form-group base">
+						<label class="col-sm-2 control-label">姓名<span style="color:red">*</span></label>
+						<div class="col-sm-5">
+							<input type="text" class="form-control" name="username" id="name_add"/>
+						</div>
+					</div>
+					<div class="form-group base">
+						<label class="col-sm-2 control-label">电话<span style="color:red">*</span></label>
+						<div class="col-sm-5">
+							<input type="text" class="form-control" name="phone" id="mobile_add"/>
+						</div>
+					</div>
+					<div class="form-group base">
+						<label class="col-sm-2 control-label">房型<span style="color:red">*</span></label>
+						<div class="col-sm-3" id="category">
+							<select class="form-control" name="category" id="category_add">
+								<option value ="0">请选择房型</option>
+								@foreach($categorys as $category)
+									<option value ="{{$category->id}}">{{$category->name}}</option>
+								@endforeach
+							</select>
+						</div>
+					</div>
+					<div class="form-group base">
+						<label for="inputEmail3" class="col-sm-2 control-label">入住时间<span style="color:red">*</span></label>
+						<div class="col-sm-5">
+							<input class=" form-control" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="start" id="start_add" value="">
+						</div>
+					</div>
+					<div class="form-group base">
+						<label for="inputEmail3" class="col-sm-2 control-label">离店时间<span style="color:red">*</span></label>
+						<div class="col-sm-5">
+							<input class=" form-control" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="end" id="end_add" value="">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" onclick="app.system.cancel();">关闭</button>
+				<button type="button" class="btn btn-primary" onclick="add()">保存</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script type="text/javascript">
+add = function(){
+	var username = $('#name_add').val();
+	var phone = $('#mobile_add').val();
+	var category = $('#category_add').val();
+	var start = $('#start_add').val();
+	var end = $('#end_add').val();
+	var _token = $('#_token').val();
+
+	$.ajax({
+		url: '/reserve/ordercommit',
+		type: 'POST',
+		dataType:'json',
+		data:{'_token':_token,'username':username,'phone':phone,'category':category,'start':start,'end':end,'forms':2},
+		success: function(result) {
+			if(result.code==1){
+				alert('下单成功，请查看实名认证');
+				window.location.href = '/admin/user/verify';
+			}else{
+				alert(result.msg);
+			}
+		},
+		error:function(jqXHR,textStatus, errorThrown ){
+			alert(errorThrown);
+		}
+	});
+};
+
+
 order_detail = function(id){
 	if(!id){
 		alert('参数异常');
@@ -278,7 +360,7 @@ order_edit = function(){
 
 refund = function(){
 	var id = $('#id_refund').val();
-	var order_amount = $('#order_amount').val();
+	var order_amount = $('#shifu_amount').val();
 	var refund_fee = $('#refund_fee').val();
 	if(refund_fee == ''){
 		alert('请填写退款金额');

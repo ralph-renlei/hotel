@@ -9,8 +9,6 @@ use WxHotel\User;
 class MemberController extends Controller {
 	public function index()
 	{
-		$info = User::where('openid','oCg8G1KlgdVf4AC9CUcx6teDuBh4')->first();
-		session(['user'=>$info]);
 		//根据用户的微信 openid获取用户的头像，等信息，在页面显示
 		$memberInfo = User::where('openid',session('user')['openid'])->first();
 		return view('member.person_center',['memberInfo'=>$memberInfo]);
@@ -37,7 +35,7 @@ class MemberController extends Controller {
 
 	public function order(){
 		//根据用户 uid 查询用户订单，房型，数量，下单方式，入住时间，离开时间，预定状态，价格
-		$orderList = Order::where('openid',session('user')['openid'])->get();
+		$orderList = Order::where(['openid'=>session('user')['openid'],'recycle'=>0])->orderBy('order_id','desc')->get();
 		return view('member.my_order',['orderList'=>$orderList]);
 	}
 
@@ -45,6 +43,16 @@ class MemberController extends Controller {
 		//根据订单id 查询订单详情 房型，数量，房间号，订单状态，手机号，总价
 		$order_detail = Order::where('order_id',$id)->first();
 		return view('member.order_detail',['order_detail'=>$order_detail]);
+	}
+
+	public function order_del(Request $request)
+	{
+		//用户删除订单
+		$result = Order::where('order_id',$request->input('order_id'))->update(['recycle'=>1]);;
+		if($result){
+			echo "<script>alert('删除成功！');window.location.href='/member/order';</script>";
+		}
+
 	}
 
 	public function credit()

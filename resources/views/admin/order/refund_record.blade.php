@@ -6,7 +6,7 @@
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					订单列表 &nbsp;&nbsp;<a class="glyphicon glyphicon-plus" href="/admin/order/add">添加</a>
+					退款记录
 				</div>
 				<div class="panel-body">
 					<div class="table-responsive">
@@ -26,8 +26,9 @@
 									<td>{{ $item->username }}</td>
 									<td>{{ $item->phone }}</td>
 									<td>{{ $item->category_name }} @if($item->forms!=1) {{$item->goods_name}} @endif</td>
-									<td>{{ $item->order_amount }}</td>
-									<td>退款金额</td>
+									<td>{{$item->order_amount}}</td>
+									<td>{{$item->refund_fee}}</td>
+									<td>{{$item->refund_success_time}}</td>
 								</tr>
 								@endforeach
 						</table>

@@ -37,6 +37,10 @@ class HomeController extends Controller {
             session(['uid'=>$user->id]);
         }
 
+        if(session('goods_id')){
+            return redirect('/goods_id?goods_id='.session('goods_id'));
+        }
+
         return view('room.index_online');
     }
 

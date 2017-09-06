@@ -18,10 +18,10 @@
 			<p class="house_num">房型：{{$goods->category_name}}</p>
 			<p class="house_num">房间号：{{$goods->name}}</p>
 		</div>
-
+		<input type="hidden" name="goods_name" id="goods_name" value="{{$goods->name}}"/><input type="hidden" name="openid" id="openid" value="{{session('user')['openid']}}"/>
 		<div class="mainbtn_wrap">
 			@if($flag == 'book')
-				<a href="/reserve/orderoffline/goods_id/{{$goods->goods_id}}" class="">我要预定</a>
+				<a href="/reserve/orderoffline?goods_id={{$goods->goods_id}}&goods_name={{$goods->name}}" class="">我要预定</a>
 				<a href="javascript:void(0);" onclick="alert('您还未订房')">我要退房</a>
 			@else
 			<a href="/rest?goods_name={{$goods->name}}&openid={{session('user')['openid']}}" class="">我要入住</a>
