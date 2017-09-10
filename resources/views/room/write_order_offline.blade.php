@@ -14,7 +14,7 @@
 		<header class="clearfix">
 			<a href="javascript:history.back(-1);"><i class="iconfont icon-qianjin-copy"></i></a>
 			<!--<span class="h_title">个人资料</span>-->
-			<i class="iconfont icon-biaodan right"></i>
+			<i class="iconfont icon-biaodan right" onclick="window.location.href='/member'"></i>
 		</header>
 		<div class="no_interval_wrap">
 			<div class="no_interval_on">
@@ -46,11 +46,11 @@
 				</div>
 				<div class="no_interval_cell">
 					<span class="">入住人：</span >
-					<input type="text" name="checkin_name" id="checkin_name" value="" placeholder="请输入入住人姓名"/>
+					<input type="text" name="checkin_name" id="checkin_name" value="@if(session('name')){{session('name')}}@endif" placeholder="请输入入住人姓名"/>
 				</div>
 				<div class="no_interval_cell">
 					<span class="">手机号：</span >
-					<input type="number" name="checkin_phone" id="phone" value="" placeholder="请输入手机号码" onblur="checkMobile(this)"/>
+					<input type="number" name="checkin_phone" id="phone" value="@if(session('mobile')){{session('mobile')}}@endif" placeholder="请输入手机号码" onblur="checkMobile(this)"/>
 					<input type="button" class="send_code" name="" id="" value="发送验证码" />
 				</div>
 				<div class="no_interval_cell">
@@ -59,11 +59,11 @@
 				</div>
 			</div>
 		</div>
-		<div class="no_interval_wrap">
+		<div class="no_interval_wrap" style="display:@if(session('verify')) none @else block @endif">
 			<div class="no_interval_on">
 				<div class="no_interval_cell">
 					<span class="">真实姓名：</span >
-					<input type="text" name="realname" id="realname" value="" placeholder="请输入真实姓名"/>
+					<input type="text" name="realname" id="realname" value="@if(session('name')){{session('name')}}@endif" placeholder="请输入真实姓名"/>
 				</div>
 				<div class="no_interval_cell">
 					<span >身份证号：</span >
@@ -150,10 +150,8 @@
 	order_commit = function(){
 		var username = $("#checkin_name").val();
 		var phone = $("#phone").val();
-		var text = $('#date1').text();
-		var text_arr = text.split(' ');
-		var start = text_arr[0]
-		var end = text_arr[2];
+		var start = $('#start').text();
+		var end = $('#end').text();
 		var str = $('#order_amount').text();
 		var order_amount = str.replace('￥','');
 		var id = $('#category_id').attr('data');
@@ -179,10 +177,13 @@
 		//身份证
 		var idcard_front = $('#idcardbefore_file').attr('data_url');
 		var idcard_back = $('#idcardback_file').attr('data_url');
-
+		var verify = "{{session('verify')}}";
+		
 		if(idcard_front == undefined || idcard_back == undefined){
-			alert('请上传照片');
-			return false;
+			if(verify == 0){
+				alert('请上传照片');
+				return false;
+			}
 		}
 
 		$.ajax({
@@ -220,7 +221,6 @@
 		var count = Number($(e.target).html());
 		var order_amount = Number("{{$category->normalprice}}");
 		$('#order_amount').text(count*order_amount);
-
 	});
 
 	$('#vertify_code').blur(function(){
@@ -233,7 +233,7 @@
 			type:'get',
 			url: "/reserve/verify_code",
 			async: true,
-			data:{'code':$('#vertify_code').val()},
+			data:{'code':$('#vertify_code').val(),'mobile':$("#phone").val()},
 			success:function(res) {
 				if(res.code == 0){
 					$('#flag').val('ok');

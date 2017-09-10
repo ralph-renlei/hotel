@@ -13,7 +13,7 @@
 							<tr>
 								<th class="info">ID</th>
 								<th class="info">房间名称（编号）</th>
-								<th class="info">所属类型</th>
+								<th class="info">房间类型</th>
 								<th class="info">开关房</th>
 								<th class="info">当前状态</th>
 								<th class="info">操作</th>

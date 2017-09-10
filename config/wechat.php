@@ -36,3 +36,4 @@ return [
         'file'  => env('WECHAT_LOG_FILE', storage_path('logs/wechat.log')),
     ],
 ];
+

@@ -16,7 +16,7 @@
 		<header class="clearfix">
 			<a href="javascript:history.back(-1);"><i class="iconfont icon-qianjin-copy"></i></a>
 			<!--<span class="h_title">个人资料</span>-->
-			<i class="iconfont icon-biaodan right"></i>
+			<i class="iconfont icon-biaodan right" onclick="window.location.href='/member'"></i>
 		</header>
 		<div class="reserve_wrap">
 			<div class="reserve_on clearfix">
@@ -24,11 +24,9 @@
 				<div class="right_info">
 					<div class="right_top clearfix">
 						<p class="bigger_text left">淘源圆岭岗</p>
-						<i class="iconfont right icon-dingwei"></i>
 					</div>
 					<div class="right_top clearfix">
 						<p class="bigger_text left">18814040788</p>
-						<i class="iconfont right icon-dianhua"></i>
 					</div>
 				</div>
 			</div>

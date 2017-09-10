@@ -27,7 +27,7 @@
 					</a>
 				</div>
 				<div class="no_interval_cell">
-					<span >身份证号：</span >
+					<span>身份证号：</span >
 					<input type="text" name="idcard_number" id="idcard_number" value="{{$user->idcard_no}}" readonly="readonly"/>
 				</div>
 				<div class="no_interval_cell clearfix">

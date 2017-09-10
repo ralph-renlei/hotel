@@ -4,6 +4,7 @@
 	<div class="form-group gallery photo-border" id="gallery_div" style="display: block">
 		<ul id="gallery" class="house-photo">
 			@if(isset($gallery_list))
+				<p>上传身份证正、反面照片</p><br>
 				@foreach($gallery_list as $gallery)
 					<li>
 						<img data-original="{{$gallery}}" src="{{$gallery}}">

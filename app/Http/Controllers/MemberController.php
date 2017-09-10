@@ -58,7 +58,7 @@ class MemberController extends Controller {
 	public function credit()
 	{
 		$creditList = User::where('openid',session('user')['openid'])->first();
-		if($creditList->verify == 0){
+		if(($creditList->idcard_front == null || $creditList->idcard_back == null) && $creditList->verify == 0){
 			return view('member.certificate');
 		}else{
 			return view('member.certificate_photo',['creditList'=>$creditList]);

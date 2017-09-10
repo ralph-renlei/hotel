@@ -10,9 +10,10 @@ use DB;
 
 class ReserveController extends Controller {
 	public function offlineIndex(Request $request){
-		if(is_null(session('user'))){
+		if(is_null(session('goods_id'))){
+			$request->session()->flush();
 			session(['goods_id'=>$request->input('goods_id')]);
-			return  redirect('/');
+			return redirect('/');
 		}
 
 		$request->session()->pull('goods_id');
@@ -273,8 +274,12 @@ class ReserveController extends Controller {
 		session(['order_sn'=>$data['order_sn']]);
 
 		//更新用户的姓名和电话
-		User::where('openid',session('user')['openid'])->update(['mobile'=>$request->input('phone'),'name'=>$request->input('username'),'idcard_back'=>$request->input('idcard_back'),'idcard_front'=>$request->input('idcard_front')]);
-
+		if(session('verify')){
+			User::where('openid',session('user')['openid'])->update(['mobile'=>$request->input('phone'),'name'=>$request->input('username')]);
+		}else{
+			User::where('openid',session('user')['openid'])->update(['mobile'=>$request->input('phone'),'name'=>$request->input('username'),'idcard_back'=>$request->input('idcard_back'),'idcard_front'=>$request->input('idcard_front')]);
+		}
+		
 		$result = Order::create($data);
 
 		if($request->input('forms')==2){
@@ -290,7 +295,7 @@ class ReserveController extends Controller {
 	}
 
 	public function verify_code(Request $request){
-		$code = SmsRecord::where('mobile',$request->input('mobile'))->orderBy('id','desc')->pluck('token');
+		$code = \DB::table('sms_record')->where('mobile',$request->input('mobile'))->orderBy('id','desc')->pluck('token');
 		if($code != $request->input('code')){
 			$return['code'] = 1;
 			$return['msg'] = '验证码不正确';
@@ -310,7 +315,7 @@ class ReserveController extends Controller {
 		//根据房间id 查询房间的信息 ，种类
 		$goodsinfo = Goods::find($request->input('goods_id'));
 		if($goodsinfo->status==0 || $goodsinfo->status ==-1){
-			 echo "<script>alert('该房间不能入住，请选择其他房间')</script>";
+			 echo "<script>alert('该房间不能入住，请选择其他房间');window.history.back();</script>";
 			return ;
 		}
 

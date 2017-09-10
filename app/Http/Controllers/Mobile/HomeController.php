@@ -10,32 +10,39 @@ use DB;
 class HomeController extends Controller {
     public function index(Request $request)
     {
-        //如果没有code，获取code
-        if(!($request->input('code'))){
-            if(!is_null(session('wx_code'))){
-            }else{
-                session(['wx_code'=>1]);
+		if(session('wx_code')){
+			
+		}else{
+			if($request->input('code')){
+				//回调地址 携带code参数，
+				$code = $request->input('code');
+				//获取access_token
+				$access_token = $this->getAccess_token($code);
+				//获取登录授权
+				$userInfo =  $this->getUserInfo($access_token);
+				session(['user'=>$userInfo]);
+				//将已授权表示写入session
+				session(['wx_code'=>1]);
+				//如果数据中没有此用户，创建这个用户
+				$user = User::where('openid',$userInfo['openid'])->first();
+				if(!$user){
+					$uid = \DB::table('users')->insertGetId(['openid'=>$userInfo['openid'],'nickname'=>$userInfo['nickname'],'sex'=>$userInfo['sex'],'avatar'=>$userInfo['headimgurl'],'country'=>$userInfo['country'],
+						'province'=>$userInfo['province'],'city'=>$userInfo['city'],'created_at'=>date('Y-m-d H:i:s',time())]);
+					session(['uid'=>$uid]);
+				}else{
+					session(['uid'=>$user->id]);
+					session(['mobile'=>trim($user->mobile,' ')]);
+					session(['name'=>trim($user->name,' ')]);
+					session(['verify'=>$user->verify]);
+				}
+			}else{
+				$goods_id = session('goods_id');
+				$request->session()->flush();
+                session(['goods_id'=>$goods_id]);
                 $this->getCode();
                 return;
-            }
-        }
-
-        //回调地址 携带code参数，
-        $code = $request->input('code');
-//        获取access_token
-        $access_token = $this->getAccess_token($code);
-//        获取登录授权
-        $userInfo =  $this->getUserInfo($access_token);
-        session(['user'=>$userInfo]);
-        //如果数据中没有此用户，创建这个用户
-        $user = User::where('openid',$userInfo['openid'])->first();
-        if(!$user){
-            $uid = \DB::table('users')->insertGetId(['openid'=>$userInfo['openid'],'nickname'=>$userInfo['nickname'],'sex'=>$userInfo['sex'],'avatar'=>$userInfo['headimgurl'],'country'=>$userInfo['country'],
-                'province'=>$userInfo['province'],'city'=>$userInfo['city'],'created_at'=>date('Y-m-d H:i:s',time())]);
-            session(['uid'=>$uid]);
-        }else{
-            session(['uid'=>$user->id]);
-        }
+			}
+		}
 
         if(session('goods_id')){
             return redirect('/goods_id?goods_id='.session('goods_id'));
@@ -56,47 +63,21 @@ class HomeController extends Controller {
 
     public function getAccess_token($code = NULL)
     {
-        //判断 存在access文件，并且token文件不过期，返回access_token
-        $tokenFile = storage_path() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'access_token.txt';
-        $refreshFile = storage_path() . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'refresh.txt';
         $arrContextOptions = array(
             "ssl"=>array(
                 "verify_peer"=>false,
                 "verify_peer_name"=>false,
             ),
         );
-        if(!is_file($tokenFile)){
-            fopen($tokenFile,'w');
-        }
-        $data = json_decode(file_get_contents($tokenFile),true); //转换为数组格式
+		
+		$appid = env('WECHAT_APPID');
+		$secret = env('WECHAT_SECRET');
+		$grant_type = 'authorization_code ';
+		$url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' . $appid . '&secret=' . $secret . '&code=' . $code . '&grant_type=' . $grant_type;
 
-        if ($data['expire_time'] > time()) {
-            $access_token = $data['access_token'];
-        }else{
-//            fopen($tokenFile, 'w');//创建文件，或者覆盖 过期的access_token
-            $appid = env('WECHAT_APPID');
-            $secret = env('WECHAT_SECRET');
-            $grant_type = 'authorization_code ';
-            $url = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' . $appid . '&secret=' . $secret . '&code=' . $code . '&grant_type=' . $grant_type;
-            if($code == NULL){
-                $url = 'https://api.weixin.qq.com/sns/oauth2/refresh_token?appid='.$appid.'&grant_type=refresh_token&refresh_token='.file_get_contents($refreshFile);//刷新token
-//                $url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$appid.'&secret='.$secret;
-            }
-
-            $res = file_get_contents($url,false, stream_context_create($arrContextOptions));//重新获取
-            $res = json_decode($res, true); // 对 JSON 格式的字符串进行编码
-            $access_token = $res['access_token'];
-            if ($access_token) {
-                $data['expire_time'] = time() + 7200; //保存2小时
-                $data['access_token'] = $access_token;
-                if($res['refresh_token']){
-                    file_put_contents($refreshFile,$res['refresh_token']);
-                }
-                $fp = fopen($tokenFile, "w"); //只写文件
-                fwrite($fp, json_encode($data)); //写入json格式文件
-                fclose($fp); //关闭连接
-            }
-        }
+		$res = file_get_contents($url,false, stream_context_create($arrContextOptions));//重新获取
+		$res = json_decode($res, true); // 对 JSON 格式的字符串进行编码
+		$access_token = $res['access_token'];
         return $access_token;
     }
 

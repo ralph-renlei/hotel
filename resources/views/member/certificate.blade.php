@@ -15,7 +15,7 @@
 			<!--<span class="h_title"></span>-->
 			<i class="iconfont right icon-biaodan"></i>
 		</header>
-		<p class="certificate_note">根据国家法令。入住酒店需要身份证登记</p>
+		<p class="certificate_note">根据国家法令，入住酒店需要身份证登记</p>
 		<div class="no_interval_wrap">
 			<div class="no_interval_on">
 				<!--表单-->

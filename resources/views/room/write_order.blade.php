@@ -13,7 +13,7 @@
 		<header class="clearfix">
 			<a href="javascript:history.back(-1);"><i class="iconfont icon-qianjin-copy"></i></a>
 			<!--<span class="h_title">个人资料</span>-->
-			<i class="iconfont icon-biaodan right"></i>
+			<i class="iconfont icon-biaodan right" onclick="window.location.href='/member'"></i>
 		</header>
 		<div class="no_interval_wrap">
 			<div class="no_interval_on">
@@ -43,11 +43,11 @@
 				</div>
 				<div class="no_interval_cell">
 					<span class="">入住人：</span >
-					<input type="text" name="checkin_name" id="checkin_name" value="" placeholder="请输入入住人姓名"/>
+					<input type="text" name="checkin_name" id="checkin_name" value="@if(session('name')){{session('name')}}@endif" placeholder="请输入入住人姓名"/>
 				</div>
 				<div class="no_interval_cell">
 					<span class="">手机号：</span >
-					<input type="text" name="checkin_phone" id="checkin_phone" value="" placeholder="请输入联系人手机号码"/>
+					<input type="text" name="checkin_phone" id="checkin_phone" value="@if(session('mobile')){{session('mobile')}}@endif" placeholder="请输入联系人手机号码"/>
 				</div>
 			</div>
 		</div>

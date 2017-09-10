@@ -10,7 +10,7 @@
 	<body>
 		<header class="clearfix">
 			<a href="javascript:history.back(-1);"><i class="iconfont icon-qianjin-copy"></i></a>
-			<!--<span class="h_title">设置</span>-->
+			<span class="h_title">修改手机号码</span>
 		</header>
 		<form action="" method="post" id="old_phone">
 			<div class="no_interval_wrap">

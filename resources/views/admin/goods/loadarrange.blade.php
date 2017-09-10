@@ -30,13 +30,13 @@
 						<div class="form-group base">
 							<label class="col-sm-2 control-label">房间名称（编号）<span style="color:red">*</span></label>
 							<div class="col-sm-5">
-								<input type="text" class="form-control" name="goods_name" id="goods_name" value="{{$roominfo->name}}"/>
+								<input type="text" class="form-control" name="goods_name" id="goods_name" value="{{$roominfo->name}}" disabled>
 							</div>
 						</div>
 						<div class="form-group base">
 							<label class="col-sm-2 control-label">分类<span style="color:red">*</span></label>
 							<div class="col-sm-3" id="category">
-								<select class="form-control" name="category" id="category">
+								<select class="form-control" name="category" id="category" disabled>
                                     <option value ="0">请选择分类</option>
                                     @foreach($categories as $category)
 										<option value ="{{$category->id}}" @if($roominfo->category_id==$category->id) selected @endif>{{$category->name}}</option>
@@ -47,37 +47,37 @@
 						<div class="form-group base">
 							<label for="inputPassword3" class="col-sm-2 control-label">订单id<span style="color:red">*</span></label>
 							<div class="col-sm-5">
-								<input type="text" name="order_id" class="form-control" id="order_id" value="">
+								<input type="text" name="order_id" class="form-control" id="order_id" value="" placeholder="只需填入订单号">
 							</div>
 						</div>
 						<div class="form-group base">
 							<label for="inputPassword3" class="col-sm-2 control-label">预订人<span style="color:red">*</span></label>
 							<div class="col-sm-5">
-								<input type="text" name="name" class="form-control" id="name" value="">
+								<input type="text" name="name" class="form-control" id="name" value="" disabled>
 							</div>
 						</div>
 						<div class="form-group base">
 							<label for="inputEmail3" class="col-sm-2 control-label">电话<span style="color:red">*</span></label>
 							<div class="col-sm-5">
-								<input type="text" name="mobile" class="form-control" id="mobile" value="">
+								<input type="text" name="mobile" class="form-control" id="mobile" value="" disabled>
 							</div>
 						</div>
 						<div class="form-group base">
 							<label for="inputEmail3" class="col-sm-2 control-label">人数<span style="color:red">*</span></label>
 							<div class="col-sm-5">
-								<input type="text" name="number" class="form-control" id="number" value="">
+								<input type="text" name="number" class="form-control" id="number" value="" disabled>
 							</div>
 						</div>
 						<div class="form-group base">
 							<label for="inputEmail3" class="col-sm-2 control-label">开房时间<span style="color:red">*</span></label>
 							<div class="col-sm-5">
-								<input class=" form-control" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="start" id="start" value="">
+								<input class=" form-control" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="start" id="start" value="" disabled>
 							</div>
 						</div>
 						<div class="form-group base">
 							<label for="inputEmail3" class="col-sm-2 control-label">退房时间<span style="color:red">*</span></label>
 							<div class="col-sm-5">
-								<input class=" form-control" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="end" id="end" value="">
+								<input class=" form-control" type="text" onclick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd'})" name="end" id="end" value="" disabled>
 							</div>
 						</div>
 						<div class="form-group do">

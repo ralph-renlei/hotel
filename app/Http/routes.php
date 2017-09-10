@@ -59,6 +59,7 @@ Route::get('/reserve','ReserveController@index');
 Route::get('/reserve/orderonline','ReserveController@makeOrder');//线上预订
 Route::post('/reserve/ordercommit','ReserveController@orderCommit');//生成订单
 Route::post('/reserve/ordercommit_offline','ReserveController@ordercommit_offline');//生成订单
+Route::get('/reserve/verify_code','ReserveController@verify_code');
 Route::get('/reserve/orderoffline','ReserveController@orderoffline');//线下预定
 Route::get('/mobile_room','Console\OrderManageController@mobile_room');//管理员通过手机分配房间
 Route::get('/mobile_allow','Console\OrderManageController@mobile_allow');//管理员通过手机同意

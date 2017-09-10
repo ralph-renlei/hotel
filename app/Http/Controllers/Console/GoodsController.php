@@ -219,6 +219,7 @@ class GoodsController extends Controller {
 				foreach($new_arr as $new){
 					if($new->goods_name == $one->name){
 						$one->room_status = '已预定';//不可分配
+						$one->order_info = \DB::table('orders')->where('order_id',$new->order_id)->first();
 						break;
 					}else{
 						$one->room_status = '可以预定';//

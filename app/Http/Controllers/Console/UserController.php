@@ -92,6 +92,12 @@ class UserController extends Controller
         $openid = $request->input('openid');
         $name = $request->input('name');
         $mobile = $request->input('mobile');
+		
+		$flag = User::where('mobile',$mobile)->pluck('id');
+		if($flag){
+			echo "<script>alert('该手机号已被使用！');window.history.back();</script>";
+			return;
+		}
         $request = User::create(['role'=>$role,'openid'=>$openid,'name'=>$name,'mobile'=>$mobile,'created_at'=>date('Y-m-d H:i:s',time())]);
         return redirect('/admin/user/verify');
     }

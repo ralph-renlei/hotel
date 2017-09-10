@@ -29,7 +29,7 @@ class Alidayu{
         $time = 10;
         $req ->setSmsParam( "{code:'{$number}',product:'{$time}'}" ); //变量来源于 配置短信模板 点击列表中的详情 模板内容的变量
         $req ->setRecNum($telphone); //手机号
-        $req ->setSmsTemplateCode("SMS_49345085"); //配置短信模板 列表中有模板id
+        $req ->setSmsTemplateCode("SMS_91850005"); //配置短信模板 列表中有模板id
         $resp = $c ->execute( $req );
         $resp->code = $randomCode;
         return $resp;

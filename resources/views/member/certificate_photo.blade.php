@@ -14,7 +14,7 @@
 			<!--<span class="h_title"></span>-->
 			<i class="iconfont right icon-biaodan"></i>
 		</header>
-		<p class="certificate_note">根据国家法令。入住酒店需要身份证登记</p>
+		<p class="certificate_note">根据国家法令，入住酒店需要身份证登记</p>
 		<div class="no_interval_wrap">
 			<div class="no_interval_on">
 				<!--表单-->
@@ -45,8 +45,7 @@
 				</form>
 			</div>
 		</div>
-		<p class="button orange_btn" id="makecredit">@if($creditList->verify==0) 未认证 @else 已认证 @endif</p>
-
+		<p class="button orange_btn" id="makecredit">@if($creditList->verify==0) 审核中 @else 已认证 @endif</p>
 	</body>
 	<script src="{{asset('/hotel/js/jquery.min.js')}}" type="text/javascript" charset="utf-8"></script>
 	<script src="{{asset('/hotel/js/common.js')}}" type="text/javascript" charset="utf-8"></script>

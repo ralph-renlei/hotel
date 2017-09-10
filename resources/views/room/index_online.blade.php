@@ -31,7 +31,7 @@
 				<i class="iconfont icon-icon right"></i>
 			</div>
 			<div class="range reserve_online_range">
-				<span>1</span>晚
+				<span id="last">1</span>晚
 			</div>
 			<div class="online_time" style="border-bottom: 1px solid #ddd;">
 				<i class="iconfont icon-icon-test"></i> 离店时间：
@@ -55,9 +55,28 @@
 <script src="{{asset('hotel/js/common.js')}}" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
 	init_date();
+	var start = $('.sInput');//the element I want to monitor
+	var end = $('.eInput');
+	var one = "";
+	var two = "";
+	start.bind('DOMNodeInserted', function(e) {
+		one = $('.sInput').text();
+	});
+	end.bind('DOMNodeInserted', function(e) {
+		two = $('.eInput').text();
+		var day = DateMinus(one,two);
+		$('#last').text(day);
+	});
+	
+	function DateMinus(start,end){ 
+	　　var one = new Date(start.replace(/-/g, "/")); 
+	　　var two = new Date(end.replace(/-/g, "/")); 
+	　　var days = two.getTime() - one.getTime(); 
+	　　var day = parseInt(days / (1000 * 60 * 60 * 24)); 
+	　　return day; 
+	}
+	
 	function sendtime(){
-//		var text = $('#date1').text();
-//		var text_arr = text.split(' ');
 		window.location.href = '/reserve?start='+$(".sInput").text()+'&end='+$(".eInput").text();
 	}
 </script>

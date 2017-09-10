@@ -6,7 +6,7 @@
 		<div class="col-md-10 col-md-offset-1">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					订单列表 &nbsp;&nbsp;<a class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#no3Modal">添加</a>
+					订单列表 &nbsp;&nbsp;<a class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#no3Modal">前台预定新增</a>
 				</div>
 				<div class="panel-body">
 					<div class="row">
@@ -24,11 +24,11 @@
 								<th class="info">订单id</th>
 								<th class="info">姓名</th>
 								<th class="info">电话</th>
+								<th class="info">预定渠道</th>
                                 <th class="info">房间类型</th>
-                                <th class="info">价格</th>
-								<th class="info">入住时间</th>
-								<th class="info">退房时间</th>
-								<th class="info">状态</th>
+                                <th class="info">房间名称</th>
+                                <th class="info">订单金额</th>
+								<th class="info">付款状态/订单状态</th>
 								<th class="info">操作</th>
 							</tr>
 							@foreach($list as $item)
@@ -36,46 +36,45 @@
 								<td>{{$item->order_id}} </td>
                                 <td>{{ $item->username }}</td>
                                 <td>{{ $item->phone }}</td>
-                                <td>{{ $item->category_name }} @if($item->forms!=1) {{$item->goods_name}} @endif</td>
+                                <td>@if($item->forms==1) 线上预定 @elseif($item->forms==0) 线下预定 @else 前台预定 @endif</td>
+								<td>{{ $item->category_name}}</td>
+								<td> @if(($item->forms==1||$item->forms==2) && !$item->goods_name) 未分配 @else {{ $item->goods_name  }} @endif</td>
                                 <td>{{ $item->order_amount }}</td>
-                                <td>{{ $item->start }}</td>
-                                <td>{{ $item->end }}</td>
                                 <td>
-									@if($item->pay_status == 0) 未付款	/ 不用处理
-									@elseif($item->pay_status == 2) 已退款
+									@if($item->pay_status == 0) 未付款/不允入住
+									@elseif($item->pay_status == 2) 已退款/订单完成
 									@else 已付款
-										/ @if($item->order_status == 0) 新订单 @elseif($item->order_status == 1) 已处理 @else 已完成 @endif
+										/ @if($item->order_status == 0) 新订单 @elseif($item->order_status == 1) 已处理 @else 订单完成 @endif
 									@endif
                                 </td>
 							    <td class="do">
-									<button type="button" class="btn btn-default btn-sm" onclick="order_detail({{$item->order_id}})" data-toggle="modal" data-target="#myModal">详情</button>
+									<button type="button" class="btn btn-default btn-sm" onclick="order_detail({{$item->order_id}})" data-toggle="modal" data-target="#myModal" title="可关闭订单">查看/修改</button>
 									@if($item->pay_status == 1)
 										@if($item->forms == 1 || $item->forms == 2)
 											@if($item->order_status==0)
 												<a href="/admin/shop/status"><button type="button" class="btn btn-default btn-sm">分配房间</button></a>
 											@elseif($item->order_status==1)
-												<button type="button" class="btn btn-default btn-sm">已分配</button></a>
+												<button type="button" class="btn btn-default btn-sm">已经处理</button></a>
 											@else
 												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
 											@endif
 										@else
 											@if($item->order_status==0)
-												<a href="/admin/order/allowarrange/{{$item->order_id}}"><button type="button" class="btn btn-default btn-sm">同意入住</button></a>
+												<a href="/admin/order/allowarrange/{{$item->order_id}}"><button type="button" class="btn btn-default btn-sm">同意请求</button></a>
 											@elseif($item->order_status==1)
-												<button type="button" class="btn btn-default btn-sm">已同意</button></a>
+												<button type="button" class="btn btn-default btn-sm">已经处理</button></a>
 											@else
 												<button type="button" class="btn btn-default btn-sm">订单完成</button></a>
 											@endif
 										@endif
-									@elseif($item->pay_status == 0)
-										<button type="button" class="btn btn-default btn-sm" title="未付款无法分配">无法分配</button></a>
+										
+										@if($item->order_status!=2)
+											<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#no2Modal">申请退款</button></a>
+										@endif
 									@else
-										<button type="button" class="btn btn-default btn-sm" title="已退款">已退款</button></a>
+										<button type="button" class="btn btn-default btn-sm" title="未付款无法分配">无法分配</button></a>
 									@endif
-									@if($item->pay_status == 1 && $item->order_status != 2)
-									    <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#no2Modal">申请退款</button></a>
-									@endif
-								</td>
+                                </td>
 							</tr>
 							@endforeach
 						</table>
@@ -123,9 +122,27 @@
 						</div>
 					</div>
 					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">房间名称<span style="color:red">*</span></label>
+						<div class="col-sm-10">
+							<input type="text" name="goods_name" class="form-control" id="goods_name" disabled>
+						</div>
+					</div>
+					<div class="form-group">
 						<label for="inputEmail3" class="col-sm-2 control-label">总价<span style="color:red">*</span></label>
 						<div class="col-sm-10">
 							<input type="text" name="order_amount" class="form-control" id="order_amount" disabled>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">入住时间<span style="color:red">*</span></label>
+						<div class="col-sm-10">
+							<input type="text" name="start" class="form-control" id="start_time" disabled>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="inputEmail3" class="col-sm-2 control-label">离店时间<span style="color:red">*</span></label>
+						<div class="col-sm-10">
+							<input type="text" name="end" class="form-control" id="end_time" disabled>
 						</div>
 					</div>
 					<div class="form-group">
@@ -301,6 +318,14 @@ order_detail = function(id){
 				$('#name').val(c.username);
 				$('#mobile').val(c.phone);
 				$('#category').val(c.category_name);
+				if(c.goods_name =="" || c.goods_name == null){
+					$('#goods_name').val('需要分配房间');
+				}else{
+					$('#goods_name').val(c.goods_name);
+				}
+				$('#goods_name').val();
+				$('#start_time').val(c.start);
+				$('#end_time').val(c.end);
 				$('#order_amount').val(c.order_amount);
 				if(c.forms == 1){
 					$('#forms').val('线上预订');
